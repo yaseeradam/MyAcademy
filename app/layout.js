@@ -8,8 +8,8 @@ export const metadata = {
   description: "Comprehensive school management system for Nigerian private schools",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/logo.jpg",
+    apple: "/logo.jpg",
   },
 };
 
