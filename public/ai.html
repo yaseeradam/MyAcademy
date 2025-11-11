@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>EduManage AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #1a1a1a;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2a2a;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d9ff;
+            margin: 0;
+        }
+
+        .header-title p {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .new-chat-btn {
+            background-color: #00d9ff;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .new-chat-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tabs-container {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            padding: 10px 15px;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabs-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tabs-container::-webkit-scrollbar-thumb {
+            background: #00d9ff;
+            border-radius: 10px;
+        }
+
+        .tab {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-right: 8px;
+            background-color: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .tab:hover {
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+        .tab.active {
+            background-color: #00d9ff;
+            color: #000;
+            border-color: #00d9ff;
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px;
+            gap: 15px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 5px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #00d9ff;
+            border-radius: 10px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background-color: #00d9ff;
+            color: #000;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .message.ai {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #2a2a2a;
+            align-self: flex-start;
+        }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .input-section {
+            flex-shrink: 0;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            padding: 12px;
+            border: 2px solid #2a2a2a;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input { 
+            flex: 1;
+            padding: 14px 16px; 
+            background-color: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #00d9ff;
+        }
+
+        input::placeholder {
+            color: #555;
+        }
+
+        button.send-btn { 
+            padding: 14px 24px; 
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            background-color: #00d9ff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        button.send-btn:active {
+            transform: scale(0.95);
+            background-color: #00b8d4;
+        }
+
+        button.send-btn:disabled {
+            background-color: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            color: #00d9ff;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            .header-title h1 {
+                font-size: 1.2rem;
+            }
+
+            .header-title p {
+                font-size: 0.7rem;
+            }
+
+            .new-chat-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .main-content {
+                padding: 12px;
+            }
+
+            input {
+                font-size: 16px;
+            }
+
+            .message {
+                font-size: 0.9rem;
+                max-width: 90%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            body {
+                max-width: 900px;
+                margin: 0 auto;
+                box-shadow: 0 0 50px rgba(0, 217, 255, 0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">
+            <h1>EduManage AI</h1>
+            <p>School Management Assistant</p>
+        </div>
+        <button class="new-chat-btn" onclick="createNewChat()">+ New Chat</button>
+    </div>
+
+    <div class="tabs-container" id="tabsContainer"></div>
+
+    <div class="main-content">
+        <div class="chat-messages" id="chatMessages">
+            <div class="empty-state">Start a conversation by typing below...</div>
+        </div>
+
+        <div class="input-section">
+            <div class="input-container">
+                <input type="text" id="promptInput" placeholder="Type your message...">
+                <button class="send-btn" id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <script>
+        let chats = [{ id: 1, title: 'Chat 1', messages: [] }];
+        let currentChatId = 1;
+        let nextChatId = 2;
+
+        const promptInput = document.getElementById('promptInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatMessages = document.getElementById('chatMessages');
+        const tabsContainer = document.getElementById('tabsContainer');
+
+        function renderTabs() {
+            tabsContainer.innerHTML = chats.map(chat => `
+                <span class="tab ${chat.id === currentChatId ? 'active' : ''}" 
+                      onclick="switchChat(${chat.id})">
+                    ${chat.title}
+                </span>
+            `).join('');
+        }
+
+        function renderMessages() {
+            const currentChat = chats.find(c => c.id === currentChatId);
+            
+            if (currentChat.messages.length === 0) {
+                chatMessages.innerHTML = '<div class="empty-state">Start a conversation by typing below...</div>';
+            } else {
+                chatMessages.innerHTML = currentChat.messages.map(msg => `
+                    <div class="message ${msg.role}">
+                        ${msg.content}
+                    </div>
+                `).join('');
+            }
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function createNewChat() {
+            const newChat = {
+                id: nextChatId++,
+                title: `Chat ${nextChatId - 1}`,
+                messages: []
+            };
+            chats.push(newChat);
+            currentChatId = newChat.id;
+            renderTabs();
+            renderMessages();
+        }
+
+        function switchChat(chatId) {
+            currentChatId = chatId;
+            renderTabs();
+            renderMessages();
+        }
+
+        async function sendMessage() {
+            const prompt = promptInput.value.trim();
+            
+            if (!prompt) return;
+
+            const currentChat = chats.find(c => c.id === currentChatId);
+            
+            // Add user message
+            currentChat.messages.push({
+                role: 'user',
+                content: prompt
+            });
+            
+            promptInput.value = '';
+            renderMessages();
+            sendButton.disabled = true;
+
+            // Add loading message
+            currentChat.messages.push({
+                role: 'ai',
+                content: 'Thinking...'
+            });
+            renderMessages();
+
+            try {
+                // Build full conversation history for Claude
+                const conversationHistory = currentChat.messages
+                    .filter(msg => msg.content !== 'Thinking...')
+                    .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
+                    .join('\n\n');
+                
+                // Send full conversation context to Claude
+                const fullPrompt = conversationHistory + '\n\nUser: ' + prompt;
+                const response = await puter.ai.chat(fullPrompt);
+                
+                // Replace loading with actual response
+                currentChat.messages[currentChat.messages.length - 1].content = response;
+                renderMessages();
+
+            } catch (error) {
+                console.error("Error:", error);
+                currentChat.messages[currentChat.messages.length - 1].content = 'Error: ' + error.message;
+                renderMessages();
+            } finally {
+                sendButton.disabled = false;
+            }
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        promptInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Initial render
+        renderTabs();
+        renderMessages();
+    </script>
+</body>
+</html>
