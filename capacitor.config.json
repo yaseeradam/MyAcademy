@@ -1,0 +1,10 @@
+{
+  "appId": "com.myacademy.app",
+  "appName": "My Academy",
+  "webDir": "web-build",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://myacademy-ms.vercel.app",
+    "cleartext": false
+  }
+}

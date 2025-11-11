@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import StatusBarInit from "@/components/capacitor/StatusBarInit";
 
 export const metadata = {
   title: "EduManage Nigeria - School Management System",
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
         >
           {children}
           <Toaster richColors position="top-right" />
+          <StatusBarInit />
         </ThemeProvider>
       </body>
     </html>
