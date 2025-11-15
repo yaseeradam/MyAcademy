@@ -153,7 +153,10 @@ async function initializeDatabase() {
       { collection: 'notifications', index: { recipientId: 1, schoolId: 1 } },
       { collection: 'payments', index: { schoolId: 1 } },
       { collection: 'chat_conversations', index: { schoolId: 1, participants: 1 } },
-      { collection: 'chat_messages', index: { conversationId: 1, schoolId: 1 } }
+      { collection: 'chat_messages', index: { conversationId: 1, schoolId: 1 } },
+      { collection: 'student_scores', index: { schoolId: 1, studentId: 1, classId: 1, subjectId: 1 }, options: { unique: true } },
+      { collection: 'student_scores', index: { schoolId: 1, classId: 1, subjectId: 1 } },
+      { collection: 'student_scores', index: { schoolId: 1, teacherId: 1, createdAt: 1 } }
     ]
     
     for (const { collection, index, options } of indexes) {

@@ -308,7 +308,30 @@
 }
 ```
 
-### 17. announcements
+### 17. student_scores
+```javascript
+{
+  id: UUID,
+  schoolId: UUID,
+  studentId: UUID,
+  classId: UUID,
+  subjectId: UUID,
+  teacherId: UUID,
+  scores: Object {
+    firstCA: Number,        // Max: 15
+    secondCA: Number,       // Max: 15
+    notebook: Number,       // Max: 10
+    firstProject: Number,   // Max: 20
+    secondProject: Number,  // Max: 20
+    exam: Number           // Max: 40
+  },
+  total: Number,           // Sum of all scores (Max: 100)
+  createdAt: ISO Date,
+  updatedAt: ISO Date
+}
+```
+
+### 18. announcements
 ```javascript
 {
   id: UUID,
@@ -437,3 +460,8 @@
 ### gamification_points
 - schoolId + userId + createdAt
 - schoolId + userType + points
+
+### student_scores
+- schoolId + studentId + classId + subjectId (unique)
+- schoolId + classId + subjectId
+- schoolId + teacherId + createdAt
