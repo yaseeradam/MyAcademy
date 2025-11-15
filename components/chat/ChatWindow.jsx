@@ -151,7 +151,7 @@ function ChatWindow({ conversation, onClose, currentUser }) {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       })
-      socketManager.markMessagesRead(conversation.id, currentUser.id)
+      
     } catch (error) {
       console.error('Error marking messages as read:', error)
     }
@@ -211,7 +211,6 @@ function ChatWindow({ conversation, onClose, currentUser }) {
       if (response.ok) {
         const message = await response.json()
         setMessages(prev => [...prev, message])
-        socketManager.sendMessage(message)
       }
       
       setNewMessage('')
@@ -255,7 +254,6 @@ function ChatWindow({ conversation, onClose, currentUser }) {
       if (response.ok) {
         const message = await response.json()
         setMessages(prev => [...prev, message])
-        socketManager.sendMessage(message)
       }
     } catch (error) {
       console.error('Error uploading file:', error)

@@ -165,7 +165,6 @@ function ChatWindowEnhanced({ conversation, onClose, currentUser }) {
       if (response.ok) {
         const message = await response.json()
         setMessages(prev => [...prev, message])
-        socketManager.sendMessage(message)
       }
       
       setNewMessage('')
@@ -206,7 +205,6 @@ function ChatWindowEnhanced({ conversation, onClose, currentUser }) {
       if (response.ok) {
         const message = await response.json()
         setMessages(prev => [...prev, message])
-        socketManager.sendMessage(message)
       }
       setUploading(false)
     } catch (error) {

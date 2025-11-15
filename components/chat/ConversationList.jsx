@@ -273,15 +273,11 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
               conversationId: conversation.id,
               messageType: 'text',
               content: newChatForm.initialMessage,
-              senderId: currentUser.id,
-              senderName: currentUser.name,
               timestamp: new Date().toISOString()
             })
           })
-          
           if (messageResponse.ok) {
-            const message = await messageResponse.json()
-            socketManager.sendMessage(message)
+            await messageResponse.json()
           }
         }
       }

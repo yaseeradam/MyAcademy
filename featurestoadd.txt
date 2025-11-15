@@ -1,0 +1,51 @@
+Features to add
+
+and I want you to add this feature User Story: As a Teacher, I want to enter and manage student scores for my class and subject, download the final scoresheet as a PDF, so I can track academic performance and share or archive official records.
+
+Feature: Create a new module named "Gradebook" or "Scoresheet Entry".
+
+Requirements & Acceptance Criteria:
+
+Context Selection:
+
+The teacher must first be able to select their Class (e.g., "Primary 5") and the Subject they are scoring.
+
+Student List Display:
+
+Once a class and subject are selected, the system must display a table/grid that lists all students enrolled in that class.
+
+The first columns should be non-editable: S/N (Serial Number) and Name (Student Name).
+
+Score Entry Fields:
+
+The table must include the following editable columns for teachers to input scores.
+
+Implement input validation to ensure scores do not exceed the maximum marks allowed for each field.
+
+Assessment Columns:
+
+1st CA (Max: 15)
+
+2nd CA (Max: 15)
+
+Notebook Assessment (Max: 10)
+
+1st Project (Max: 20)
+
+2nd Project (Max: 20)
+
+Exam (Max: 40)
+
+Automatic Calculation:
+
+Add a final, read-only (non-editable) column labeled Total.
+
+This Total column must automatically calculate and update in real-time as the teacher enters scores in the other fields. It is the sum of all assessment columns.
+
+Data Persistence:
+
+Include a "Save Scores" button (or implement autosave) to store the entered scores in the database, linked to the specific student, class, and subject.
+
+The interface should be intuitive and allow for quick data entry, similar to a spreadsheet.
+
+6. PDF Export: * Include a "Download as PDF" button on the page. * When clicked, the system must generate a PDF document of the current scoresheet view (including all student names, scores, and totals for the selected class/subject). * The PDF layout should be clean, professional, and formatted for printing. It should clearly state the Class Name, Subject, and all column headers.
