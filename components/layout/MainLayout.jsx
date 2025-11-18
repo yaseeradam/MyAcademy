@@ -62,7 +62,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
         <div className="border-t border-slate-700/50 p-4 bg-slate-800/30">
           <div className="flex items-center mb-3">
             <Avatar className="h-10 w-10 mr-3 ring-2 ring-blue-400/50">
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-medium">{user.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-medium">{user?.name?.charAt(0) || '?'}</AvatarFallback>
             </Avatar>
             {!sidebarCollapsed && (
               <div className="flex-1 min-w-0">
@@ -108,7 +108,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center space-x-3 p-1.5 rounded-xl hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50 transition-all group">
                   <Avatar className="h-9 w-9 ring-2 ring-gray-200 group-hover:ring-blue-400 transition-all">
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">{user.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">{user?.name?.charAt(0) || '?'}</AvatarFallback>
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>

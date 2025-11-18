@@ -459,7 +459,7 @@ export async function POST(request, { params }) {
         }
       
       // Master/Developer routes
-      case 'master/schools':
+      case 'master/schools': {
         const devData = authenticateToken(request)
         if (!devData || devData.role !== 'developer') {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -509,6 +509,7 @@ export async function POST(request, { params }) {
           school: newSchool,
           admin: { ...newAdmin, password: undefined }
         })
+      }
       
       // Master/Developer school toggle status
       case 'master/schools/toggle-status':
@@ -565,6 +566,55 @@ export async function POST(request, { params }) {
         }
         
         return NextResponse.json(settings)
+      
+      // Create school admin (Developer only - for adding admins to existing schools)
+      case 'school/admins': {
+        const devAdminData = authenticateToken(request)
+        if (!devAdminData || devAdminData.role !== 'developer') {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+        
+        const { schoolId, name, email, password } = body
+        
+        if (!schoolId || !name || !email || !password) {
+          return NextResponse.json({ error: 'All fields required' }, { status: 400 })
+        }
+        
+        // Check if school exists
+        const schoolExists = await db.collection('schools').findOne({ id: schoolId })
+        if (!schoolExists) {
+          return NextResponse.json({ error: 'School not found' }, { status: 404 })
+        }
+        
+        // Check if email already exists
+        const existingUser = await db.collection('users').findOne({ email })
+        if (existingUser) {
+          return NextResponse.json({ error: 'Email already exists' }, { status: 400 })
+        }
+        
+        const adminId = uuidv4()
+        const hashedAdminPassword = await bcrypt.hash(password, 10)
+        
+        // Create school admin user
+        const newSchoolAdmin = {
+          id: adminId,
+          name,
+          email,
+          password: hashedAdminPassword,
+          plainPassword: password,
+          role: 'school_admin',
+          schoolId: schoolId,
+          createdAt: new Date().toISOString(),
+          active: true
+        }
+        
+        await db.collection('users').insertOne(newSchoolAdmin)
+        
+        return NextResponse.json({
+          admin: { ...newSchoolAdmin, password: undefined },
+          message: 'School admin created successfully'
+        })
+      }
       
       // Create teacher account (School Admin only)
       case 'teachers':
@@ -834,7 +884,7 @@ export async function POST(request, { params }) {
         return NextResponse.json({ success: true })
 
       // Create chat conversation
-      case 'chat/conversations':
+      case 'chat/conversations': {
         const userDataConversations = authenticateToken(request)
         if (!userDataConversations) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -889,6 +939,7 @@ export async function POST(request, { params }) {
         }
 
         return NextResponse.json({ error: 'Invalid conversation type' }, { status: 400 })
+      }
 
       // Get chat conversations
       case 'chat/conversations/list':
