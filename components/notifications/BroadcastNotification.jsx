@@ -45,34 +45,39 @@ function BroadcastNotification({ currentUser, trigger }) {
       const token = localStorage.getItem('token')
       const headers = { 'Authorization': `Bearer ${token}` }
 
-      const [teachersRes, parentsRes, studentsRes] = await Promise.all([
-        fetch('/api/teachers', { headers }),
-        fetch('/api/parents', { headers }),
-        fetch('/api/students', { headers })
-      ])
-
-      const teachers = teachersRes.ok ? await teachersRes.json() : []
-      const parents = parentsRes.ok ? await parentsRes.json() : []
-      const students = studentsRes.ok ? await studentsRes.json() : []
-
+      const res = await fetch('/api/dashboard/stats', { headers })
+      if (!res.ok) {
+        setStats({ totalUsers: 0, teachers: 0, parents: 0, students: 0 })
+        return
+      }
+      const data = await res.json()
+      const teachersCount = data?.totalTeachers || 0
+      const parentsCount = data?.totalParents || 0
+      const studentsCount = data?.totalStudents || 0
       setStats({
-        totalUsers: teachers.length + parents.length + students.length,
-        teachers: teachers.length,
-        parents: parents.length,
-        students: students.length
+        totalUsers: teachersCount + parentsCount + studentsCount,
+        teachers: teachersCount,
+        parents: parentsCount,
+        students: studentsCount
       })
     } catch (error) {
       console.error('Error loading user stats:', error)
+      setStats({ totalUsers: 0, teachers: 0, parents: 0, students: 0 })
     }
   }, [])
 
   // ✅ Only load once when dialog opens
   useEffect(() => {
-    if (isOpen && stats.totalUsers === 0) {
+    if (isOpen) {
+      const token = localStorage.getItem('token')
+      if (token) {
+        try {
+          socketManager.connect(token)
+        } catch (e) {}
+      }
       loadUserStats()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen])
+  }, [isOpen, loadUserStats])
 
   // ✅ Clean up socket listeners on unmount
   useEffect(() => {

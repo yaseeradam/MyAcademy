@@ -34,7 +34,6 @@ import MessagesPage from '@/components/chat/MessagesPage'
 import BillingDashboard from '@/components/billing/BillingDashboard'
 import GamificationDashboard from '@/components/gamification/GamificationDashboard'
 import CalculatorApp from '@/components/calculator/calculator'
-import PuterAI from '@/components/ai/PuterAI'
 import QuickActions from '@/components/dashboard/QuickActions'
 import AttendanceCharts from '@/components/dashboard/AttendanceCharts'
 import ReportDialog from '@/components/reports/ReportDialog'
@@ -415,7 +414,6 @@ function App() {
         schoolName={school?.name}
       />
       
-      <div data-puter-ai><PuterAI /></div>
       {showCalculator && <CalculatorApp isOpen={showCalculator} onClose={() => setShowCalculator(false)} />}
       
       <LoadingModal open={modal.loading} message={modal.loadingMessage} />

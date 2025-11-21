@@ -28,7 +28,6 @@ import MessagesPage from '@/components/chat/MessagesPage'
 import BillingDashboard from '@/components/billing/BillingDashboard'
 import GamificationDashboard from '@/components/gamification/GamificationDashboard'
 import CalculatorApp from '@/components/calculator/calculator'
-import PuterAI from '@/components/ai/PuterAI'
 import QuickActions from '@/components/dashboard/QuickActions'
 import AttendanceCharts from '@/components/dashboard/AttendanceCharts'
 import { Home, MessageCircle, Building2, Settings as SettingsIcon, Users2, Users, UserCheck, School as SchoolIcon, BookOpen, GraduationCap, Calendar, Trophy, CreditCard, BarChart3 } from 'lucide-react'
@@ -173,7 +172,6 @@ function App() {
       
       {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'assignments', 'attendance', 'billing', 'payments', 'gamification', 'messages', 'school-settings', 'master-settings'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
       
-      <div data-puter-ai><PuterAI /></div>
       {showCalculator && <CalculatorApp isOpen={showCalculator} onClose={() => setShowCalculator(false)} />}
     </MainLayout>
   )

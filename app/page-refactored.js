@@ -10,7 +10,6 @@ import MessagesPage from '@/components/chat/MessagesPage'
 import BillingDashboard from '@/components/billing/BillingDashboard'
 import GamificationDashboard from '@/components/gamification/GamificationDashboard'
 import CalculatorApp from '@/components/calculator/calculator'
-import PuterAI from '@/components/ai/PuterAI'
 import LoginPage from '@/components/auth/LoginPage'
 import LoadingScreen from '@/components/layout/LoadingScreen'
 import { useAppState } from '@/hooks/useAppState'
@@ -103,7 +102,6 @@ function App() {
         </div>
       </div>
 
-      <PuterAI />
       {showCalculator && <CalculatorApp isOpen={showCalculator} onClose={() => setShowCalculator(false)} />}
     </div>
   )

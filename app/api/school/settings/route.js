@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb'
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
-const JWT_SECRET = process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
 // Database connection
 async function connectToDatabase() {
