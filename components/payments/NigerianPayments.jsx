@@ -95,10 +95,10 @@ export default function NigerianPayments({ amount, description, onSuccess, onCan
       case 'paystack': return handlePaystackPayment()
       case 'opay': return handleOpayPayment()
       case 'palmpay': return handlePalmPayPayment()
-      case 'bank_transfer': 
-        toast.info('Bank Details: GTBank - 0123456789 - EduManage Nigeria')
+      case 'bank_transfer':
+        toast.info('Bank Details: GTBank - 0123456789 - My Academy')
         break
-      case 'ussd': 
+      case 'ussd':
         toast.info('USSD: *737*Amount*0123456789# (GTBank)')
         break
       default: toast.error('Please select a payment method')
@@ -147,8 +147,8 @@ export default function NigerianPayments({ amount, description, onSuccess, onCan
         )}
 
         <div className="flex gap-2">
-          <Button 
-            onClick={handlePayment} 
+          <Button
+            onClick={handlePayment}
             disabled={!paymentMethod || loading}
             className="flex-1"
           >

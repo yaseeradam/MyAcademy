@@ -10,7 +10,7 @@ export default function LoginPage({ authData, onAuthDataChange, onSubmit }) {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <School className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-          <CardTitle className="text-2xl font-bold text-gray-900">EduManage Nigeria</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-900">My Academy</CardTitle>
           <CardDescription>School Management System</CardDescription>
         </CardHeader>
         <CardContent>
@@ -41,7 +41,7 @@ export default function LoginPage({ authData, onAuthDataChange, onSubmit }) {
               Login
             </Button>
           </form>
-          
+
           <div className="mt-6 p-3 bg-gray-50 rounded-lg text-xs">
             <p className="font-medium text-gray-700 mb-2">Demo Credentials:</p>
             <p><strong>Developer:</strong> dev@system.com / dev123</p>

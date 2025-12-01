@@ -24,8 +24,8 @@ export async function GET(request) {
     }
 
     const settings = {
-      systemName: 'EduManage Nigeria',
-      systemEmail: 'admin@edumanage.ng',
+      systemName: 'My Academy',
+      systemEmail: 'admin@myacademy.com',
       defaultCurrency: 'NGN',
       timezone: 'Africa/Lagos',
       maintenanceMode: false,

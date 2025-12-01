@@ -15,7 +15,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {sidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
-      
+
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 ${sidebarCollapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transform transition-all duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-slate-700/50 bg-slate-800/50">
@@ -29,7 +29,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
             )}
             {!sidebarCollapsed && (
               <div>
-                <span className="text-lg font-bold text-white block leading-tight">{school?.name || 'EduManage'}</span>
+                <span className="text-lg font-bold text-white block leading-tight">{school?.name || 'My Academy'}</span>
                 {user.role === 'developer' && <span className="text-xs text-blue-400 font-medium">Master System</span>}
               </div>
             )}
@@ -43,7 +43,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
             </button>
           </div>
         </div>
-        
+
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navigationItems.map((item) => {
             const Icon = item.icon
@@ -58,7 +58,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
             )
           })}
         </nav>
-        
+
         <div className="border-t border-slate-700/50 p-4 bg-slate-800/30">
           <div className="flex items-center mb-3">
             <Avatar className="h-10 w-10 mr-3 ring-2 ring-blue-400/50">
@@ -80,7 +80,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
           </Button>
         </div>
       </div>
-      
+
       {/* Main content */}
       <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
         <div className="bg-white shadow-md h-16 flex items-center justify-between px-4 lg:px-6 border-b border-gray-100">
@@ -96,7 +96,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
               {user.role !== 'developer' && school && <Badge className="text-xs bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 border border-blue-200">{school.name}</Badge>}
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             {user.role === 'school_admin' && (
               <BroadcastNotification currentUser={user} trigger={<Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md hover:shadow-lg transition-all" size="sm"><Megaphone className="h-4 w-4 mr-2" />Broadcast</Button>} />
@@ -133,7 +133,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
             </DropdownMenu>
           </div>
         </div>
-        
+
         <div className="flex-1 overflow-auto p-2 sm:p-4 lg:p-6">{children}</div>
       </div>
     </div>

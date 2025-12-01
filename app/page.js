@@ -61,14 +61,14 @@ function App() {
   const [showCalculator, setShowCalculator] = useState(false)
   const [authData, setAuthData] = useState({ email: '', password: '' })
   const [schoolSettings, setSchoolSettings] = useState({ schoolName: '', logo: '', primaryColor: '#3b82f6', secondaryColor: '#64748b', address: '', phoneNumber: '', email: '' })
-  const [masterSettings, setMasterSettings] = useState({ systemName: 'EduManage Nigeria', systemEmail: 'admin@edumanage.ng', defaultCurrency: 'NGN', timezone: 'Africa/Lagos', maintenanceMode: false, allowRegistration: true, maxSchools: 1000, systemVersion: '1.0.0' })
-  
+  const [masterSettings, setMasterSettings] = useState({ systemName: 'My Academy', systemEmail: 'admin@myacademy.com', defaultCurrency: 'NGN', timezone: 'Africa/Lagos', maintenanceMode: false, allowRegistration: true, maxSchools: 1000, systemVersion: '1.0.0' })
+
   const [showClassModal, setShowClassModal] = useState(false)
   const [showSubjectModal, setShowSubjectModal] = useState(false)
   const [showAssignmentModal, setShowAssignmentModal] = useState(false)
   const [showMasterSchoolModal, setShowMasterSchoolModal] = useState(false)
   const [showReportDialog, setShowReportDialog] = useState(false)
-  
+
   const [showTimetableModal, setShowTimetableModal] = useState(false)
   const [timetableForm, setTimetableForm] = useState({})
   const [showExamModal, setShowExamModal] = useState(false)
@@ -105,13 +105,13 @@ function App() {
     error: (message) => modal.showError('Error', message)
   }
   const { stats, students, teachers, parents, classes, subjects, assignments, attendance, notifications, schools, feePayments, setStudents, setTeachers, setParents, setClasses, setSubjects, setAssignments, setAttendance, setNotifications, setSchools, apiCall, loadDashboardData, loadNotifications, loadTodayAttendance, loadAttendanceByDate } = useAppData(user, token)
-  
+
   const teacherRestrictions = useTeacherRestrictions(user, assignments, students, classes, subjects)
   const filteredStudents = user?.role === 'teacher' ? teacherRestrictions.filteredStudents : students
   const filteredClasses = user?.role === 'teacher' ? teacherRestrictions.filteredClasses : classes
   const filteredSubjects = user?.role === 'teacher' ? teacherRestrictions.filteredSubjects : subjects
   const filteredParents = user?.role === 'teacher' ? parents.filter(p => filteredStudents.some(s => s.parentId === p.id)) : parents
-  
+
   const formHandlers = useForms(apiCall, loadDashboardData, modal)
   const filterHandlers = useFilters()
   const teacherAttendanceHandlers = useTeacherAttendance(user, apiCall, teachers, loadTodayAttendance, modal)
@@ -134,7 +134,7 @@ function App() {
     if (user?.role === 'school_admin' && school) {
       apiCall('school/settings').then(settings => {
         setSchoolSettings({ schoolName: settings?.schoolName || school?.name || '', logo: settings?.logo || '', primaryColor: settings?.primaryColor || '#3b82f6', secondaryColor: settings?.secondaryColor || '#64748b', address: settings?.address || '', phoneNumber: settings?.phoneNumber || '', email: settings?.email || '' })
-      }).catch(() => {})
+      }).catch(() => { })
     }
   }, [user, school])
 
@@ -142,20 +142,20 @@ function App() {
     if (user && token) {
       const socketManager = require('@/lib/socket-client').default
       socketManager.connect(token)
-      
+
       const handleNewMessage = (message) => {
         if (message.senderId !== user.id) {
           if (activeTab !== 'messages') {
             setUnreadMessages(prev => prev + 1)
             const audio = new Audio('/notification.mp3')
-            audio.play().catch(() => {})
+            audio.play().catch(() => { })
             toast.success(`New message from ${message.senderName || 'Someone'}`)
           }
         }
       }
-      
+
       socketManager.on('new_message', handleNewMessage)
-      
+
       return () => {
         socketManager.off('new_message', handleNewMessage)
       }
@@ -177,21 +177,21 @@ function App() {
         },
         body: JSON.stringify(authData)
       })
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Network error' }))
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
       }
-      
+
       const result = await response.json()
-      
+
       setToken(result.token)
       setUser(result.user)
       setSchool(result.school)
       localStorage.setItem('token', result.token)
       localStorage.setItem('user', JSON.stringify(result.user))
       if (result.school) localStorage.setItem('school', JSON.stringify(result.school))
-      modal.showSuccess('Login Successful', 'Welcome to EduManage!')
+      modal.showSuccess('Login Successful', 'Welcome to My Academy!')
     } catch (error) {
       console.error('Login error:', error)
       modal.showError('Login Failed', error.message || 'Please check your credentials')
@@ -264,13 +264,13 @@ function App() {
   const handleToggleSchoolStatus = async (schoolId, active) => {
     try {
       modal.showLoading(active ? 'Activating school...' : 'Deactivating school...')
-      await apiCall('master/schools/toggle-status', { 
-        method: 'POST', 
-        body: JSON.stringify({ schoolId, active }) 
+      await apiCall('master/schools/toggle-status', {
+        method: 'POST',
+        body: JSON.stringify({ schoolId, active })
       })
       await loadDashboardData()
       modal.showSuccess(
-        active ? 'School Activated' : 'School Deactivated', 
+        active ? 'School Activated' : 'School Deactivated',
         `School has been ${active ? 'activated' : 'deactivated'} successfully!`
       )
     } catch (error) {
@@ -321,9 +321,9 @@ function App() {
           <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
           <School className="h-8 w-8 text-blue-600 mx-auto mb-4 absolute top-4 left-1/2 transform -translate-x-1/2" />
         </div>
-        <p className="text-gray-600 animate-pulse">Loading EduManage...</p>
+        <p className="text-gray-600 animate-pulse">Loading My Academy...</p>
         <div className="mt-4 w-64 bg-gray-200 rounded-full h-2 mx-auto">
-          <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{width: '60%'}}></div>
+          <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
         </div>
       </div>
     </div>
@@ -335,15 +335,15 @@ function App() {
       {activeTab === 'dashboard' && (
         <div className="space-y-8">
           {(user.role === 'school_admin' || user.role === 'teacher') && <QuickActions userRole={user.role} onAction={handleQuickAction} />}
-          <DashboardPage 
-            stats={stats} 
-            students={filteredStudents} 
-            teachers={teachers} 
-            parents={filteredParents} 
-            classes={filteredClasses} 
-            schools={schools} 
-            userRole={user.role} 
-            onToggleSchoolStatus={handleToggleSchoolStatus} 
+          <DashboardPage
+            stats={stats}
+            students={filteredStudents}
+            teachers={teachers}
+            parents={filteredParents}
+            classes={filteredClasses}
+            schools={schools}
+            userRole={user.role}
+            onToggleSchoolStatus={handleToggleSchoolStatus}
             assignments={assignments}
             currentUser={user}
             attendance={attendance}
@@ -353,20 +353,20 @@ function App() {
           {(user.role === 'school_admin' || user.role === 'teacher') && <AttendanceCharts attendance={attendance.filter(a => user.role === 'teacher' ? a.studentId && filteredStudents.some(s => s.id === a.studentId) : true)} students={filteredStudents} teachers={teachers} classes={filteredClasses} userRole={user.role} />}
         </div>
       )}
-      
+
       {showFormView === 'teacher' && <TeacherForm {...formHandlers} setShowFormView={setShowFormView} />}
       {showFormView === 'parent' && <ParentForm {...formHandlers} setShowFormView={setShowFormView} />}
       {showFormView === 'student' && <StudentForm {...formHandlers} setShowFormView={setShowFormView} parents={parents} classes={classes} />}
-      
+
       {activeTab === 'teachers' && user.role === 'school_admin' && !showFormView && <TeachersPage teachers={teachers} school={school} {...filterHandlers} setShowFormView={setShowFormView} modal={modal} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} />}
       {activeTab === 'parents' && user.role === 'school_admin' && !showFormView && <ParentsPage parents={parents} students={students} school={school} {...filterHandlers} setShowFormView={setShowFormView} modal={modal} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} />}
       {activeTab === 'parents' && user.role === 'teacher' && <ParentsPage parents={filteredParents} students={filteredStudents} school={school} {...filterHandlers} setShowFormView={null} modal={modal} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} readOnly={true} />}
       {activeTab === 'students' && user.role === 'school_admin' && !showFormView && <StudentsPage students={students} classes={classes} parents={parents} school={school} {...filterHandlers} setShowFormView={setShowFormView} modal={modal} onUpdateStudent={handleUpdateStudent} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} />}
       {activeTab === 'students' && user.role === 'teacher' && <StudentsPage students={filteredStudents} classes={filteredClasses} parents={filteredParents} school={school} {...filterHandlers} setShowFormView={null} modal={modal} onUpdateStudent={null} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} readOnly={true} />}
       {activeTab === 'classes' && user.role === 'school_admin' && <ClassesPage classes={classes} students={students} showClassModal={showClassModal} setShowClassModal={setShowClassModal} classForm={formHandlers.classForm} setClassForm={formHandlers.setClassForm} handleCreateClass={formHandlers.handleCreateClass} />}
-      {activeTab === 'my-classes' && user.role === 'teacher' && <ClassesPage classes={filteredClasses} students={filteredStudents} showClassModal={false} setShowClassModal={() => {}} classForm={{}} setClassForm={() => {}} handleCreateClass={() => {}} readOnly={true} />}
+      {activeTab === 'my-classes' && user.role === 'teacher' && <ClassesPage classes={filteredClasses} students={filteredStudents} showClassModal={false} setShowClassModal={() => { }} classForm={{}} setClassForm={() => { }} handleCreateClass={() => { }} readOnly={true} />}
       {activeTab === 'subjects' && user.role === 'school_admin' && <SubjectsPage subjects={subjects} showSubjectModal={showSubjectModal} setShowSubjectModal={setShowSubjectModal} subjectForm={formHandlers.subjectForm} setSubjectForm={formHandlers.setSubjectForm} handleCreateSubject={formHandlers.handleCreateSubject} />}
-      {activeTab === 'my-subjects' && user.role === 'teacher' && <SubjectsPage subjects={filteredSubjects} showSubjectModal={false} setShowSubjectModal={() => {}} subjectForm={{}} setSubjectForm={() => {}} handleCreateSubject={() => {}} readOnly={true} />}
+      {activeTab === 'my-subjects' && user.role === 'teacher' && <SubjectsPage subjects={filteredSubjects} showSubjectModal={false} setShowSubjectModal={() => { }} subjectForm={{}} setSubjectForm={() => { }} handleCreateSubject={() => { }} readOnly={true} />}
       {activeTab === 'assignments' && user.role === 'school_admin' && <AssignmentsPage assignments={assignments} teachers={teachers} classes={classes} subjects={subjects} showAssignmentModal={showAssignmentModal} setShowAssignmentModal={setShowAssignmentModal} assignmentForm={formHandlers.assignmentForm} setAssignmentForm={formHandlers.setAssignmentForm} handleCreateAssignment={(e) => formHandlers.handleCreateAssignment(e, subjects, classes)} />}
       {activeTab === 'teacher-attendance' && user.role === 'school_admin' && <TeacherAttendancePage user={user} attendance={attendance.filter(a => a.teacherId)} teachers={teachers} {...teacherAttendanceHandlers} />}
       {activeTab === 'student-attendance' && (user.role === 'school_admin' || user.role === 'teacher') && <StudentAttendancePage user={user} attendance={attendance.filter(a => a.studentId)} students={filteredStudents} classes={filteredClasses} {...studentAttendanceHandlers} loadAttendanceByDate={loadAttendanceByDate} />}
@@ -375,9 +375,9 @@ function App() {
       {activeTab === 'master-settings' && user.role === 'developer' && <MasterSettingsPage masterSettings={masterSettings} stats={stats} />}
       {activeTab === 'more-features' && user.role === 'school_admin' && <MoreFeaturesPage setActiveTab={setActiveTab} />}
       {activeTab === 'timetable' && user.role === 'school_admin' && <TimetablePage timetables={newFeatures.timetables} classes={classes} subjects={subjects} teachers={teachers} showModal={showTimetableModal} setShowModal={setShowTimetableModal} form={timetableForm} setForm={setTimetableForm} handleSubmit={(e) => newFeatures.handleTimetableSubmit(e, timetableForm, setShowTimetableModal)} handleDelete={newFeatures.handleTimetableDelete} onBack={() => setActiveTab('more-features')} school={school} schoolSettings={schoolSettings} />}
-      {activeTab === 'exams' && user.role === 'school_admin' && <ExamsPage exams={newFeatures.exams} classes={classes} subjects={subjects} students={students} showModal={showExamModal} setShowModal={setShowExamModal} showGradeModal={showGradeModal} setShowGradeModal={setShowGradeModal} form={examForm} setForm={setExamForm} gradeForm={gradeForm} setGradeForm={setGradeForm} handleSubmit={(e) => newFeatures.handleExamSubmit(e, examForm, setShowExamModal)} handleGradeSubmit={(e) => newFeatures.handleGradeSubmit(e, gradeForm, setShowGradeModal)} handleDelete={(id) => {}} onBack={() => setActiveTab('more-features')} school={school} schoolSettings={schoolSettings} />}
+      {activeTab === 'exams' && user.role === 'school_admin' && <ExamsPage exams={newFeatures.exams} classes={classes} subjects={subjects} students={students} showModal={showExamModal} setShowModal={setShowExamModal} showGradeModal={showGradeModal} setShowGradeModal={setShowGradeModal} form={examForm} setForm={setExamForm} gradeForm={gradeForm} setGradeForm={setGradeForm} handleSubmit={(e) => newFeatures.handleExamSubmit(e, examForm, setShowExamModal)} handleGradeSubmit={(e) => newFeatures.handleGradeSubmit(e, gradeForm, setShowGradeModal)} handleDelete={(id) => { }} onBack={() => setActiveTab('more-features')} school={school} schoolSettings={schoolSettings} />}
       {activeTab === 'fees' && user.role === 'school_admin' && <FeesPage fees={newFeatures.fees} students={students} classes={classes} showModal={showFeeModal} setShowModal={setShowFeeModal} showPaymentModal={showPaymentModal} setShowPaymentModal={setShowPaymentModal} form={feeForm} setForm={setFeeForm} paymentForm={paymentForm} setPaymentForm={setPaymentForm} handleSubmit={(e) => newFeatures.handleFeeSubmit(e, feeForm, setShowFeeModal)} handlePayment={(e) => newFeatures.handlePayment(e, paymentForm, setShowPaymentModal)} onBack={() => setActiveTab('more-features')} />}
-      {activeTab === 'homework' && user.role === 'school_admin' && <HomeworkPage homework={newFeatures.homework} classes={classes} subjects={subjects} students={students} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => {}} onBack={() => setActiveTab('more-features')} />}
+      {activeTab === 'homework' && user.role === 'school_admin' && <HomeworkPage homework={newFeatures.homework} classes={classes} subjects={subjects} students={students} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => { }} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'library' && user.role === 'school_admin' && <LibraryPage books={newFeatures.books} students={students} showModal={showBookModal} setShowModal={setShowBookModal} showIssueModal={showIssueModal} setShowIssueModal={setShowIssueModal} form={bookForm} setForm={setBookForm} issueForm={issueForm} setIssueForm={setIssueForm} handleSubmit={(e) => newFeatures.handleBookSubmit(e, bookForm, setShowBookModal)} handleIssue={(e) => newFeatures.handleIssueBook(e, issueForm, setShowIssueModal)} handleReturn={newFeatures.handleReturnBook} searchTerm={bookSearch} setSearchTerm={setBookSearch} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'events' && user.role === 'school_admin' && <EventsPage events={newFeatures.events} classes={classes} showModal={showEventModal} setShowModal={setShowEventModal} form={eventForm} setForm={setEventForm} handleSubmit={(e) => newFeatures.handleEventSubmit(e, eventForm, setShowEventModal)} handleDelete={newFeatures.handleEventDelete} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'behavior' && user.role === 'school_admin' && <BehaviorPage behaviors={newFeatures.behaviors} students={students} classes={classes} showModal={showBehaviorModal} setShowModal={setShowBehaviorModal} form={behaviorForm} setForm={setBehaviorForm} handleSubmit={(e) => newFeatures.handleBehaviorSubmit(e, behaviorForm, setShowBehaviorModal)} onBack={() => setActiveTab('more-features')} />}
@@ -387,22 +387,22 @@ function App() {
       {activeTab === 'gamification' && <GamificationDashboard currentUser={user} />}
       {activeTab === 'messages' && <MessagesPage currentUser={user} onBack={() => setActiveTab('dashboard')} />}
       {activeTab === 'gradebook' && user.role === 'teacher' && (
-        <GradebookPage 
-          currentUser={user} 
-          apiCall={apiCall} 
-          modal={modal} 
-          toast={toast} 
-          students={filteredStudents} 
-          classes={filteredClasses} 
-          subjects={filteredSubjects} 
+        <GradebookPage
+          currentUser={user}
+          apiCall={apiCall}
+          modal={modal}
+          toast={toast}
+          students={filteredStudents}
+          classes={filteredClasses}
+          subjects={filteredSubjects}
         />
       )}
       {activeTab === 'school-fees' && user.role === 'parent' && <ParentFeesPage user={user} apiCall={apiCall} modal={modal} />}
-      
+
       {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'homework', 'fees', 'library', 'events', 'behavior', 'transport', 'health', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
-      
-      <ReportDialog 
-        open={showReportDialog} 
+
+      <ReportDialog
+        open={showReportDialog}
         onOpenChange={setShowReportDialog}
         students={students}
         teachers={teachers}
@@ -413,12 +413,12 @@ function App() {
         userRole={user.role}
         schoolName={school?.name}
       />
-      
+
       {showCalculator && <CalculatorApp isOpen={showCalculator} onClose={() => setShowCalculator(false)} />}
-      
+
       <LoadingModal open={modal.loading} message={modal.loadingMessage} />
-      <StatusModal 
-        open={modal.status.open} 
+      <StatusModal
+        open={modal.status.open}
         onOpenChange={modal.closeStatus}
         type={modal.status.type}
         title={modal.status.title}

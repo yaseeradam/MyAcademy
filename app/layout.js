@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import StatusBarInit from "@/components/capacitor/StatusBarInit";
 
 export const metadata = {
-  title: "EduManage Nigeria - School Management System",
-  description: "Comprehensive school management system for Nigerian private schools",
+  title: "My Academy",
+  description: "Comprehensive school management system for My Academy",
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.jpg",

@@ -15,7 +15,7 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
       { id: 'dashboard', label: 'Dashboard', icon: Home },
       { id: 'messages', label: 'Messages', icon: MessageCircle }
     ]
-    
+
     if (user?.role === 'developer') {
       return [
         ...baseItems,
@@ -51,19 +51,19 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
         { id: 'payments', label: 'Payments', icon: CreditCard }
       ]
     }
-    
+
     return baseItems
   }
 
   return (
     <>
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      
+
       <div className={`
         fixed inset-y-0 left-0 z-50 
         ${sidebarCollapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl
@@ -82,7 +82,7 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
             {!sidebarCollapsed && (
               <div>
                 <span className="text-lg font-bold text-white block leading-tight">
-                  {school?.name || 'EduManage'}
+                  {school?.name || 'My Academy'}
                 </span>
                 {user.role === 'developer' && (
                   <span className="text-xs text-blue-400 font-medium">Master System</span>
@@ -105,7 +105,7 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
             </button>
           </div>
         </div>
-        
+
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {getNavigationItems().map((item) => {
             const Icon = item.icon
@@ -116,15 +116,13 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
                   setActiveTab(item.id)
                   setSidebarOpen(false)
                 }}
-                className={`w-full flex items-center px-3 py-2.5 text-left text-sm font-medium rounded-xl transition-all duration-200 group ${
-                  activeTab === item.id
+                className={`w-full flex items-center px-3 py-2.5 text-left text-sm font-medium rounded-xl transition-all duration-200 group ${activeTab === item.id
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/50 scale-105'
                     : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-                }`}
+                  }`}
               >
-                <Icon className={`h-5 w-5 mr-3 flex-shrink-0 transition-transform duration-200 ${
-                  activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'
-                }`} />
+                <Icon className={`h-5 w-5 mr-3 flex-shrink-0 transition-transform duration-200 ${activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'
+                  }`} />
                 {!sidebarCollapsed && (
                   <>
                     <span className="flex-1">{item.label}</span>
@@ -139,7 +137,7 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
             )
           })}
         </nav>
-        
+
         <div className="border-t border-slate-700/50 p-4 bg-slate-800/30">
           <div className="flex items-center mb-3">
             <Avatar className="h-10 w-10 mr-3 ring-2 ring-blue-400/50">

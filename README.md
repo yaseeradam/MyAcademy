@@ -1,4 +1,4 @@
-# EduManage Nigeria - School Management System
+# My Academy
 
 A comprehensive School Management System built with Next.js, MongoDB, and modern web technologies. Features multi-tenancy, real-time communication, payments, and gamification.
 
@@ -234,4 +234,4 @@ This project is licensed under the MIT License.
 
 ---
 
-**EduManage Nigeria** - Empowering Education Through Technology 🎓
+**My Academy** - Empowering Education Through Technology 🎓

@@ -31,19 +31,19 @@ export default function LoginPage({ onLogin }) {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-12 flex-col justify-between relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-        
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-8">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
               <School className="h-10 w-10 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">EduManage Nigeria</h1>
+              <h1 className="text-3xl font-bold text-white">My Academy</h1>
               <p className="text-blue-100 text-sm">Empowering Education Through Technology</p>
             </div>
           </div>
-          
+
           <div className="space-y-6 mt-12">
             <div className="flex items-start gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl">
               <div className="p-2 bg-white/20 rounded-lg">
@@ -54,7 +54,7 @@ export default function LoginPage({ onLogin }) {
                 <p className="text-blue-100 text-sm">Complete student records, attendance tracking, and performance monitoring</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl">
               <div className="p-2 bg-white/20 rounded-lg">
                 <Users className="h-6 w-6 text-white" />
@@ -64,7 +64,7 @@ export default function LoginPage({ onLogin }) {
                 <p className="text-blue-100 text-sm">Seamless communication between teachers, parents, and administrators</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl">
               <div className="p-2 bg-white/20 rounded-lg">
                 <BookOpen className="h-6 w-6 text-white" />
@@ -74,7 +74,7 @@ export default function LoginPage({ onLogin }) {
                 <p className="text-blue-100 text-sm">Comprehensive tools for curriculum management and assessment</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl">
               <div className="p-2 bg-white/20 rounded-lg">
                 <TrendingUp className="h-6 w-6 text-white" />
@@ -86,9 +86,9 @@ export default function LoginPage({ onLogin }) {
             </div>
           </div>
         </div>
-        
+
         <div className="relative z-10 text-white/80 text-sm">
-          <p>© 2024 EduManage Nigeria. All rights reserved.</p>
+          <p>© 2024 My Academy. All rights reserved.</p>
         </div>
       </div>
 
@@ -101,7 +101,7 @@ export default function LoginPage({ onLogin }) {
               <School className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">EduManage</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">My Academy</h1>
               <p className="text-gray-600 text-sm">School Management</p>
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function LoginPage({ onLogin }) {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
                   <div className="relative">
@@ -155,8 +155,8 @@ export default function LoginPage({ onLogin }) {
                   </div>
                 )}
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isLoading}
                   className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -170,7 +170,7 @@ export default function LoginPage({ onLogin }) {
                   )}
                 </Button>
               </form>
-              
+
               <div className="mt-8 p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-100">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="h-1 w-1 bg-blue-600 rounded-full"></div>
@@ -189,9 +189,9 @@ export default function LoginPage({ onLogin }) {
               </div>
             </CardContent>
           </Card>
-          
+
           <p className="text-center text-sm text-gray-600 mt-6">
-            Need help? Contact support at <span className="text-blue-600 font-medium">support@edumanage.ng</span>
+            Need help? Contact support at <span className="text-blue-600 font-medium">support@myacademy.com</span>
           </p>
         </div>
       </div>
