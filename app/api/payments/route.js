@@ -1,16 +1,10 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
-import Stripe from 'stripe'
-import crypto from 'crypto'
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY
 const JWT_SECRET = process.env.JWT_SECRET
-
-// Initialize Stripe
-const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null
 
 // Database connection
 async function connectToDatabase() {
@@ -48,16 +42,24 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page')) || 1
     const limit = parseInt(searchParams.get('limit')) || 10
     const skip = (page - 1) * limit
+    const type = searchParams.get('type') // 'subscription' or 'fee'
 
-    // Get payments for the user's school
+    let query = { schoolId: user.schoolId }
+    
+    // If type is not specified or is 'subscription', show mainly subscription payments
+    // But typically admins want to see EVERYTHING
+    if (type) {
+         query.type = type
+    }
+
     const payments = await db.collection('payments')
-      .find({ schoolId: user.schoolId })
+      .find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .toArray()
 
-    const total = await db.collection('payments').countDocuments({ schoolId: user.schoolId })
+    const total = await db.collection('payments').countDocuments(query)
 
     return NextResponse.json({
       payments,
@@ -75,133 +77,90 @@ export async function GET(request) {
   }
 }
 
-// POST /api/payments - Create payment intent or initialize payment
+// POST /api/payments - Initialize School Subscription Payment
 export async function POST(request) {
   try {
     const user = verifyToken(request)
-    if (!user) {
+    if (!user || user.role !== 'school_admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
-    const { amount, currency = 'usd', paymentMethod, planId, provider = 'stripe' } = body
+    const { planId, interval } = body // interval: 'monthly', 'termly', 'yearly'
 
-    if (!amount || !planId) {
-      return NextResponse.json({ error: 'Amount and planId are required' }, { status: 400 })
+    if (!planId) {
+      return NextResponse.json({ error: 'Plan ID is required' }, { status: 400 })
+    }
+
+    // Default interval logic (should match what's in /api/subscription-plans)
+    // Actually the plan object might already have fixed interval if we use the NEW hardcoded plan IDs
+    // But let's support passed interval for flexibility if plans were dynamic
+    
+    // If using the IDs from our new plan list, we can deduce price
+    const plansInfo = {
+        'standard_monthly': { price: 15000, duration: 1 },
+        'standard_termly': { price: 40000, duration: 3 },
+        'standard_yearly': { price: 150000, duration: 12 }
+    }
+
+    const selectedPlan = plansInfo[planId]
+    if (!selectedPlan) {
+        return NextResponse.json({ error: 'Invalid Plan ID' }, { status: 400 })
+    }
+
+    const transactionRef = `sub_${user.schoolId}_${Date.now()}`
+    
+    // Initialize Paystack
+    const paystackResponse = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        amount: selectedPlan.price * 100, // kobo
+        email: user.email,
+        reference: transactionRef,
+        metadata: {
+          paymentType: 'subscription',
+          schoolId: user.schoolId,
+          planId: planId,
+          durationMonths: selectedPlan.duration,
+          adminId: user.id
+        },
+        callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/` // Return to dashboard root for verification check
+      })
+    })
+
+    const paystackData = await paystackResponse.json()
+
+    if (!paystackData.status) {
+      return NextResponse.json({ error: 'Payment initialization failed', details: paystackData.message }, { status: 400 })
     }
 
     const db = await connectToDatabase()
-
-    // Get plan details
-    const plan = await db.collection('subscription_plans').findOne({ id: planId })
-    if (!plan) {
-      return NextResponse.json({ error: 'Plan not found' }, { status: 404 })
-    }
-
-    // Create payment record
-    const paymentId = crypto.randomUUID()
-    const payment = {
-      id: paymentId,
-      schoolId: user.schoolId,
-      userId: user.id,
-      amount,
-      currency,
-      planId,
-      planName: plan.name,
-      provider,
-      status: 'pending',
-      metadata: body.metadata || {},
-      createdAt: new Date().toISOString()
-    }
-
-    await db.collection('payments').insertOne(payment)
-
-    let authorizationUrl = null
-
-    if (provider === 'stripe' && stripe) {
-      // Create Stripe checkout session
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [{
-          price_data: {
-            currency,
-            product_data: {
-              name: plan.name,
-              description: plan.description
-            },
-            unit_amount: Math.round(amount * 100) // Convert to cents
-          },
-          quantity: 1
-        }],
-        mode: 'payment',
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing`,
-        metadata: {
-          paymentId,
-          schoolId: user.schoolId,
-          planId
-        },
-        customer_email: user.email
-      })
-
-      authorizationUrl = session.url
-
-      // Update payment with Stripe session ID
-      await db.collection('payments').updateOne(
-        { id: paymentId },
-        {
-          $set: {
-            stripeSessionId: session.id,
-            authorizationUrl: session.url
-          }
-        }
-      )
-
-    } else if (provider === 'paystack') {
-      // Initialize Paystack payment
-      const paystackResponse = await fetch('https://api.paystack.co/transaction/initialize', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          amount: Math.round(amount * 100), // Convert to kobo
-          email: user.email,
-          reference: paymentId,
-          metadata: {
-            paymentId,
-            schoolId: user.schoolId,
-            planId
-          },
-          callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success`
-        })
-      })
-
-      const paystackData = await paystackResponse.json()
-
-      if (!paystackData.status) {
-        return NextResponse.json({ error: 'Payment initialization failed' }, { status: 400 })
-      }
-
-      authorizationUrl = paystackData.data.authorization_url
-
-      // Update payment with Paystack reference
-      await db.collection('payments').updateOne(
-        { id: paymentId },
-        {
-          $set: {
-            paystackReference: paystackData.data.reference,
-            paystackAccessCode: paystackData.data.access_code,
-            authorizationUrl: paystackData.data.authorization_url
-          }
-        }
-      )
-    }
+    
+    // Create pending payment record
+    await db.collection('payments').insertOne({
+        id: transactionRef, // use ref as ID for easy match
+        schoolId: user.schoolId,
+        userId: user.id,
+        amount: selectedPlan.price,
+        currency: 'NGN',
+        planId: planId,
+        provider: 'paystack',
+        status: 'pending',
+        type: 'subscription',
+        reference: paystackData.data.reference,
+        accessCode: paystackData.data.access_code,
+        createdAt: new Date().toISOString()
+    })
 
     return NextResponse.json({
-      paymentId,
-      authorizationUrl
+      authorizationUrl: paystackData.data.authorization_url,
+      reference: paystackData.data.reference,
+      accessCode: paystackData.data.access_code,
+      amount: selectedPlan.price * 100 // Return amount in kobo for frontend
     })
 
   } catch (error) {

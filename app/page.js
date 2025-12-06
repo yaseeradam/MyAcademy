@@ -50,6 +50,10 @@ import MoreFeaturesPage from '@/components/pages/MoreFeaturesPage'
 import ParentFeesPage from '@/components/pages/ParentFeesPage'
 import GradebookPage from '@/components/pages/GradebookPage'
 import { Home, MessageCircle, Building2, Settings as SettingsIcon, Users2, Users, UserCheck, School as SchoolIcon, BookOpen, GraduationCap, Calendar, Trophy, CreditCard, BarChart3, Clock, FileText, DollarSign, BookMarked, CalendarDays, Heart, Bus, AlertCircle, Grid3x3 } from 'lucide-react'
+import SubscriptionExpired from '@/components/subscription/SubscriptionExpired'
+import AccessDeniedOverlay from '@/components/subscription/AccessDeniedOverlay'
+import SchoolFeesPage from '@/components/pages/SchoolFeesPage'
+import SubscriptionBanner from '@/components/subscription/SubscriptionBanner' // Assume this exists or I'll create it next
 
 function App() {
   const [user, setUser] = useState(null)
@@ -62,6 +66,9 @@ function App() {
   const [authData, setAuthData] = useState({ email: '', password: '' })
   const [schoolSettings, setSchoolSettings] = useState({ schoolName: '', logo: '', primaryColor: '#3b82f6', secondaryColor: '#64748b', address: '', phoneNumber: '', email: '' })
   const [masterSettings, setMasterSettings] = useState({ systemName: 'My Academy', systemEmail: 'admin@myacademy.com', defaultCurrency: 'NGN', timezone: 'Africa/Lagos', maintenanceMode: false, allowRegistration: true, maxSchools: 1000, systemVersion: '1.0.0' })
+  
+  // Subscription State
+  const [subscriptionStatus, setSubscriptionStatus] = useState({ status: 'active', daysRemaining: 0, message: '' })
 
   const [showClassModal, setShowClassModal] = useState(false)
   const [showSubjectModal, setShowSubjectModal] = useState(false)
@@ -129,6 +136,57 @@ function App() {
     }
     setLoading(false)
   }, [])
+
+  // Check Subscription Status
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const reference = params.get('reference')
+    
+    const verifyPayment = async () => {
+        if (reference) {
+            setSubscriptionStatus(null) // Show loading
+            try {
+               const res = await fetch(`/api/payments/verify?reference=${reference}`)
+               const data = await res.json()
+               if (data.success) {
+                   toast.success('Subscription Renewed!')
+                   // Clear URL param
+                   window.history.replaceState({}, document.title, "/")
+                   // Fetch fresh status
+                   fetchStatus()
+               } else {
+                   toast.error('Payment verification failed')
+                   fetchStatus()
+               }
+            } catch (e) {
+                console.error(e)
+                fetchStatus()
+            }
+        } else {
+            fetchStatus()
+        }
+    }
+
+    const fetchStatus = () => {
+        if (user && user.role !== 'developer' && user.schoolId && token) {
+            fetch('/api/school/subscription/check', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status) {
+                    setSubscriptionStatus(data)
+                }
+            })
+            .catch(err => console.error(err))
+        }
+    }
+
+    if (user && token) {
+        verifyPayment()
+    }
+
+  }, [user, token])
 
   useEffect(() => {
     if (user?.role === 'school_admin' && school) {
@@ -330,8 +388,26 @@ function App() {
   )
   if (!user) return <LoginPage onLogin={handleAuth} />
 
+  // --- ACCESS CONTROL RENDERING ---
+  if (subscriptionStatus.status === 'expired') {
+    if (user.role === 'school_admin') {
+      return <SubscriptionExpired school={school} user={user} />
+    } else if (user.role === 'teacher' || user.role === 'parent') {
+      return <AccessDeniedOverlay schoolName={school?.name} />
+    }
+  }
+  // --------------------------------
+
   return (
     <MainLayout user={user} school={school} schoolSettings={schoolSettings} activeTab={activeTab} setActiveTab={setActiveTab} navigationItems={getNavigationItems()} handleLogout={handleLogout} setShowCalculator={setShowCalculator} unreadMessages={unreadMessages}>
+      
+      {/* Show Warning Banner */}
+      <SubscriptionBanner 
+        status={subscriptionStatus.status} 
+        daysRemaining={subscriptionStatus.daysRemaining} 
+        message={subscriptionStatus.message} 
+      />
+
       {activeTab === 'dashboard' && (
         <div className="space-y-8">
           {(user.role === 'school_admin' || user.role === 'teacher') && <QuickActions userRole={user.role} onAction={handleQuickAction} />}
@@ -397,7 +473,7 @@ function App() {
           subjects={filteredSubjects}
         />
       )}
-      {activeTab === 'school-fees' && user.role === 'parent' && <ParentFeesPage user={user} apiCall={apiCall} modal={modal} />}
+      {activeTab === 'school-fees' && user.role === 'parent' && <SchoolFeesPage user={user} />}
 
       {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'homework', 'fees', 'library', 'events', 'behavior', 'transport', 'health', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
 

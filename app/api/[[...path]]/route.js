@@ -3,6 +3,7 @@ import { MongoClient } from 'mongodb'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
+import { checkSubscriptionAccess } from '@/lib/subscription-middleware'
 
 const client = new MongoClient(process.env.MONGO_URL)
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
@@ -61,6 +62,27 @@ export async function GET(request, { params }) {
     const searchParams = url.searchParams
     const limit = parseInt(searchParams.get('limit')) || 50
     const skip = parseInt(searchParams.get('skip')) || 0
+
+    // --- ACCESS CONTROL CHECK ---
+    // Exempt routes that don't need subscription check
+    const exemptRoutes = ['auth', 'master', 'upload']
+    const isExempt = exemptRoutes.some(r => pathStr.startsWith(r)) 
+
+    if (!isExempt) {
+      // Check token to identifying school
+      const userData = authenticateToken(request)
+      if (userData && userData.role !== 'developer' && userData.schoolId) {
+          const access = await checkSubscriptionAccess(userData.schoolId)
+          
+          if (!access.allowed) {
+              return NextResponse.json({ 
+                  error: 'School subscription expired', 
+                  code: 'SUBSCRIPTION_EXPIRED' 
+              }, { status: 403 })
+          }
+      }
+    }
+    // ----------------------------
     
     switch (pathStr) {
       // Auth routes

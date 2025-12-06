@@ -31,12 +31,49 @@ function verifyToken(request) {
 // GET /api/subscription-plans - Get all available subscription plans
 export async function GET(request) {
   try {
-    const db = await connectToDatabase()
-
-    const plans = await db.collection('subscription_plans')
-      .find({ active: true })
-      .sort({ price: 1 })
-      .toArray()
+    // Return hardcoded plans for now to ensure consistency
+    // In production, these could be fetched from DB and synchronized with Paystack
+    const plans = [
+      {
+        id: 'standard_monthly',
+        name: 'Standard (Monthly)',
+        description: 'Monthly subscription',
+        price: 15000,
+        currency: 'NGN',
+        interval: 'monthly',
+        duration: 1, 
+        features: ['Automated Result Compilation & Report Cards', 'Digital Fee Management & Online Collections', 'Parent, Teacher & Student Portals', 'Advanced Performance Analytics & Insights', 'Real-time Attendance & Behavior Tracking', 'Unlimited Cloud Storage & Backup'],
+        maxUsers: 10000,
+        maxStorage: 10240,
+        active: true
+      },
+      {
+        id: 'standard_termly',
+        name: 'Standard (Termly)',
+        description: 'Billed every 3 months',
+        price: 40000, // Discounted for 3 months
+        currency: 'NGN',
+        interval: 'termly',
+        duration: 3,
+        features: ['Automated Result Compilation & Report Cards', 'Digital Fee Management & Online Collections', 'Parent, Teacher & Student Portals', 'Advanced Performance Analytics & Insights', 'Real-time Attendance & Behavior Tracking', 'Unlimited Cloud Storage & Backup'],
+        maxUsers: 10000,
+        maxStorage: 10240,
+        active: true
+      },
+      {
+        id: 'standard_yearly',
+        name: 'Standard (Yearly)',
+        description: 'Annual subscription (Best Value)',
+        price: 150000, 
+        currency: 'NGN',
+        interval: 'yearly',
+        duration: 12,
+        features: ['Automated Result Compilation & Report Cards', 'Digital Fee Management & Online Collections', 'Parent, Teacher & Student Portals', 'Advanced Performance Analytics & Insights', 'Real-time Attendance & Behavior Tracking', 'Unlimited Cloud Storage & Backup'],
+        maxUsers: 10000,
+        maxStorage: 10240,
+        active: true
+      }
+    ]
 
     return NextResponse.json({ plans })
 
@@ -48,42 +85,6 @@ export async function GET(request) {
 
 // POST /api/subscription-plans - Create new subscription plan (Admin only)
 export async function POST(request) {
-  try {
-    const user = verifyToken(request)
-    if (!user || user.role !== 'developer') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const body = await request.json()
-    const { name, description, price, currency, duration, features, maxUsers, maxStorage } = body
-
-    if (!name || !price || !duration) {
-      return NextResponse.json({ error: 'Name, price, and duration are required' }, { status: 400 })
-    }
-
-    const db = await connectToDatabase()
-
-    const plan = {
-      id: require('crypto').randomUUID(),
-      name,
-      description,
-      price: parseFloat(price),
-      currency: currency || 'usd',
-      duration: parseInt(duration), // in months
-      features: features || [],
-      maxUsers: maxUsers || 100,
-      maxStorage: maxStorage || 1000, // in MB
-      active: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-
-    await db.collection('subscription_plans').insertOne(plan)
-
-    return NextResponse.json({ plan }, { status: 201 })
-
-  } catch (error) {
-    console.error('Error creating subscription plan:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    // Disabled dynamically creating plans for now to favor the hardcoded steady structure
+    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
 }

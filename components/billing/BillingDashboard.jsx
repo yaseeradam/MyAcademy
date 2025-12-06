@@ -104,8 +104,8 @@ function BillingDashboard({ currentUser, school }) {
     }
   }
 
-  const formatCurrency = (amount, currency = 'usd') => {
-    return new Intl.NumberFormat('en-US', {
+  const formatCurrency = (amount, currency = 'NGN') => {
+    return new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: currency.toUpperCase()
     }).format(amount)
@@ -123,48 +123,9 @@ function BillingDashboard({ currentUser, school }) {
     return Math.min((current / max) * 100, 100)
   }
 
+  const [subscriptionInterval, setSubscriptionInterval] = useState('monthly')
+
   // Payment processing functions
-  const processStripePayment = async () => {
-    if (!selectedPlan) return
-
-    setProcessingPayment(true)
-    setPaymentProvider('stripe')
-
-    try {
-      toast.info('Redirecting to Stripe payment page...')
-
-      // Create payment intent and get redirect URL
-      const response = await fetch('/api/payments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          amount: selectedPlan.price,
-          currency: selectedPlan.currency,
-          planId: selectedPlan.id,
-          provider: 'stripe'
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to create payment intent')
-      }
-
-      const { authorizationUrl } = await response.json()
-
-      // Redirect to Stripe checkout
-      window.location.href = authorizationUrl
-
-    } catch (error) {
-      console.error('Stripe payment error:', error)
-      toast.error(error.message || 'Payment initialization failed. Please try again.')
-      setProcessingPayment(false)
-      setPaymentProvider(null)
-    }
-  }
-
   const processPaystackPayment = async () => {
     if (!selectedPlan) return
 
@@ -172,9 +133,8 @@ function BillingDashboard({ currentUser, school }) {
     setPaymentProvider('paystack')
 
     try {
-      toast.info('Redirecting to Paystack payment page...')
+      toast.info('Initializing Paystack payment...')
 
-      // Create payment intent
       const response = await fetch('/api/payments', {
         method: 'POST',
         headers: {
@@ -182,15 +142,15 @@ function BillingDashboard({ currentUser, school }) {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          amount: selectedPlan.price,
-          currency: selectedPlan.currency,
-          planId: selectedPlan.id,
+          planId: selectedPlan.id, // Ensure this matches new plan IDs like 'basic_monthly' or handled dynamically
+          interval: subscriptionInterval, // Pass interval if backend needs it separate
           provider: 'paystack'
         })
       })
 
       if (!response.ok) {
-        throw new Error('Failed to initialize payment')
+        const err = await response.json()
+        throw new Error(err.error || 'Failed to initialize payment')
       }
 
       const { authorizationUrl } = await response.json()
@@ -205,6 +165,8 @@ function BillingDashboard({ currentUser, school }) {
       setPaymentProvider(null)
     }
   }
+
+
 
   if (loading) {
     return (
@@ -527,24 +489,8 @@ function BillingDashboard({ currentUser, school }) {
                 </div>
               </div>
 
-              <div className="flex space-x-2">
-                <Button
-                  className="flex-1"
-                  onClick={processStripePayment}
-                  disabled={processingPayment}
-                >
-                  {processingPayment && paymentProvider === 'stripe' ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    'Pay with Card (Stripe)'
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1"
+              <Button
+                  className="w-full bg-blue-600 hover:bg-blue-700"
                   onClick={processPaystackPayment}
                   disabled={processingPayment}
                 >
@@ -557,7 +503,6 @@ function BillingDashboard({ currentUser, school }) {
                     'Pay with Paystack'
                   )}
                 </Button>
-              </div>
             </div>
           )}
         </DialogContent>
