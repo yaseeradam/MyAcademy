@@ -9,33 +9,17 @@ import { Loader2, CreditCard, CheckCircle, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 
+import PaystackPop from '@paystack/inline-js'
+
+// ... existing imports ...
+
 export default function SchoolFeesPage() {
-  const [fees, setFees] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [processingId, setProcessingId] = useState(null)
-
-  useEffect(() => {
-    fetchFees()
-  }, [])
-
-  const fetchFees = async () => {
-    try {
-      const res = await fetch('/api/fees', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      const data = await res.json()
-      if (data.fees) setFees(data.fees)
-    } catch (error) {
-      console.error('Error fetching fees:', error)
-      toast.error('Failed to load school fees')
-    } finally {
-      setLoading(false)
-    }
-  }
+  // ... existing state ...
 
   const handlePay = async (feeId) => {
     setProcessingId(feeId)
     try {
+      // 1. Initialize on Backend
       const res = await fetch('/api/fees/pay', {
         method: 'POST',
         headers: {
@@ -46,10 +30,40 @@ export default function SchoolFeesPage() {
       })
       
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Payment failed')
+      if (!res.ok) throw new Error(data.error || 'Payment initialization failed')
 
-      // Redirect to Paystack
-      window.location.href = data.authorizationUrl
+      // 2. Open Paystack Popup
+      const paystack = new PaystackPop()
+      paystack.newTransaction({
+        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+        email: data.email,
+        amount: data.amount,
+        ref: data.reference,
+        onSuccess: async (transaction) => {
+            // 3. Verify on Backend
+            try {
+                const verifyRes = await fetch(`/api/fees/verify?reference=${transaction.reference}`)
+                const verifyData = await verifyRes.json()
+                
+                if (verifyData.success) {
+                    toast.success('School fee paid successfully!')
+                    fetchFees() // Refresh list
+                    setProcessingId(null)
+                } else {
+                    toast.error('Payment verification failed.')
+                    setProcessingId(null)
+                }
+            } catch (err) {
+                console.error(err)
+                toast.error('Error verifying payment')
+                setProcessingId(null)
+            }
+        },
+        onCancel: () => {
+            setProcessingId(null)
+            toast.info('Payment cancelled')
+        }
+      })
 
     } catch (error) {
       toast.error(error.message)

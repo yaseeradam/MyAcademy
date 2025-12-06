@@ -85,7 +85,13 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Paystack initialization failed', details: data.message }, { status: 400 })
     }
 
-    return NextResponse.json({ authorizationUrl: data.data.authorization_url, reference: data.data.reference })
+    return NextResponse.json({ 
+        authorizationUrl: data.data.authorization_url, 
+        reference: data.data.reference,
+        accessCode: data.data.access_code,
+        amount: Math.round(fee.amount * 100),
+        email: user.email
+    })
 
   } catch (error) {
     console.error('Error initializing fee payment:', error)
