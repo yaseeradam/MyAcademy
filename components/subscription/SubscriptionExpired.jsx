@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { CheckCircle, ShieldAlert, Sparkles, Zap, GraduationCap, CreditCard, BarChart3, Users, HardDrive } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import PaystackPop from '@paystack/inline-js'
+// import PaystackPop from '@paystack/inline-js' // Removed to prevent SSR error
 
 export default function SubscriptionExpired({ school, user }) {
   const [plans, setPlans] = useState([])
@@ -38,7 +38,8 @@ export default function SubscriptionExpired({ school, user }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Payment initialization failed')
 
-      // 2. Open Paystack Popup
+      // 2. Open Paystack Popup (Dynamically imported to avoid SSR window error)
+      const PaystackPop = (await import('@paystack/inline-js')).default
       const paystack = new PaystackPop()
       paystack.newTransaction({
         key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY, // Ensure this env var exists
