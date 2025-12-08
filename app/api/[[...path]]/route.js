@@ -449,11 +449,46 @@ export async function POST(request, { params }) {
           if (user.role !== 'developer' && user.schoolId) {
             const school = await db.collection('schools').findOne({ id: user.schoolId })
             if (school) {
+              // --- TRIAL LOGIC IMPLEMENTATION ---
+              // Check if school has no subscription status (new school)
+              // We check for both flat fields and nested subscription object to be safe/compatible
+              const hasSubscription = school.subscriptionStatus || (school.subscription && school.subscription.status);
+              
+              if (!hasSubscription) {
+                console.log(`Initializing 3-month trial for school ${school.name} (${school.id})`);
+                
+                const startDate = new Date();
+                const endDate = new Date();
+                endDate.setMonth(endDate.getMonth() + 3); // 3 months trial
+                
+                const trialUpdate = {
+                   subscriptionStatus: 'trial',
+                   subscriptionPlan: 'trial',
+                   subscriptionStartDate: startDate.toISOString(),
+                   subscriptionEndDate: endDate.toISOString(),
+                   updatedAt: new Date().toISOString()
+                };
+                
+                // Update school with trial info
+                await db.collection('schools').updateOne(
+                    { id: school.id },
+                    { $set: trialUpdate }
+                );
+                
+                // Update local school object to reflect changes in response
+                school.subscriptionStatus = 'trial';
+                school.subscriptionStartDate = trialUpdate.subscriptionStartDate;
+                school.subscriptionEndDate = trialUpdate.subscriptionEndDate;
+              }
+              // ----------------------------------
+
               schoolInfo = {
                 id: school.id,
                 name: school.name,
                 logo: school.logo,
-                theme: school.theme
+                theme: school.theme,
+                subscriptionStatus: school.subscriptionStatus,
+                subscriptionEndDate: school.subscriptionEndDate
               }
             }
           }
