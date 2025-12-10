@@ -14,9 +14,22 @@ export default function SubscriptionExpired({ school, user }) {
   const [processing, setProcessing] = useState(false)
 
   useEffect(() => {
+    // Hardcoded plans matching the intervals to ensure functionality even without DB
+    const hardcodedPlans = [
+        { id: 'standard_monthly', interval: 'monthly', price: 15000 },
+        { id: 'standard_termly', interval: 'termly', price: 40000 },
+        { id: 'standard_yearly', interval: 'yearly', price: 150000 }
+    ]
+    setPlans(hardcodedPlans)
+
     fetch('/api/subscription-plans')
       .then(res => res.json())
-      .then(data => setPlans(data.plans))
+      .then(data => {
+          if (data.plans && data.plans.length > 0) {
+              setPlans(data.plans)
+          }
+      })
+      .catch(err => console.log('Using hardcoded plans due to fetch error'))
   }, [])
 
   const selectedPlan = plans.find(p => p.interval === selectedInterval)
@@ -101,7 +114,7 @@ export default function SubscriptionExpired({ school, user }) {
         <div className="grid grid-cols-1 md:grid-cols-2">
             
             {/* Left Side: Value Prop */}
-            <div className="p-8 md:p-10 bg-slate-900 text-white flex flex-col justify-between relative overflow-hidden">
+            <div className="p-6 md:p-10 bg-slate-900 text-white flex flex-col justify-between relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
                 <div className="relative z-10">
                     <div className="flex items-center space-x-3 mb-6">
@@ -111,7 +124,7 @@ export default function SubscriptionExpired({ school, user }) {
                         <span className="font-semibold text-red-200 tracking-wide uppercase text-xs">Subscription Expired</span>
                     </div>
                     
-                    <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+                    <h1 className="text-2xl md:text-4xl font-bold mb-4 leading-tight">
                         Restore Access to Your <span className="text-blue-400">Digital School.</span>
                     </h1>
                     <p className="text-slate-400 text-lg mb-8 leading-relaxed">
@@ -134,20 +147,20 @@ export default function SubscriptionExpired({ school, user }) {
             </div>
 
             {/* Right Side: Pricing & Action */}
-            <div className="p-8 md:p-12 flex flex-col justify-center bg-white">
+            <div className="p-6 md:p-12 flex flex-col justify-center bg-white">
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold text-gray-900">Choose Your Plan</h2>
                     <p className="text-gray-500">Flexible options to suit your budget.</p>
                 </div>
 
                 {/* Interval Toggle */}
-                <div className="bg-gray-100 p-1 rounded-xl flex justify-between mb-8">
+                <div className="bg-gray-100 p-1 rounded-xl flex justify-between mb-8 md:mb-10 overflow-visible relative">
                     {intervals.map((int) => (
                         <button
                             key={int.id}
                             onClick={() => setSelectedInterval(int.id)}
                             className={cn(
-                                "flex-1 py-2 px-2 rounded-lg text-sm font-semibold transition-all duration-200 relative",
+                                "flex-1 py-2 px-1 sm:px-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 relative",
                                 selectedInterval === int.id 
                                 ? "bg-white text-blue-600 shadow-sm ring-1 ring-black/5" 
                                 : "text-gray-500 hover:text-gray-900"
@@ -155,7 +168,7 @@ export default function SubscriptionExpired({ school, user }) {
                         >
                             {int.label}
                             {int.save && (
-                                <span className="absolute -top-3 right-0 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded-full shadow-sm hidden md:block">
+                                <span className="absolute -top-4 right-0 transform translate-x-2 bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full shadow-md hidden md:block z-10">
                                     {int.save}
                                 </span>
                             )}
@@ -166,7 +179,7 @@ export default function SubscriptionExpired({ school, user }) {
                 {/* Selected Plan Details */}
                 <div key={selectedInterval} className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
                    <div className="flex items-center justify-center items-baseline space-x-2">
-                        <span className="text-5xl font-extrabold text-blue-600 tracking-tight">
+                        <span className="text-4xl md:text-5xl font-extrabold text-blue-600 tracking-tight">
                             {intervals.find(i => i.id === selectedInterval)?.price}
                         </span>
                         <span className="text-gray-500 font-medium">

@@ -1188,6 +1188,45 @@ export async function POST(request, { params }) {
         
         return NextResponse.json(payment)
 
+      // Reset School Admin Password (Developer Only)
+      case 'master/schools/reset-password':
+          const devResetData = authenticateToken(request);
+          if (!devResetData || devResetData.role !== 'developer') {
+              return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+          }
+
+          const { schoolId: resetSchoolId, adminEmail, newPassword } = body;
+
+          if (!resetSchoolId || !adminEmail || !newPassword) {
+              return NextResponse.json({ error: 'School ID, Admin Email, and new password required' }, { status: 400 });
+          }
+
+          // Find the school admin with specific email
+          const schoolAdmin = await db.collection('users').findOne({ 
+              schoolId: resetSchoolId, 
+              email: adminEmail,
+              role: 'school_admin' 
+          });
+
+          if (!schoolAdmin) {
+              return NextResponse.json({ error: 'School admin with this email not found in the specified school' }, { status: 404 });
+          }
+
+          const hashedResetPassword = await bcrypt.hash(newPassword, 10);
+
+          await db.collection('users').updateOne(
+              { id: schoolAdmin.id },
+              { 
+                  $set: { 
+                      password: hashedResetPassword, 
+                      plainPassword: newPassword, 
+                      updatedAt: new Date().toISOString() 
+                  } 
+              }
+          );
+
+          return NextResponse.json({ success: true, message: 'Password reset successfully' });
+
       default:
         return NextResponse.json({ error: 'Route not found' }, { status: 404 })
     }
@@ -1235,13 +1274,34 @@ export async function PUT(request, { params }) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         
+        // Remove _id if present to avoid immutable field error
+        const { _id, ...updateData } = body;
+
         await db.collection('teachers').updateOne(
           { id: updateId, schoolId: userData.schoolId },
-          { $set: { ...body, updatedAt: new Date().toISOString() } }
+          { $set: { ...updateData, updatedAt: new Date().toISOString() } }
         )
         
+        // Check if name or relevant user fields changed, and update users collection too
+        if (updateData.firstName || updateData.lastName || updateData.email) {
+            const userUpdate = {};
+            if (updateData.firstName || updateData.lastName) {
+                userUpdate.name = `${updateData.firstName || ''} ${updateData.lastName || ''}`.trim();
+            }
+            if (updateData.email) {
+                userUpdate.email = updateData.email;
+            }
+            if (Object.keys(userUpdate).length > 0) {
+                 await db.collection('users').updateOne(
+                    { id: updateId, role: 'teacher', schoolId: userData.schoolId },
+                    { $set: { ...userUpdate, updatedAt: new Date().toISOString() } }
+                )
+            }
+        }
+
         const updatedTeacher = await db.collection('teachers').findOne({ id: updateId, schoolId: userData.schoolId })
         return NextResponse.json(updatedTeacher)
+      
       
       case 'classes':
         if (!hasPermission(userData.role, ['school_admin'])) {

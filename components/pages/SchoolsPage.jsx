@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Eye, Edit, School, Search, UserPlus } from 'lucide-react'
+import { Plus, Eye, EyeOff, Edit, School, Search, UserPlus, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import { useState } from 'react'
 
@@ -26,6 +26,11 @@ export default function SchoolsPage({
   const [selectedSchool, setSelectedSchool] = useState(null)
   const [adminForm, setAdminForm] = useState({ name: '', email: '', password: '' })
   const [addingAdmin, setAddingAdmin] = useState(false)
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
+  const [resetPassword, setResetPassword] = useState('')
+  const [resetEmail, setResetEmail] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   const handleAddAdmin = async (e) => {
     e.preventDefault()
@@ -53,6 +58,36 @@ export default function SchoolsPage({
       toast.error('❌ Failed to add admin: ' + error.message)
     } finally {
       setAddingAdmin(false)
+    }
+  }
+
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault()
+    if (!resetPassword || !resetEmail) {
+      toast.error('Email and New password are required')
+      return
+    }
+
+    setIsResetting(true)
+    try {
+      await apiCall('master/schools/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          schoolId: selectedSchool.id,
+          adminEmail: resetEmail,
+          newPassword: resetPassword
+        })
+      })
+      toast.success('✅ Password reset successfully!')
+      setShowResetPasswordModal(false)
+      setResetPassword('')
+      setResetEmail('')
+      setSelectedSchool(null)
+    } catch (error) {
+      toast.error('❌ Failed to reset password: ' + error.message)
+    } finally {
+      setIsResetting(false)
     }
   }
 
@@ -207,6 +242,21 @@ export default function SchoolsPage({
                     <UserPlus className="h-4 w-4 mr-1" />
                     Add Admin
                   </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => {
+                        setSelectedSchool(school)
+                        setResetEmail('') // Reset email on open
+                        setResetPassword('') // Reset password on open
+                        setShowPassword(false) // Reset visibility on open
+                        setShowResetPasswordModal(true)
+                    }}
+                  >
+                    <Lock className="h-4 w-4 mr-1" />
+                    Reset Pass
+                  </Button>
                   {school.active !== false ? (
                     <Button 
                       size="sm" 
@@ -282,6 +332,61 @@ export default function SchoolsPage({
               </Button>
               <Button type="submit" disabled={addingAdmin}>
                 {addingAdmin ? 'Adding...' : 'Add Admin'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showResetPasswordModal} onOpenChange={setShowResetPasswordModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset School Admin Password</DialogTitle>
+            <DialogDescription>
+              Enter a new password for {selectedSchool?.name}'s admin.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleResetPassword}>
+            <div className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="resetEmail">Admin Email</Label>
+                <Input
+                  id="resetEmail"
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="Enter admin email"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="newPassword">New Password</Label>
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    type={showPassword ? "text" : "password"}
+                    value={resetPassword}
+                    onChange={(e) => setResetPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowResetPasswordModal(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isResetting}>
+                {isResetting ? 'Resetting...' : 'Reset Password'}
               </Button>
             </DialogFooter>
           </form>

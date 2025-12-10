@@ -61,6 +61,7 @@ export async function GET(request) {
     // Update subscription in schools collection
     const plan = await db.collection('subscription_plans').findOne({ id: payment.planId })
     if (plan) {
+      console.log(`Paystack Verify: Updating school ${payment.schoolId} to plan ${plan.id}`)
       const subscriptionEndDate = new Date()
       subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + plan.duration)
 

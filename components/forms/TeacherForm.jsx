@@ -82,6 +82,14 @@ export default function TeacherForm({
                 <Label className="text-sm font-bold text-gray-800 mb-1 block">Qualification *</Label>
                 <Input value={teacherForm.teacherData.qualification} onChange={(e) => setTeacherForm(prev => ({ ...prev, teacherData: { ...prev.teacherData, qualification: e.target.value }}))} className="h-10 text-base" placeholder="e.g., B.Ed, M.Sc" required />
               </div>
+              <div className="bg-white p-3 rounded-lg shadow-sm">
+                <Label className="text-sm font-bold text-gray-800 mb-1 block">Specialization</Label>
+                <Input value={teacherForm.teacherData.specialization} onChange={(e) => setTeacherForm(prev => ({ ...prev, teacherData: { ...prev.teacherData, specialization: e.target.value }}))} className="h-10 text-base" placeholder="e.g. Mathematics" />
+              </div>
+              <div className="bg-white p-3 rounded-lg shadow-sm">
+                <Label className="text-sm font-bold text-gray-800 mb-1 block">Experience (Years)</Label>
+                <Input value={teacherForm.teacherData.experience} onChange={(e) => setTeacherForm(prev => ({ ...prev, teacherData: { ...prev.teacherData, experience: e.target.value }}))} className="h-10 text-base" placeholder="e.g. 5" type="number" />
+              </div>
             </div>
             <div className="mt-4 bg-white p-3 rounded-lg shadow-sm">
               <Label className="text-sm font-bold text-gray-800 mb-1 block">Address</Label>

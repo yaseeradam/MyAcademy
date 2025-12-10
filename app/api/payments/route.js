@@ -57,12 +57,22 @@ export async function GET(request) {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
+      .limit(limit)
       .toArray()
+
+    // Enrich payments with plan details
+    const enrichedPayments = await Promise.all(payments.map(async (payment) => {
+        if (payment.planId) {
+            const plan = await db.collection('subscription_plans').findOne({ id: payment.planId })
+            return { ...payment, planName: plan?.name || payment.planId }
+        }
+        return payment
+    }))
 
     const total = await db.collection('payments').countDocuments(query)
 
     return NextResponse.json({
-      payments,
+      payments: enrichedPayments,
       pagination: {
         page,
         limit,
@@ -92,18 +102,24 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Plan ID is required' }, { status: 400 })
     }
 
-    // Default interval logic (should match what's in /api/subscription-plans)
-    // Actually the plan object might already have fixed interval if we use the NEW hardcoded plan IDs
-    // But let's support passed interval for flexibility if plans were dynamic
-    
-    // If using the IDs from our new plan list, we can deduce price
-    const plansInfo = {
-        'standard_monthly': { price: 15000, duration: 1 },
-        'standard_termly': { price: 40000, duration: 3 },
-        'standard_yearly': { price: 150000, duration: 12 }
-    }
+    // db connection is needed earlier now
+    const db = await connectToDatabase()
 
-    const selectedPlan = plansInfo[planId]
+    // Hardcoded plans as source of truth
+    const plans = [
+      { id: 'standard_monthly', price: 15000, duration: 1 },
+      { id: 'standard_termly', price: 40000, duration: 3 },
+      { id: 'standard_yearly', price: 150000, duration: 12 }
+    ]
+
+    // Fetch plan (from hardcoded list first for reliability)
+    let selectedPlan = plans.find(p => p.id === planId)
+    
+    // If not found in hardcoded list, try DB
+    if (!selectedPlan) {
+        selectedPlan = await db.collection('subscription_plans').findOne({ id: planId })
+    }
+    
     if (!selectedPlan) {
         return NextResponse.json({ error: 'Invalid Plan ID' }, { status: 400 })
     }
@@ -138,7 +154,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Payment initialization failed', details: paystackData.message }, { status: 400 })
     }
 
-    const db = await connectToDatabase()
+
     
     // Create pending payment record
     await db.collection('payments').insertOne({

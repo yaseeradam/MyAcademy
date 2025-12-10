@@ -80,9 +80,11 @@ export async function GET(request) {
     const newGraceDate = new Date(newEndDate)
     newGraceDate.setDate(newGraceDate.getDate() + 3)
 
-    // Update School Subscription
-    await db.collection('schools').updateOne(
-        { id: schoolId },
+     // Update School Subscription
+    console.log(`Updating subscription for school: ${schoolId} with plan: ${planId}`)
+    
+    const updateResult = await db.collection('schools').updateOne(
+        { id: schoolId }, // Assuming 'id' is a string. If ObjectId, needed new ObjectId(schoolId)
         {
             $set: {
                 subscriptionStatus: 'active',

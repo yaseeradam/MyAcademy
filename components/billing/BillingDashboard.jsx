@@ -13,7 +13,7 @@ import { toast } from 'sonner'
 import {
   CreditCard,
   Calendar,
-  DollarSign,
+  Banknote,
   CheckCircle,
   XCircle,
   Clock,
@@ -44,10 +44,16 @@ function BillingDashboard({ currentUser, school }) {
 
   const loadBillingData = async () => {
     try {
+      const token = localStorage.getItem('token')
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+
       const [subscriptionRes, paymentsRes, plansRes] = await Promise.all([
-        fetch('/api/school/subscription'),
-        fetch('/api/payments'),
-        fetch('/api/subscription-plans')
+        fetch('/api/school/subscription', { headers }),
+        fetch('/api/payments', { headers }),
+        fetch('/api/subscription-plans', { headers })
       ])
 
       if (subscriptionRes.ok) {
@@ -189,7 +195,7 @@ function BillingDashboard({ currentUser, school }) {
     subscriptionStatus: 'trial',
     subscriptionEndDate: null,
     planPrice: 0,
-    currency: 'usd',
+    currency: 'NGN',
     maxUsers: 10,
     currentUsers: 0,
     maxStorage: 100,
@@ -200,37 +206,37 @@ function BillingDashboard({ currentUser, school }) {
 
   const displayPlans = plans.length > 0 ? plans : [
     {
-      id: '1',
-      name: 'Basic',
-      description: 'Perfect for small schools',
-      price: 29.99,
-      currency: 'usd',
+      id: 'standard_monthly',
+      name: 'Standard (Monthly)',
+      description: 'Monthly subscription',
+      price: 15000,
+      currency: 'NGN',
       duration: 1,
-      maxUsers: 50,
-      maxStorage: 1000,
-      features: ['Up to 50 users', '1GB storage', 'Basic features', 'Email support']
+      maxUsers: 10000,
+      maxStorage: 10240,
+      features: ['Automated Result Compilation', 'Digital Fee Management', 'Portals', 'Analytics', 'Attendance', 'Unlimited Storage']
     },
     {
-      id: '2',
-      name: 'Professional',
-      description: 'For growing schools',
-      price: 79.99,
-      currency: 'usd',
-      duration: 1,
-      maxUsers: 200,
-      maxStorage: 5000,
-      features: ['Up to 200 users', '5GB storage', 'All features', 'Priority support']
+      id: 'standard_termly',
+      name: 'Standard (Termly)',
+      description: 'Billed every 3 months',
+      price: 40000,
+      currency: 'NGN',
+      duration: 3,
+      maxUsers: 10000,
+      maxStorage: 10240,
+      features: ['Automated Result Compilation', 'Digital Fee Management', 'Portals', 'Analytics', 'Attendance', 'Unlimited Storage']
     },
     {
-      id: '3',
-      name: 'Enterprise',
-      description: 'For large institutions',
-      price: 199.99,
-      currency: 'usd',
-      duration: 1,
-      maxUsers: 1000,
-      maxStorage: 20000,
-      features: ['Unlimited users', '20GB storage', 'All features', '24/7 support', 'Custom integrations']
+      id: 'standard_yearly',
+      name: 'Standard (Yearly)',
+      description: 'Annual subscription (Best Value)',
+      price: 150000,
+      currency: 'NGN',
+      duration: 12,
+      maxUsers: 10000,
+      maxStorage: 10240,
+      features: ['Automated Result Compilation', 'Digital Fee Management', 'Portals', 'Analytics', 'Attendance', 'Unlimited Storage']
     }
   ]
 
@@ -278,9 +284,9 @@ function BillingDashboard({ currentUser, school }) {
               }
             </div>
             <p className="text-xs text-gray-600 mt-1">
-              {getDaysUntilExpiry() > 0
-                ? `${getDaysUntilExpiry()} days remaining`
-                : 'Expired'
+              {displaySubscription.subscriptionEndDate
+                ? (getDaysUntilExpiry() > 0 ? `${getDaysUntilExpiry()} days remaining` : 'Expired')
+                : (displaySubscription.subscriptionStatus === 'trial' ? 'Trial Period' : 'Lifetime Access')
               }
             </p>
           </CardContent>
@@ -289,13 +295,13 @@ function BillingDashboard({ currentUser, school }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Monthly Cost</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
+            <Banknote className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {displaySubscription.planPrice
                 ? formatCurrency(displaySubscription.planPrice, displaySubscription.currency)
-                : '$0.00'
+                : (displaySubscription.subscriptionStatus === 'trial' ? 'Free' : formatCurrency(0, 'NGN'))
               }
             </div>
             <p className="text-xs text-gray-600 mt-1">
@@ -397,8 +403,9 @@ function BillingDashboard({ currentUser, school }) {
                     <Button
                       className="w-full mt-4"
                       onClick={() => handleUpgrade(plan)}
+                      disabled={true} // Disabled as per requirement
                     >
-                      {subscription ? 'Upgrade' : 'Subscribe'}
+                      {subscription ? 'Contact to Upgrade' : 'Contact Support'}
                     </Button>
                   )}
                 </CardContent>
@@ -489,6 +496,7 @@ function BillingDashboard({ currentUser, school }) {
                 </div>
               </div>
 
+              {/* Payment functionality disabled as per requirements
               <Button
                   className="w-full bg-blue-600 hover:bg-blue-700"
                   onClick={processPaystackPayment}
@@ -503,6 +511,10 @@ function BillingDashboard({ currentUser, school }) {
                     'Pay with Paystack'
                   )}
                 </Button>
+              */}
+              <div className="p-4 bg-yellow-50 rounded-lg text-yellow-800 text-sm">
+                To upgrade your plan, please contact support or use the main payment portal.
+              </div>
             </div>
           )}
         </DialogContent>

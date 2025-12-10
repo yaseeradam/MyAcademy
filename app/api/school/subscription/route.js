@@ -44,10 +44,49 @@ export async function GET(request) {
       return NextResponse.json({ error: 'School not found' }, { status: 404 })
     }
 
+    // Define plans locally since they are hardcoded in the plans API
+    const plans = [
+      {
+        id: 'standard_monthly',
+        name: 'Standard (Monthly)',
+        price: 15000,
+        currency: 'NGN',
+        features: ['Automated Result Compilation', 'Digital Fee Management', 'Portals', 'Analytics', 'Attendance', 'Unlimited Storage'],
+        maxUsers: 10000,
+        maxStorage: 10240
+      },
+      {
+        id: 'standard_termly',
+        name: 'Standard (Termly)',
+        price: 40000,
+        currency: 'NGN',
+        features: ['Automated Result Compilation', 'Digital Fee Management', 'Portals', 'Analytics', 'Attendance', 'Unlimited Storage'],
+        maxUsers: 10000,
+        maxStorage: 10240
+      },
+      {
+        id: 'standard_yearly',
+        name: 'Standard (Yearly)',
+        price: 150000,
+        currency: 'NGN',
+        features: ['Automated Result Compilation', 'Digital Fee Management', 'Portals', 'Analytics', 'Attendance', 'Unlimited Storage'],
+        maxUsers: 10000,
+        maxStorage: 10240
+      }
+    ]
+
     // Get current subscription plan details
     let planDetails = null
+    console.log(`Fetching subscription for school: ${user.schoolId}, Plan ID: ${school.subscriptionPlanId}, Status: ${school.subscriptionStatus}`)
+
     if (school.subscriptionPlanId) {
-      planDetails = await db.collection('subscription_plans').findOne({ id: school.subscriptionPlanId })
+      // Try to find in hardcoded list first (source of truth currently)
+      planDetails = plans.find(p => p.id === school.subscriptionPlanId)
+      
+      // Fallback to DB if not found in hardcoded list
+      if (!planDetails) {
+         planDetails = await db.collection('subscription_plans').findOne({ id: school.subscriptionPlanId })
+      }
     }
 
     // Get usage statistics
