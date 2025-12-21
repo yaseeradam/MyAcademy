@@ -13,6 +13,14 @@ export function useApi(token) {
       })
       
       if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          localStorage.removeItem('school')
+          toast.error('Session expired. Redirecting to login...')
+          window.location.reload()
+          throw new Error('Session expired')
+        }
         const error = await response.json()
         throw new Error(error.error || 'API Error')
       }

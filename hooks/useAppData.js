@@ -28,6 +28,14 @@ export function useAppData(user, token) {
       })
       
       if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          localStorage.removeItem('school')
+          toast.error('Session expired. Redirecting to login...')
+          window.location.reload()
+          throw new Error('Session expired')
+        }
         const error = await response.json()
         const errorMessage = error.error || `HTTP ${response.status}: ${response.statusText}`
         throw new Error(errorMessage)
