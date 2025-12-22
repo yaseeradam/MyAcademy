@@ -159,7 +159,7 @@ export default function StudentForm({
         <div className="flex gap-3 mt-6">
           <Button type="button" variant="outline" onClick={() => setShowFormView(null)} className="flex-1 h-11">Cancel</Button>
           <Button type="submit" className="flex-1 h-11 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold shadow-lg" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Create Student'}
+            {isSubmitting ? 'Saving...' : (studentForm.id || studentForm._id ? 'Update Student' : 'Create Student')}
           </Button>
         </div>
       </form>

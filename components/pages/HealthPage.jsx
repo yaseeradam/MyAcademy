@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Plus, Heart, AlertCircle, Syringe, ArrowLeft } from 'lucide-react'
+import { Plus, Heart, AlertCircle, Syringe, ArrowLeft, Trash2 } from 'lucide-react'
 
-export default function HealthPage({ healthRecords, students, showModal, setShowModal, form, setForm, handleSubmit, selectedStudent, setSelectedStudent, onBack }) {
+export default function HealthPage({ healthRecords, students, showModal, setShowModal, form, setForm, handleSubmit, handleDelete, selectedStudent, setSelectedStudent, onBack }) {
   const studentRecord = selectedStudent ? healthRecords.find(r => r.studentId === selectedStudent) : null
 
   return (
@@ -113,6 +113,9 @@ export default function HealthPage({ healthRecords, students, showModal, setShow
 
                 <Button onClick={() => { setForm(studentRecord); setShowModal(true) }} className="w-full">
                   Update Record
+                </Button>
+                <Button variant="destructive" onClick={() => { if(confirm('Delete this health record?')) { handleDelete(studentRecord.id || studentRecord._id); setSelectedStudent(null) } }} className="w-full">
+                  <Trash2 className="h-4 w-4 mr-2" /> Delete Record
                 </Button>
               </div>
             ) : selectedStudent ? (

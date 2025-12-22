@@ -166,7 +166,7 @@ export default function FeesPage({ fees, students, classes, showModal, setShowMo
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Add Fee</Button>
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{form.id || form._id ? 'Update Fee' : 'Add Fee'}</Button>
           </form>
         </DialogContent>
       </Dialog>

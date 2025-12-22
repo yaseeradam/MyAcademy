@@ -11,8 +11,11 @@ import { Download, Save, FileText } from 'lucide-react'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
+import { generateClassReportCards } from '@/lib/report-generator'
+
 export default function GradebookPage({ 
   currentUser,
+  school,
   apiCall,
   modal,
   toast,
@@ -25,15 +28,16 @@ export default function GradebookPage({
   const [studentScores, setStudentScores] = useState({})
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [generatingReport, setGeneratingReport] = useState(false)
 
   // Assessment configuration with maximum marks
   const assessments = [
-    { key: 'firstCA', label: '1st CA', max: 15 },
-    { key: 'secondCA', label: '2nd CA', max: 15 },
+    { key: 'firstCA', label: '1st CA', max: 10 },
+    { key: 'secondCA', label: '2nd CA', max: 10 },
     { key: 'notebook', label: 'Notebook', max: 10 },
-    { key: 'firstProject', label: '1st Project', max: 20 },
-    { key: 'secondProject', label: '2nd Project', max: 20 },
-    { key: 'exam', label: 'Exam', max: 40 }
+    { key: 'firstProject', label: '1st Project', max: 10 },
+    { key: 'secondProject', label: '2nd Project', max: 10 },
+    { key: 'exam', label: 'Exam', max: 50 }
   ]
 
   // Filter students by selected class
@@ -53,6 +57,27 @@ export default function GradebookPage({
       const score = parseFloat(scores[assessment.key]) || 0
       return total + score
     }, 0)
+  }
+
+  // Calculate letter grade based on custom scale or default
+  const calculateGrade = (total) => {
+    if (school.gradingScale && school.gradingScale.length > 0) {
+      const scale = school.gradingScale.sort((a, b) => b.min - a.min)
+      const gradeObj = scale.find(g => total >= g.min && total <= g.max)
+      // Handles cases where score might be slightly above max (e.g. bonus) or below min of top tier but above others 
+      if (gradeObj) return gradeObj.grade
+      
+      // Fallback for edge cases not covered by user ranges
+      if (total >= scale[0].max) return scale[0].grade
+    }
+
+    // Default fallback if no settings
+    if (total >= 70) return 'A'
+    if (total >= 60) return 'B'
+    if (total >= 50) return 'C'
+    if (total >= 45) return 'D'
+    if (total >= 40) return 'E'
+    return 'F'
   }
 
   // Handle score input with validation
@@ -89,7 +114,7 @@ export default function GradebookPage({
       if (response && response.scores) {
         const scoresMap = {}
         response.scores.forEach(score => {
-          scoresMap[score.studentId] = score
+          scoresMap[score.studentId] = score.scores
         })
         setStudentScores(scoresMap)
       }
@@ -109,15 +134,20 @@ export default function GradebookPage({
         toast.error('No students found in the selected class')
         return
       }
-      const scoresData = filteredStudents.map(student => ({
-        studentId: student.id,
-        classId: selectedClass,
-        subjectId: selectedSubject,
-        teacherId: currentUser.id,
-        schoolId: currentUser.schoolId,
-        scores: studentScores[student.id] || {},
-        total: calculateTotal(studentScores[student.id] || {})
-      }))
+      const scoresData = filteredStudents.map(student => {
+        const scores = studentScores[student.id] || {}
+        const total = calculateTotal(scores)
+        return {
+          studentId: student.id,
+          classId: selectedClass,
+          subjectId: selectedSubject,
+          teacherId: currentUser.id,
+          schoolId: currentUser.schoolId,
+          scores: scores,
+          total: total,
+          grade: calculateGrade(total)
+        }
+      })
       await apiCall('gradebook/scores', {
         method: 'POST',
         body: JSON.stringify({ scores: scoresData })
@@ -156,6 +186,7 @@ export default function GradebookPage({
     // Table data
     const tableData = filteredStudents.map((student, index) => {
       const scores = studentScores[student.id] || {}
+      const total = calculateTotal(scores)
       const row = [
         index + 1,
         `${student.firstName} ${student.lastName}`,
@@ -165,13 +196,14 @@ export default function GradebookPage({
         scores.firstProject || 0,
         scores.secondProject || 0,
         scores.exam || 0,
-        calculateTotal(scores)
+        total,
+        calculateGrade(total)
       ]
       return row
     })
 
     // Table headers
-    const headers = ['S/N', 'Student Name', '1st CA', '2nd CA', 'Notebook', '1st Project', '2nd Project', 'Exam', 'Total']
+    const headers = ['S/N', 'Student Name', '1st CA', '2nd CA', 'Nbk', '1st Prj', '2nd Prj', 'Exam', 'Total', 'Grd']
 
     // Generate table
     doc.autoTable({
@@ -180,10 +212,11 @@ export default function GradebookPage({
       startY: 75,
       theme: 'grid',
       headStyles: { fillColor: [59, 130, 246] },
-      styles: { fontSize: 10 },
+      styles: { fontSize: 9, cellPadding: 1 },
       columnStyles: {
-        0: { cellWidth: 15 },
-        1: { cellWidth: 40 }
+        0: { cellWidth: 10 },
+        1: { cellWidth: 40 },
+        // Distribute remaining width specifically if needed
       }
     })
 
@@ -191,14 +224,63 @@ export default function GradebookPage({
     doc.save(`scoresheet-${selectedClassObj?.name || 'class'}-${selectedSubjectObj?.name || 'subject'}-${new Date().toISOString().split('T')[0]}.pdf`)
   }
 
+  // Generate Class Report Cards
+  const handleGenerateReportCards = async () => {
+    if (!selectedClass) {
+      toast.error('Please select a class first')
+      return
+    }
+
+    try {
+      setGeneratingReport(true)
+      // Fetch all scores for the class (without subjectId)
+      const response = await apiCall(`gradebook/scores?classId=${selectedClass}`)
+      
+      if (!response || !response.scores) {
+        toast.error('Failed to fetch class scores')
+        return
+      }
+
+      if (response.scores.length === 0) {
+        toast.warning('No scores found for this class')
+        return
+      }
+
+      const selectedClassObj = classes.find(c => c.id === selectedClass)
+      
+      // We pass the filtered students for this class
+      generateClassReportCards(
+        filteredStudents, 
+        subjects, 
+        response.scores, 
+        school?.name || currentUser.schoolName || 'School Name', 
+        selectedClassObj?.name || 'Class',
+        school.gradingScale || []
+      )
+      
+      toast.success('Report cards generated successfully')
+    } catch (error) {
+      console.error('Error generating report cards:', error)
+      toast.error('Failed to generate report cards')
+    } finally {
+      setGeneratingReport(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Gradebook</h1>
         <div className="flex gap-2">
+          {selectedClass && (
+             <Button onClick={handleGenerateReportCards} variant="secondary" disabled={generatingReport}>
+               <FileText className="h-4 w-4 mr-2" />
+               {generatingReport ? 'Generating...' : 'Report Cards'}
+             </Button>
+          )}
           <Button onClick={handleDownloadPDF} variant="outline" disabled={!selectedClass || !selectedSubject || filteredStudents.length === 0}>
             <Download className="h-4 w-4 mr-2" />
-            Download PDF
+            Download Sheet
           </Button>
           <Button onClick={handleSaveScores} disabled={!selectedClass || !selectedSubject || filteredStudents.length === 0 || saving}>
             <Save className="h-4 w-4 mr-2" />
@@ -289,12 +371,16 @@ export default function GradebookPage({
                           <div className="text-xs text-gray-500">(Max: 100)</div>
                         </div>
                       </TableHead>
+                      <TableHead className="text-center w-16">
+                        <div>Grade</div>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredStudents.map((student, index) => {
                       const scores = studentScores[student.id] || {}
                       const total = calculateTotal(scores)
+                      const grade = calculateGrade(total)
                       
                       return (
                         <TableRow key={student.id}>
@@ -323,6 +409,9 @@ export default function GradebookPage({
                             <Badge variant={total >= 70 ? 'success' : total >= 50 ? 'warning' : 'destructive'}>
                               {total.toFixed(1)}
                             </Badge>
+                          </TableCell>
+                          <TableCell className="text-center font-bold">
+                            {grade}
                           </TableCell>
                         </TableRow>
                       )

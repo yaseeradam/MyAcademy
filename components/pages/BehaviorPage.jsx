@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Plus, ThumbsUp, ThumbsDown, AlertTriangle, ArrowLeft } from 'lucide-react'
+import { Plus, ThumbsUp, ThumbsDown, AlertTriangle, ArrowLeft, Edit, Trash2 } from 'lucide-react'
 
-export default function BehaviorPage({ behaviors, students, classes, showModal, setShowModal, form, setForm, handleSubmit, onBack }) {
+export default function BehaviorPage({ behaviors, students, classes, showModal, setShowModal, form, setForm, handleSubmit, handleDelete, onBack }) {
   const positiveCount = behaviors.filter(b => b.type === 'Positive').length
   const negativeCount = behaviors.filter(b => b.type === 'Negative').length
 
@@ -105,6 +105,15 @@ export default function BehaviorPage({ behaviors, students, classes, showModal, 
                         )}
                       </div>
                     </div>
+
+                    <div className="flex flex-col gap-2">
+                      <Button size="sm" variant="ghost" onClick={() => { setForm(behavior); setShowModal(true) }}>
+                        <Edit className="h-4 w-4 text-blue-600" />
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => { if(confirm('Delete this record?')) handleDelete(behavior.id || behavior._id) }}>
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )
@@ -173,7 +182,7 @@ export default function BehaviorPage({ behaviors, students, classes, showModal, 
                 <Textarea value={form.actionTaken} onChange={(e) => setForm({...form, actionTaken: e.target.value})} rows={2} />
               </div>
             )}
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Record Behavior</Button>
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{form.id || form._id ? 'Update Record' : 'Record Behavior'}</Button>
           </form>
         </DialogContent>
       </Dialog>

@@ -103,7 +103,7 @@ export default function ParentForm({
         <div className="flex gap-3 mt-6">
           <Button type="button" variant="outline" onClick={() => setShowFormView(null)} className="flex-1 h-11">Cancel</Button>
           <Button type="submit" className="flex-1 h-11 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold shadow-lg" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Create Parent'}
+            {isSubmitting ? 'Saving...' : (parentForm.parentData.id || parentForm.parentData._id ? 'Update Parent' : 'Create Parent')}
           </Button>
         </div>
       </form>

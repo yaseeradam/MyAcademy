@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Download, Eye, Edit, Users, UserX } from 'lucide-react'
+import { Plus, Download, Eye, Edit, Users, UserX, Trash2 } from 'lucide-react'
 import { exportStudentsToCSV } from '@/lib/csv-export'
 import { ViewStudentModal } from '@/components/modals/ViewStudentModal'
 import { EditStudentModal } from '@/components/modals/EditStudentModal'
@@ -28,6 +28,8 @@ export default function StudentsPage({
   toast,
   apiCall,
   loadDashboardData,
+  onEdit,
+  onDelete,
   readOnly = false
 }) {
   const [viewStudent, setViewStudent] = useState(null)
@@ -180,15 +182,15 @@ export default function StudentsPage({
                           <Eye className="h-4 w-4" />
                         </Button>
                         {!readOnly && <>
-                          <Button size="sm" variant="outline" onClick={() => { setViewStudent(student); handleEdit(); }}>
+                          <Button size="sm" variant="outline" onClick={() => { setViewStudent(student); onEdit(student); }}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
                             size="sm" 
                             variant={student.active ? "destructive" : "default"}
-                            onClick={() => handleDeactivate(student)}
+                            onClick={() => { if (window.confirm('Are you sure?')) onDelete(student.id) }} 
                           >
-                            <UserX className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </>}
                       </div>

@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Eye, EyeOff, Edit, School, Search, UserPlus, Lock } from 'lucide-react'
+import { Plus, Eye, EyeOff, Edit, School, Search, UserPlus, Lock, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useState } from 'react'
 
@@ -19,7 +19,9 @@ export default function SchoolsPage({
   setMasterSchoolForm,
   handleCreateSchool,
   onToggleSchoolStatus,
-  apiCall
+  apiCall,
+  onEdit,
+  onDelete
 }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddAdminModal, setShowAddAdminModal] = useState(false)
@@ -246,6 +248,15 @@ export default function SchoolsPage({
                     size="sm" 
                     variant="outline"
                     className="flex-1"
+                    onClick={() => onEdit(school)}
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    className="flex-1"
                     onClick={() => {
                         setSelectedSchool(school)
                         setResetEmail('') // Reset email on open
@@ -276,6 +287,14 @@ export default function SchoolsPage({
                       Activate
                     </Button>
                   )}
+                  <Button 
+                    size="sm" 
+                    variant="destructive"
+                    className="flex-shrink-0"
+                    onClick={() => { if (window.confirm('Are you sure you want to delete this school?')) onDelete(school.id) }} 
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>

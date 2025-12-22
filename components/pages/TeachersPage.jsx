@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Download, UserPlus, Edit, UserCheck, UserX } from 'lucide-react'
+import { Download, UserPlus, Edit, UserCheck, UserX, Trash2 } from 'lucide-react'
 import { exportTeachersToCSV } from '@/lib/csv-export'
 import { EditTeacherModal } from '@/components/modals/EditTeacherModal'
 
@@ -23,7 +23,10 @@ export default function TeachersPage({
   modal,
   toast,
   apiCall,
-  loadDashboardData
+  loadDashboardData,
+  onEdit,
+  onDelete,
+  readOnly = false
 }) {
   const [editTeacher, setEditTeacher] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
@@ -153,18 +156,16 @@ export default function TeachersPage({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => handleEdit(teacher)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant={teacher.active ? "destructive" : "default"}
-                        onClick={() => handleDeactivate(teacher)}
-                      >
-                        <UserX className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    {!readOnly && (
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline" onClick={() => onEdit(teacher)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => { if (window.confirm('Are you sure you want to delete this teacher?')) onDelete(teacher.id) }}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

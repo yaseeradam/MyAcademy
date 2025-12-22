@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Eye, Edit, GraduationCap } from 'lucide-react'
+import { Plus, Eye, Edit, GraduationCap, Trash2 } from 'lucide-react'
 
 export default function AssignmentsPage({ 
   assignments,
@@ -19,7 +19,8 @@ export default function AssignmentsPage({
   setShowAssignmentModal,
   assignmentForm,
   setAssignmentForm,
-  handleCreateAssignment
+  handleCreateAssignment,
+  handleDeleteAssignment
 }) {
   return (
     <div>
@@ -34,7 +35,7 @@ export default function AssignmentsPage({
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Assign Teacher to Subject</DialogTitle>
+              <DialogTitle>{assignmentForm.id ? 'Edit Assignment' : 'Assign Teacher to Subject'}</DialogTitle>
               <DialogDescription>
                 Assign a teacher to teach a specific subject for a class.
               </DialogDescription>
@@ -99,7 +100,7 @@ export default function AssignmentsPage({
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">Assign Teacher</Button>
+                <Button type="submit">{assignmentForm.id ? 'Update Assignment' : 'Assign Teacher'}</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -139,11 +140,33 @@ export default function AssignmentsPage({
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button size="sm" variant="outline">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setAssignmentForm({
+                              id: assignment.id,
+                              teacherId: assignment.teacherId,
+                              classId: assignment.classId,
+                              subjectId: assignment.subjectId,
+                              subjectName: assignment.subjectName,
+                              className: assignment.className
+                            })
+                            setShowAssignmentModal(true)
+                          }}
+                        >
                           <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive" // Use destructive variant for Delete
+                          onClick={() => {
+                            if (window.confirm('Are you sure you want to delete this assignment?')) {
+                              handleDeleteAssignment(assignment.id)
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

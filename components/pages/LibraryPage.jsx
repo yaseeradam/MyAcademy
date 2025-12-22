@@ -6,9 +6,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, BookOpen, BookMarked, ArrowLeftRight, ArrowLeft } from 'lucide-react'
+import { Plus, BookOpen, BookMarked, ArrowLeftRight, ArrowLeft, Edit, Trash2 } from 'lucide-react'
 
-export default function LibraryPage({ books, students, showModal, setShowModal, showIssueModal, setShowIssueModal, form, setForm, issueForm, setIssueForm, handleSubmit, handleIssue, handleReturn, searchTerm, setSearchTerm, onBack }) {
+export default function LibraryPage({ books, students, showModal, setShowModal, showIssueModal, setShowIssueModal, form, setForm, issueForm, setIssueForm, handleSubmit, handleIssue, handleReturn, handleDelete, searchTerm, setSearchTerm, onBack }) {
   const filteredBooks = books.filter(b => b.title.toLowerCase().includes(searchTerm.toLowerCase()) || b.author.toLowerCase().includes(searchTerm.toLowerCase()))
 
   return (
@@ -94,6 +94,12 @@ export default function LibraryPage({ books, students, showModal, setShowModal, 
                     <td className="p-3 text-center">
                       <Button size="sm" disabled={book.available === 0} onClick={() => { setIssueForm({ bookId: book._id, studentId: '', dueDate: '' }); setShowIssueModal(true) }}>
                         Issue
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => { setForm(book); setShowModal(true) }}>
+                        <Edit className="h-4 w-4 text-blue-600" />
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => { if(confirm('Delete this book?')) handleDelete(book.id || book._id) }}>
+                        <Trash2 className="h-4 w-4 text-red-600" />
                       </Button>
                     </td>
                   </tr>
@@ -183,7 +189,7 @@ export default function LibraryPage({ books, students, showModal, setShowModal, 
               <Label>Quantity</Label>
               <Input type="number" value={form.quantity} onChange={(e) => setForm({...form, quantity: e.target.value, available: e.target.value})} required />
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Add Book</Button>
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{form.id || form._id ? 'Update Book' : 'Add Book'}</Button>
           </form>
         </DialogContent>
       </Dialog>

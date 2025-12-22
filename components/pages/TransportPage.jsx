@@ -6,9 +6,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Bus, MapPin, User, ArrowLeft } from 'lucide-react'
+import { Plus, Bus, MapPin, User, ArrowLeft, Edit, Trash2 } from 'lucide-react'
 
-export default function TransportPage({ routes, students, showModal, setShowModal, showAssignModal, setShowAssignModal, form, setForm, assignForm, setAssignForm, handleSubmit, handleAssign, onBack }) {
+export default function TransportPage({ routes, students, showModal, setShowModal, showAssignModal, setShowAssignModal, form, setForm, assignForm, setAssignForm, handleSubmit, handleAssign, handleDelete, onBack }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -35,6 +35,14 @@ export default function TransportPage({ routes, students, showModal, setShowModa
                   <Button size="sm" onClick={() => { setAssignForm({ routeId: route._id, studentId: '' }); setShowAssignModal(true) }}>
                     Assign Student
                   </Button>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="ghost" onClick={() => { setForm(route); setShowModal(true) }}>
+                      <Edit className="h-4 w-4 text-blue-600" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => { if(confirm('Delete this route?')) handleDelete(route.id || route._id) }}>
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -127,7 +135,7 @@ export default function TransportPage({ routes, students, showModal, setShowModa
               <Label>Monthly Fee (₦)</Label>
               <Input type="number" value={form.fee} onChange={(e) => setForm({...form, fee: e.target.value})} required />
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Add Route</Button>
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{form.id || form._id ? 'Update Route' : 'Add Route'}</Button>
           </form>
         </DialogContent>
       </Dialog>

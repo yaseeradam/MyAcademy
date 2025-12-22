@@ -119,7 +119,7 @@ export default function TeacherForm({
         <div className="flex gap-3 mt-6">
           <Button type="button" variant="outline" onClick={() => setShowFormView(null)} className="flex-1 h-11">Cancel</Button>
           <Button type="submit" className="flex-1 h-11 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold shadow-lg" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Create Teacher'}
+            {isSubmitting ? 'Saving...' : (teacherForm.teacherData.id || teacherForm.teacherData._id ? 'Update Teacher' : 'Create Teacher')}
           </Button>
         </div>
       </form>

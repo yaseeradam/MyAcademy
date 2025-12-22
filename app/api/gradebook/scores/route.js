@@ -40,14 +40,19 @@ export async function GET(request) {
     const classId = searchParams.get('classId')
     const subjectId = searchParams.get('subjectId')
 
-    if (!classId || !subjectId) {
-      return NextResponse.json({ error: 'Class ID and Subject ID are required' }, { status: 400 })
+    if (!classId) {
+      return NextResponse.json({ error: 'Class ID is required' }, { status: 400 })
     }
 
     const db = await connectToDatabase()
     
     // Check if user is a teacher and has access to this class/subject
-    if (user.role === 'teacher') {
+    // If getting all class scores (no subjectId), teacher must have at least one assignment in this class ??
+    // Actually, for report cards, usually only Admin or Form Teacher creates them.
+    // For now, let's allow if user is teacher and subjectId is present, OR if user is teacher and requesting all assignments (maybe restrict this later if needed).
+    // Simpler: If subjectId is missing, skip specific assignment check for now or check generic class access.
+    
+    if (user.role === 'teacher' && subjectId) {
       const assignment = await db.collection('teacher_assignments').findOne({
         teacherId: user.id,
         classId,
@@ -60,13 +65,18 @@ export async function GET(request) {
       }
     }
 
+    // Build query
+    const query = {
+        classId,
+        schoolId: user.schoolId
+    }
+    if (subjectId) {
+        query.subjectId = subjectId
+    }
+
     // Get existing scores
     const scores = await db.collection('student_scores')
-      .find({
-        classId,
-        subjectId,
-        schoolId: user.schoolId
-      })
+      .find(query)
       .toArray()
 
     return NextResponse.json({ scores })

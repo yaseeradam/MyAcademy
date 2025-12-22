@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Eye, Edit } from 'lucide-react'
+import { Plus, Eye, Edit, Trash2 } from 'lucide-react'
 
 export default function SubjectsPage({ 
   subjects,
@@ -18,6 +18,7 @@ export default function SubjectsPage({
   subjectForm,
   setSubjectForm,
   handleCreateSubject,
+  handleDeleteSubject,
   readOnly = false
 }) {
   return (
@@ -33,7 +34,7 @@ export default function SubjectsPage({
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create New Subject</DialogTitle>
+              <DialogTitle>{subjectForm.id ? 'Edit Subject' : 'Create New Subject'}</DialogTitle>
               <DialogDescription>
                 Add a new subject to the curriculum.
               </DialogDescription>
@@ -92,7 +93,7 @@ export default function SubjectsPage({
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">Create Subject</Button>
+                <Button type="submit">{subjectForm.id ? 'Update Subject' : 'Create Subject'}</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -129,9 +130,25 @@ export default function SubjectsPage({
                       <Button size="sm" variant="outline">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      {!readOnly && <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
-                      </Button>}
+                      {!readOnly && <>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setSubjectForm(subject)
+                            setShowSubjectModal(true)
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive"
+                          onClick={() => { if (window.confirm('Are you sure you want to delete this subject?')) handleDeleteSubject(subject.id) }} 
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>}
                     </div>
                   </TableCell>
                 </TableRow>

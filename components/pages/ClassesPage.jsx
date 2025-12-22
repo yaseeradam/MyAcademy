@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Eye, Edit } from 'lucide-react'
+import { Plus, Eye, Edit, Trash2 } from 'lucide-react'
 
 export default function ClassesPage({ 
   classes, 
@@ -19,6 +19,7 @@ export default function ClassesPage({
   classForm,
   setClassForm,
   handleCreateClass,
+  handleDeleteClass,
   readOnly = false
 }) {
   return (
@@ -34,7 +35,7 @@ export default function ClassesPage({
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create New Class</DialogTitle>
+              <DialogTitle>{classForm.id ? 'Edit Class' : 'Create New Class'}</DialogTitle>
               <DialogDescription>
                 Set up a new class with capacity and academic year information.
               </DialogDescription>
@@ -93,7 +94,7 @@ export default function ClassesPage({
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">Create Class</Button>
+                <Button type="submit">{classForm.id ? 'Update Class' : 'Create Class'}</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -147,9 +148,25 @@ export default function ClassesPage({
                         <Button size="sm" variant="outline">
                           <Eye className="h-4 w-4" />
                         </Button>
-                        {!readOnly && <Button size="sm" variant="outline">
-                          <Edit className="h-4 w-4" />
-                        </Button>}
+                        {!readOnly && <>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => {
+                              setClassForm(cls)
+                              setShowClassModal(true)
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="destructive"
+                            onClick={() => { if (window.confirm('Are you sure you want to delete this class?')) handleDeleteClass(cls.id) }} 
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>}
                       </div>
                     </TableCell>
                   </TableRow>

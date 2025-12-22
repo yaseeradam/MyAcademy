@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Plus, Trash2 } from 'lucide-react'
 
 export default function SchoolSettingsPage({ 
   schoolSettings,
@@ -82,7 +83,102 @@ export default function SchoolSettingsPage({
               <p className="text-xs text-gray-500 mt-1">Upload passport-sized logo (max 2MB)</p>
             </div>
             
-            <div className="flex justify-end">
+            <div className="border-t pt-6 mt-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">Grading System</h3>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setSchoolSettings(prev => ({
+                    ...prev,
+                    gradingScale: [
+                      ...(prev.gradingScale || []), 
+                      { min: 0, max: 0, grade: '', remark: '' }
+                    ]
+                  }))}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Grade Range
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                {(schoolSettings.gradingScale || []).sort((a, b) => b.min - a.min).map((grade, index) => (
+                  <div key={index} className="grid grid-cols-12 gap-2 items-end bg-gray-50 p-3 rounded">
+                    <div className="col-span-2">
+                      <Label className="text-xs text-gray-500">Min Score</Label>
+                      <Input 
+                        type="number" 
+                        value={grade.min} 
+                        onChange={(e) => {
+                          const newScale = [...(schoolSettings.gradingScale || [])]
+                          newScale[index].min = parseFloat(e.target.value)
+                          setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
+                        }}
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-xs text-gray-500">Max Score</Label>
+                      <Input 
+                        type="number" 
+                        value={grade.max} 
+                        onChange={(e) => {
+                          const newScale = [...(schoolSettings.gradingScale || [])]
+                          newScale[index].max = parseFloat(e.target.value)
+                          setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
+                        }}
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-xs text-gray-500">Grade</Label>
+                      <Input 
+                        value={grade.grade} 
+                        onChange={(e) => {
+                          const newScale = [...(schoolSettings.gradingScale || [])]
+                          newScale[index].grade = e.target.value
+                          setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
+                        }}
+                        placeholder="A"
+                      />
+                    </div>
+                    <div className="col-span-5">
+                      <Label className="text-xs text-gray-500">Remark</Label>
+                      <Input 
+                        value={grade.remark} 
+                        onChange={(e) => {
+                          const newScale = [...(schoolSettings.gradingScale || [])]
+                          newScale[index].remark = e.target.value
+                          setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
+                        }}
+                        placeholder="Excellent"
+                      />
+                    </div>
+                    <div className="col-span-1">
+                      <Button 
+                        type="button" 
+                        variant="destructive" 
+                        size="icon"
+                        onClick={() => {
+                          const newScale = [...(schoolSettings.gradingScale || [])]
+                          newScale.splice(index, 1)
+                          setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {(!schoolSettings.gradingScale || schoolSettings.gradingScale.length === 0) && (
+                  <div className="text-center p-4 text-gray-500 text-sm border-2 border-dashed rounded">
+                    No grading scale defined. Click "Add Grade Range" to start.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-4">
               <Button type="submit">Save Settings</Button>
             </div>
           </form>

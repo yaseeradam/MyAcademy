@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Plus, BookOpen, Upload, CheckCircle, Clock, XCircle, ArrowLeft } from 'lucide-react'
+import { Plus, BookOpen, Upload, CheckCircle, Clock, XCircle, ArrowLeft, Edit, Trash2 } from 'lucide-react'
 
-export default function HomeworkPage({ homework, classes, subjects, students, userRole, showModal, setShowModal, form, setForm, handleSubmit, handleGrade, onBack }) {
+export default function HomeworkPage({ homework, classes, subjects, students, userRole, showModal, setShowModal, form, setForm, handleSubmit, handleGrade, handleDelete, onBack }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -44,6 +44,16 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
                     <span className={`px-3 py-1 rounded ${new Date(hw.dueDate) > new Date() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                       {new Date(hw.dueDate) > new Date() ? 'Active' : 'Overdue'}
                     </span>
+                    {userRole === 'school_admin' && (
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="ghost" onClick={() => { setForm(hw); setShowModal(true) }}>
+                          <Edit className="h-4 w-4 text-blue-600" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => { if(confirm('Delete this homework?')) handleDelete(hw.id || hw._id) }}>
+                          <Trash2 className="h-4 w-4 text-red-600" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardTitle>
               </CardHeader>
@@ -130,7 +140,7 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
                 <Input type="number" value={form.totalMarks} onChange={(e) => setForm({...form, totalMarks: e.target.value})} required />
               </div>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Assign Homework</Button>
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{form.id || form._id ? 'Update Homework' : 'Assign Homework'}</Button>
           </form>
         </DialogContent>
       </Dialog>

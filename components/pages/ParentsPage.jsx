@@ -25,6 +25,8 @@ export default function ParentsPage({
   toast,
   apiCall,
   loadDashboardData,
+  onEdit,
+  onDelete,
   readOnly = false
 }) {
   const handleEdit = (parent) => {
@@ -139,15 +141,15 @@ export default function ParentsPage({
                   <TableCell>
                     <div className="flex space-x-2">
                       {!readOnly && <>
-                        <Button size="sm" variant="outline" onClick={() => handleEdit(parent)}>
+                        <Button size="sm" variant="outline" onClick={() => onEdit(parent)}>
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button 
                           size="sm" 
-                          variant={parent.active ? "destructive" : "default"}
-                          onClick={() => handleDeactivate(parent)}
+                          variant="destructive"
+                          onClick={() => { if (confirm('Are you sure?')) onDelete(parent.id) }} 
                         >
-                          <UserX className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </>}
                     </div>
