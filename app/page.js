@@ -191,7 +191,16 @@ function App() {
   useEffect(() => {
     if (user?.role === 'school_admin' && school) {
       apiCall('school/settings').then(settings => {
-        setSchoolSettings({ schoolName: settings?.schoolName || school?.name || '', logo: settings?.logo || '', primaryColor: settings?.primaryColor || '#3b82f6', secondaryColor: settings?.secondaryColor || '#64748b', address: settings?.address || '', phoneNumber: settings?.phoneNumber || '', email: settings?.email || '' })
+        setSchoolSettings({ 
+          schoolName: settings?.schoolName || school?.name || '', 
+          logo: settings?.logo || '', 
+          primaryColor: settings?.primaryColor || '#3b82f6', 
+          secondaryColor: settings?.secondaryColor || '#64748b', 
+          address: settings?.address || '', 
+          phoneNumber: settings?.phoneNumber || '', 
+          email: settings?.email || '',
+          gradingScale: settings?.gradingScale || []
+        })
       }).catch(() => { })
     }
   }, [user, school])
@@ -297,7 +306,12 @@ function App() {
       modal.showLoading('Saving settings...')
       await apiCall('school/settings', { method: 'POST', body: JSON.stringify(schoolSettings) })
       if (school) {
-        const updatedSchool = { ...school, name: schoolSettings.schoolName, logo: schoolSettings.logo }
+        const updatedSchool = { 
+          ...school, 
+          name: schoolSettings.schoolName, 
+          logo: schoolSettings.logo,
+          gradingScale: schoolSettings.gradingScale
+        }
         setSchool(updatedSchool)
         localStorage.setItem('school', JSON.stringify(updatedSchool))
       }

@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge'
 import { Download, Save, FileText } from 'lucide-react'
 import jsPDF from 'jspdf'
-import 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 
 import { generateClassReportCards } from '@/lib/report-generator'
 
@@ -206,7 +206,7 @@ export default function GradebookPage({
     const headers = ['S/N', 'Student Name', '1st CA', '2nd CA', 'Nbk', '1st Prj', '2nd Prj', 'Exam', 'Total', 'Grd']
 
     // Generate table
-    doc.autoTable({
+    autoTable(doc, {
       head: [headers],
       body: tableData,
       startY: 75,
@@ -261,7 +261,7 @@ export default function GradebookPage({
       toast.success('Report cards generated successfully')
     } catch (error) {
       console.error('Error generating report cards:', error)
-      toast.error('Failed to generate report cards')
+      toast.error(`Failed to generate report cards: ${error.message || 'Unknown error'}`)
     } finally {
       setGeneratingReport(false)
     }
