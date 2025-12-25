@@ -136,7 +136,7 @@ export function ViewParentModal({ open, onOpenChange, parent, children, onEdit, 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader><DialogTitle>Parent Details</DialogTitle></DialogHeader>
-        <div className="grid grid-cols-2 gap-3 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 py-4">
           <div className="flex gap-2 p-3 bg-blue-50 rounded-lg">
             <User className="h-5 w-5 text-blue-600" />
             <div><p className="text-xs text-gray-600">Name</p><p className="font-semibold">{parent.name}</p></div>

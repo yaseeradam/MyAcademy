@@ -109,7 +109,7 @@ export default function TransportPage({ routes, students, showModal, setShowModa
               <Label>Route Name</Label>
               <Input value={form.routeName} onChange={(e) => setForm({...form, routeName: e.target.value})} placeholder="e.g., Route A - Ikeja" required />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Bus Number</Label>
                 <Input value={form.busNumber} onChange={(e) => setForm({...form, busNumber: e.target.value})} required />

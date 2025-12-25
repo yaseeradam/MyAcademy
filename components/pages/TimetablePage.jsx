@@ -177,7 +177,7 @@ export default function TimetablePage({ timetables, classes, subjects, teachers,
                 <SelectContent>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.firstName} {t.lastName}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Start Time</Label>
                 <Input type="time" value={form.startTime} onChange={(e) => setForm({...form, startTime: e.target.value})} required />

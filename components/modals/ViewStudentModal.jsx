@@ -177,7 +177,7 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
             <img src={student.photo} alt="Student" className="h-32 w-32 rounded-full object-cover border-4 border-blue-500 shadow-lg" />
           </div>
         )}
-        <div className="grid grid-cols-2 gap-3 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 py-4">
           <div className="flex gap-2 p-3 bg-blue-50 rounded-lg">
             <User className="h-5 w-5 text-blue-600" />
             <div><p className="text-xs text-gray-600">Name</p><p className="font-semibold">{student.firstName} {student.lastName}</p></div>

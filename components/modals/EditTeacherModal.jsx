@@ -46,7 +46,7 @@ export function EditTeacherModal({ open, onOpenChange, teacher, onSave }) {
           <DialogTitle>Edit Teacher</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>First Name *</Label>
               <Input
@@ -65,7 +65,7 @@ export function EditTeacherModal({ open, onOpenChange, teacher, onSave }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Email *</Label>
               <Input
@@ -84,7 +84,7 @@ export function EditTeacherModal({ open, onOpenChange, teacher, onSave }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Qualification</Label>
               <Input

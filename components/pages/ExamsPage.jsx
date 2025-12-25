@@ -195,7 +195,7 @@ export default function ExamsPage({ exams, classes, subjects, students, showModa
               <Label>Title</Label>
               <Input value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} required />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Class</Label>
                 <Select value={form.classId} onValueChange={(v) => setForm({...form, classId: v})}>
@@ -211,7 +211,7 @@ export default function ExamsPage({ exams, classes, subjects, students, showModa
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Date</Label>
                 <Input type="date" value={form.date} onChange={(e) => setForm({...form, date: e.target.value})} required />
@@ -221,7 +221,7 @@ export default function ExamsPage({ exams, classes, subjects, students, showModa
                 <Input type="number" value={form.duration} onChange={(e) => setForm({...form, duration: e.target.value})} required />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Total Marks</Label>
                 <Input type="number" value={form.totalMarks} onChange={(e) => setForm({...form, totalMarks: e.target.value})} required />
