@@ -17,7 +17,7 @@ try {
   console.log('No .env file found, using defaults');
 }
 
-const MONGO_URL = envVars.MONGO_URL || 'mongodb+srv://schooladmin:prince.yk0Q@cluster0.toicg4h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+const MONGO_URL = envVars.MONGO_URL || ''
 const DB_NAME = envVars.DB_NAME || 'school_management_db'
 
 async function initializeDatabase() {
