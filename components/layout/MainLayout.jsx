@@ -89,6 +89,9 @@ export default function MainLayout({ user, school, schoolSettings, children, act
               <Menu className="h-5 w-5" />
             </button>
             <div className="flex items-center space-x-3">
+              {(schoolSettings?.logo || school?.logo) && (
+                 <img src={schoolSettings?.logo || school?.logo} alt="School Logo" className="h-8 w-8 rounded-lg object-cover ring-2 ring-gray-100" />
+              )}
               <div className="flex items-center space-x-2">
                 <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent capitalize">{activeTab.replace('-', ' ')}</h1>

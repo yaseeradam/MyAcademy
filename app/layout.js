@@ -9,6 +9,7 @@ export const metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.jpg",
+    shortcut: "/logo.jpg",
     apple: "/logo.jpg",
   },
 };
