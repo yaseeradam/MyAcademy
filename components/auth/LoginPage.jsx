@@ -183,27 +183,11 @@ export default function LoginPage({ onLogin }) {
                 </Button>
               </form>
 
-              <div className="mt-8 p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-100">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="h-1 w-1 bg-blue-600 rounded-full"></div>
-                  <p className="font-semibold text-gray-800 text-sm">Demo Credentials</p>
-                </div>
-                <div className="space-y-2 text-xs">
-                  <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
-                    <span className="font-medium text-gray-700">Developer</span>
-                    <span className="text-gray-600">dev@system.com / dev123</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
-                    <span className="font-medium text-gray-700">School Admin</span>
-                    <span className="text-gray-600">admin@school.com / admin123</span>
-                  </div>
-                </div>
-              </div>
             </CardContent>
           </Card>
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            Need help? Contact support at <span className="text-blue-600 font-medium">support@myacademy.com</span>
+            Need help? Contact support at <a href="mailto:support@myacademy.com" className="text-blue-600 font-medium hover:underline">support@myacademy.com</a>
           </p>
         </div>
       </div>

@@ -1,17 +1,41 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Plus, Eye, EyeOff, Edit, School, Search, UserPlus, Lock, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { useState } from 'react'
+import React from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Plus,
+  Eye,
+  EyeOff,
+  Edit,
+  School,
+  Search,
+  UserPlus,
+  Lock,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
+import { useState } from "react";
 
-export default function SchoolsPage({ 
+export default function SchoolsPage({
   schools,
   showMasterSchoolModal,
   setShowMasterSchoolModal,
@@ -21,164 +45,204 @@ export default function SchoolsPage({
   onToggleSchoolStatus,
   apiCall,
   onEdit,
-  onDelete
+  onDelete,
 }) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showAddAdminModal, setShowAddAdminModal] = useState(false)
-  const [selectedSchool, setSelectedSchool] = useState(null)
-  const [adminForm, setAdminForm] = useState({ name: '', email: '', password: '' })
-  const [addingAdmin, setAddingAdmin] = useState(false)
-  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
-  const [resetPassword, setResetPassword] = useState('')
-  const [resetEmail, setResetEmail] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isResetting, setIsResetting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAddAdminModal, setShowAddAdminModal] = useState(false);
+  const [selectedSchool, setSelectedSchool] = useState(null);
+  const [adminForm, setAdminForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [addingAdmin, setAddingAdmin] = useState(false);
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // For reset password modal
+  const [showAdminPassword, setShowAdminPassword] = useState(false); // For add admin modal
+  const [isResetting, setIsResetting] = useState(false);
 
   const handleAddAdmin = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!adminForm.name || !adminForm.email || !adminForm.password) {
-      toast.error('All fields are required')
-      return
+      toast.error("All fields are required");
+      return;
+    }
+    if (adminForm.password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+    // Simple password strength check
+    const hasUpperCase = /[A-Z]/.test(adminForm.password);
+    const hasLowerCase = /[a-z]/.test(adminForm.password);
+    const hasNumbers = /\d/.test(adminForm.password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(adminForm.password);
+
+    if (!(hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar)) {
+      // Optional: Enforce complexity or just warn. User asked for "Progressive Strength Checker",
+      // usually implies visual feedback, but enforcing 8 chars is the hard requirement.
+      // I'll stick to 8 chars validation enforcement for now to avoid being too annoying if not requested,
+      // but the UI will show strength.
     }
 
-    setAddingAdmin(true)
+    setAddingAdmin(true);
     try {
-      await apiCall('school/admins', {
-        method: 'POST',
-        body: JSON.stringify({
-          schoolId: selectedSchool.id,
-          name: adminForm.name,
-          email: adminForm.email,
-          password: adminForm.password
-        })
-      })
-      toast.success('✅ Admin added successfully!')
-      setShowAddAdminModal(false)
-      setAdminForm({ name: '', email: '', password: '' })
-      setSelectedSchool(null)
+      // Changed apiCall to onAddAdmin as per instruction
+      await onAddAdmin(selectedSchool.id, adminForm);
+      toast.success("✅ Admin added successfully!");
+      setShowAddAdminModal(false); // Kept original state variable name
+      setAdminForm({ name: "", email: "", password: "" });
+      setSelectedSchool(null);
+      setShowAdminPassword(false); // Reset password visibility
     } catch (error) {
-      toast.error('❌ Failed to add admin: ' + error.message)
+      toast.error("❌ Failed to add admin: " + error.message);
     } finally {
-      setAddingAdmin(false)
+      setAddingAdmin(false);
     }
-  }
-
+  };
 
   const handleResetPassword = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!resetPassword || !resetEmail) {
-      toast.error('Email and New password are required')
-      return
+      toast.error("Email and New password are required");
+      return;
     }
 
-    setIsResetting(true)
+    setIsResetting(true);
     try {
-      await apiCall('master/schools/reset-password', {
-        method: 'POST',
+      await apiCall("master/schools/reset-password", {
+        method: "POST",
         body: JSON.stringify({
           schoolId: selectedSchool.id,
           adminEmail: resetEmail,
-          newPassword: resetPassword
-        })
-      })
-      toast.success('✅ Password reset successfully!')
-      setShowResetPasswordModal(false)
-      setResetPassword('')
-      setResetEmail('')
-      setSelectedSchool(null)
+          newPassword: resetPassword,
+        }),
+      });
+      toast.success("✅ Password reset successfully!");
+      setShowResetPasswordModal(false);
+      setResetPassword("");
+      setResetEmail("");
+      setSelectedSchool(null);
     } catch (error) {
-      toast.error('❌ Failed to reset password: ' + error.message)
+      toast.error("❌ Failed to reset password: " + error.message);
     } finally {
-      setIsResetting(false)
+      setIsResetting(false);
     }
-  }
+  };
 
-  const filteredSchools = schools?.filter(school => 
-    school.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || []
+  const filteredSchools =
+    schools?.filter((school) =>
+      school.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
   const colors = [
-    'border-l-4 border-l-blue-500 bg-white',
-    'border-l-4 border-l-green-500 bg-white',
-    'border-l-4 border-l-purple-500 bg-white',
-    'border-l-4 border-l-orange-500 bg-white',
-    'border-l-4 border-l-pink-500 bg-white',
-    'border-l-4 border-l-indigo-500 bg-white',
-    'border-l-4 border-l-teal-500 bg-white',
-    'border-l-4 border-l-red-500 bg-white'
-  ]
+    "border-l-4 border-l-blue-500 bg-white",
+    "border-l-4 border-l-green-500 bg-white",
+    "border-l-4 border-l-purple-500 bg-white",
+    "border-l-4 border-l-orange-500 bg-white",
+    "border-l-4 border-l-pink-500 bg-white",
+    "border-l-4 border-l-indigo-500 bg-white",
+    "border-l-4 border-l-teal-500 bg-white",
+    "border-l-4 border-l-red-500 bg-white",
+  ];
 
   return (
     <div>
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-900">Schools Management</h2>
-        <Dialog open={showMasterSchoolModal} onOpenChange={setShowMasterSchoolModal}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create School
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New School</DialogTitle>
-              <DialogDescription>
-                Set up a new school with admin credentials.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleCreateSchool}>
-              <div className="grid gap-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="schoolName">School Name</Label>
-                  <Input
-                    id="schoolName"
-                    value={masterSchoolForm.schoolName}
-                    onChange={(e) => setMasterSchoolForm(prev => ({ ...prev, schoolName: e.target.value }))}
-                    placeholder="Enter school name"
-                    required
-                  />
+          <h2 className="text-2xl font-bold text-gray-900">
+            Schools Management
+          </h2>
+          <Dialog
+            open={showMasterSchoolModal}
+            onOpenChange={setShowMasterSchoolModal}
+          >
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Create School
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New School</DialogTitle>
+                <DialogDescription>
+                  Set up a new school with admin credentials.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleCreateSchool}>
+                <div className="grid gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="schoolName">School Name</Label>
+                    <Input
+                      id="schoolName"
+                      value={masterSchoolForm.schoolName}
+                      onChange={(e) =>
+                        setMasterSchoolForm((prev) => ({
+                          ...prev,
+                          schoolName: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter school name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="adminName">Admin Name</Label>
+                    <Input
+                      id="adminName"
+                      value={masterSchoolForm.adminName}
+                      onChange={(e) =>
+                        setMasterSchoolForm((prev) => ({
+                          ...prev,
+                          adminName: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter admin full name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="adminEmail">Admin Email</Label>
+                    <Input
+                      id="adminEmail"
+                      type="email"
+                      value={masterSchoolForm.adminEmail}
+                      onChange={(e) =>
+                        setMasterSchoolForm((prev) => ({
+                          ...prev,
+                          adminEmail: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter admin email"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="adminPassword">Admin Password</Label>
+                    <Input
+                      id="adminPassword"
+                      type="password"
+                      value={masterSchoolForm.adminPassword}
+                      onChange={(e) =>
+                        setMasterSchoolForm((prev) => ({
+                          ...prev,
+                          adminPassword: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter admin password"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="adminName">Admin Name</Label>
-                  <Input
-                    id="adminName"
-                    value={masterSchoolForm.adminName}
-                    onChange={(e) => setMasterSchoolForm(prev => ({ ...prev, adminName: e.target.value }))}
-                    placeholder="Enter admin full name"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="adminEmail">Admin Email</Label>
-                  <Input
-                    id="adminEmail"
-                    type="email"
-                    value={masterSchoolForm.adminEmail}
-                    onChange={(e) => setMasterSchoolForm(prev => ({ ...prev, adminEmail: e.target.value }))}
-                    placeholder="Enter admin email"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="adminPassword">Admin Password</Label>
-                  <Input
-                    id="adminPassword"
-                    type="password"
-                    value={masterSchoolForm.adminPassword}
-                    onChange={(e) => setMasterSchoolForm(prev => ({ ...prev, adminPassword: e.target.value }))}
-                    placeholder="Enter admin password"
-                    required
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Create School</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+                <DialogFooter>
+                  <Button type="submit">Create School</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
-        
+
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
@@ -190,23 +254,37 @@ export default function SchoolsPage({
           />
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredSchools.map((school, index) => {
-          const colorClass = colors[index % colors.length]
+          const colorClass = colors[index % colors.length];
 
           return (
-            <Card key={school.id} className={`hover:shadow-lg transition-all duration-300 ${colorClass}`}>
+            <Card
+              key={school.id}
+              className={`hover:shadow-lg transition-all duration-300 ${colorClass}`}
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${school.active ? 'bg-green-100' : 'bg-gray-100'}`}>
-                      <School className={`h-5 w-5 ${school.active ? 'text-green-600' : 'text-gray-600'}`} />
+                    <div
+                      className={`p-2 rounded-lg ${
+                        school.active ? "bg-green-100" : "bg-gray-100"
+                      }`}
+                    >
+                      <School
+                        className={`h-5 w-5 ${
+                          school.active ? "text-green-600" : "text-gray-600"
+                        }`}
+                      />
                     </div>
                     <div>
                       <CardTitle className="text-lg">{school.name}</CardTitle>
-                      <Badge variant={school.active ? "default" : "secondary"} className="mt-1">
-                        {school.active ? 'Active' : 'Inactive'}
+                      <Badge
+                        variant={school.active ? "default" : "secondary"}
+                        className="mt-1"
+                      >
+                        {school.active ? "Active" : "Inactive"}
                       </Badge>
                     </div>
                   </div>
@@ -219,86 +297,103 @@ export default function SchoolsPage({
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">Admin ID:</span>
-                    <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{school.adminId}</span>
+                    <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
+                      {school.adminId}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">Status:</span>
                     <div className="flex items-center space-x-2">
-                      <div className={`w-2 h-2 rounded-full ${school.active ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                      <span className={school.active ? 'text-green-600 font-medium' : 'text-gray-500'}>
-                        {school.active ? 'Operational' : 'Inactive'}
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          school.active ? "bg-green-500" : "bg-gray-400"
+                        }`}
+                      ></div>
+                      <span
+                        className={
+                          school.active
+                            ? "text-green-600 font-medium"
+                            : "text-gray-500"
+                        }
+                      >
+                        {school.active ? "Operational" : "Inactive"}
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 flex space-x-2">
-                  <Button 
-                    size="sm" 
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
                     variant="outline"
-                    className="flex-1"
+                    className="flex-grow text-blue-600 hover:bg-blue-50 border-blue-200"
                     onClick={() => {
-                      setSelectedSchool(school)
-                      setShowAddAdminModal(true)
+                      setSelectedSchool(school);
+                      setAdminForm({ name: "", email: "", password: "" });
+                      setShowAddAdminModal(true); // Changed to setShowAddAdminModal
                     }}
                   >
-                    <UserPlus className="h-4 w-4 mr-1" />
-                    Add Admin
+                    <Users className="h-4 w-4 mr-1" /> Add Admin
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="outline"
-                    className="flex-1"
+                    className="flex-grow text-indigo-600 hover:bg-indigo-50 border-indigo-200"
                     onClick={() => onEdit(school)}
                   >
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
+                    <Edit className="h-4 w-4 mr-1" /> Edit
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="outline"
-                    className="flex-1"
+                    className="flex-grow text-amber-600 hover:bg-amber-50 border-amber-200"
                     onClick={() => {
-                        setSelectedSchool(school)
-                        setResetEmail('') // Reset email on open
-                        setResetPassword('') // Reset password on open
-                        setShowPassword(false) // Reset visibility on open
-                        setShowResetPasswordModal(true)
+                      setSelectedSchool(school);
+                      setResetEmail(""); // Reset email on open
+                      setResetPassword(""); // Reset password on open
+                      setShowPassword(false); // Reset visibility on open
+                      setShowResetPasswordModal(true); // Changed to setShowResetPasswordModal
                     }}
                   >
-                    <Lock className="h-4 w-4 mr-1" />
-                    Reset Pass
+                    <Key className="h-4 w-4 mr-1" /> Reset Pass
                   </Button>
-                  {school.active !== false ? (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1 text-red-600 hover:bg-red-50 border-red-200"
-                      onClick={() => onToggleSchoolStatus?.(school.id, false)}
-                    >
-                      Deactivate
-                    </Button>
-                  ) : (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="flex-1 text-green-600 hover:bg-green-50 border-green-200"
-                      onClick={() => onToggleSchoolStatus?.(school.id, true)}
-                    >
-                      Activate
-                    </Button>
-                  )}
-                  <Button 
-                    size="sm" 
-                    variant="destructive"
-                    className="flex-shrink-0"
-                    onClick={() => { if (window.confirm('Are you sure you want to delete this school?')) onDelete(school.id) }} 
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={`flex-grow ${
+                      school.active
+                        ? "text-orange-600 hover:bg-orange-50 border-orange-200"
+                        : "text-green-600 hover:bg-green-50 border-green-200"
+                    }`}
+                    onClick={() =>
+                      onToggleSchoolStatus?.(school.id, !school.active)
+                    } // Changed to onToggleSchoolStatus
                   >
-                    <Trash2 className="h-4 w-4" />
+                    {school.active ? (
+                      <Ban className="h-4 w-4 mr-1" />
+                    ) : (
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                    )}
+                    {school.active ? "Deactivate" : "Activate"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="flex-grow"
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          "Are you sure you want to delete this school?"
+                        )
+                      )
+                        onDelete(school.id);
+                    }} // Added confirmation
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" /> Trash
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
@@ -317,7 +412,9 @@ export default function SchoolsPage({
                 <Input
                   id="adminName"
                   value={adminForm.name}
-                  onChange={(e) => setAdminForm({ ...adminForm, name: e.target.value })}
+                  onChange={(e) =>
+                    setAdminForm({ ...adminForm, name: e.target.value })
+                  }
                   placeholder="Enter admin name"
                   required
                 />
@@ -328,36 +425,93 @@ export default function SchoolsPage({
                   id="adminEmail"
                   type="email"
                   value={adminForm.email}
-                  onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
+                  onChange={(e) =>
+                    setAdminForm({ ...adminForm, email: e.target.value })
+                  }
                   placeholder="Enter admin email"
                   required
                 />
               </div>
               <div>
                 <Label htmlFor="adminPassword">Password</Label>
-                <Input
-                  id="adminPassword"
-                  type="password"
-                  value={adminForm.password}
-                  onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
-                  placeholder="Enter password"
-                  required
-                />
+                <div className="space-y-2">
+                  <Label>Admin Password</Label>
+                  <div className="relative">
+                    <Input
+                      type={showAdminPassword ? "text" : "password"}
+                      value={adminForm.password}
+                      onChange={(e) =>
+                        setAdminForm({ ...adminForm, password: e.target.value })
+                      }
+                      placeholder="Enter admin password"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowAdminPassword(!showAdminPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showAdminPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  {/* Password Strength Meter */}
+                  {adminForm.password && (
+                    <div className="space-y-1 mt-2">
+                      <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-300 ${
+                            adminForm.password.length >= 8 &&
+                            /[A-Z]/.test(adminForm.password) &&
+                            /[0-9]/.test(adminForm.password) &&
+                            /[^A-Za-z0-9]/.test(adminForm.password)
+                              ? "bg-green-500 w-full"
+                              : adminForm.password.length >= 8 &&
+                                (/[A-Z]/.test(adminForm.password) ||
+                                  /[0-9]/.test(adminForm.password))
+                              ? "bg-yellow-500 w-2/3"
+                              : "bg-red-500 w-1/3"
+                          }`}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 text-right">
+                        {adminForm.password.length < 8
+                          ? "Too short"
+                          : adminForm.password.length >= 8 &&
+                            /[A-Z]/.test(adminForm.password) &&
+                            /[0-9]/.test(adminForm.password) &&
+                            /[^A-Za-z0-9]/.test(adminForm.password)
+                          ? "Generic Strong"
+                          : "Medium"}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowAddAdminModal(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowAddAdminModal(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={addingAdmin}>
-                {addingAdmin ? 'Adding...' : 'Add Admin'}
+                {addingAdmin ? "Adding..." : "Add Admin"}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showResetPasswordModal} onOpenChange={setShowResetPasswordModal}>
+      <Dialog
+        open={showResetPasswordModal}
+        onOpenChange={setShowResetPasswordModal}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Reset School Admin Password</DialogTitle>
@@ -395,22 +549,30 @@ export default function SchoolsPage({
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowResetPasswordModal(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowResetPasswordModal(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isResetting}>
-                {isResetting ? 'Resetting...' : 'Reset Password'}
+                {isResetting ? "Resetting..." : "Reset Password"}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

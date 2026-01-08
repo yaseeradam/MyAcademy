@@ -122,6 +122,25 @@ export async function GET(request, { params }) {
           activeSchools
         })
       
+      // Master Settings
+      case 'master/settings':
+        const masterSettingsUser = authenticateToken(request)
+        if (!masterSettingsUser || masterSettingsUser.role !== 'developer') {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+        const masterSettings = await db.collection('master_settings').findOne({ id: 'system_config' })
+        return NextResponse.json(masterSettings || { 
+            id: 'system_config',
+            systemName: 'My Academy',
+            systemEmail: 'admin@myacademy.com',
+            defaultCurrency: 'NGN',
+            timezone: 'Africa/Lagos',
+            maxSchools: 1000,
+            allowRegistration: true,
+            maintenanceMode: false,
+            systemVersion: '1.0.0'
+        })
+      
       // School settings
       case 'school/settings':
         const settingsUserData = authenticateToken(request)
@@ -449,6 +468,16 @@ export async function POST(request, { params }) {
           if (user.role !== 'developer' && user.schoolId) {
             const school = await db.collection('schools').findOne({ id: user.schoolId })
             if (school) {
+              // --- SUBSCRIPTION CHECK ---
+              const isRestrictedRole = user.role === 'parent' || user.role === 'teacher'
+              // Check flat field first, then nested if exists (compatibility)
+              const status = school.subscriptionStatus || (school.subscription && school.subscription.status)
+              
+              if (isRestrictedRole && status === 'expired') {
+                   return NextResponse.json({ error: 'School subscription has expired. Please contact administration.' }, { status: 403 })
+              }
+              // ---------------------------
+
               // --- TRIAL LOGIC IMPLEMENTATION ---
               // Check if school has no subscription status (new school)
               // We check for both flat fields and nested subscription object to be safe/compatible
@@ -594,6 +623,27 @@ export async function POST(request, { params }) {
         )
         
         return NextResponse.json({ success: true })
+
+      // Master Settings Update
+      case 'master/settings':
+        const masterSettingsUpdateUser = authenticateToken(request)
+        if (!masterSettingsUpdateUser || masterSettingsUpdateUser.role !== 'developer') {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+        
+        const settingsUpdate = {
+            id: 'system_config', // Singleton ID
+            ...body,
+            updatedAt: new Date().toISOString()
+        }
+        
+        await db.collection('master_settings').updateOne(
+            { id: 'system_config' },
+            { $set: settingsUpdate },
+            { upsert: true }
+        )
+        
+        return NextResponse.json(settingsUpdate)
       
       // School settings
       case 'school/settings':

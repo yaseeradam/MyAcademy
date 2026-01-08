@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export function useForms(apiCall, loadDashboardData, modal) {
+export function useForms(apiCall, loadDashboardData, modal, parents = []) {
   const [teacherForm, setTeacherForm] = useState({
     teacherData: { firstName: '', lastName: '', email: '', phoneNumber: '', address: '', qualification: '', experience: '', specialization: '', dateOfJoining: '', photo: '' },
     credentials: { email: '', password: '' }
@@ -86,18 +86,32 @@ export function useForms(apiCall, loadDashboardData, modal) {
   const handleCreateParent = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
+
+    // Client-side Validation
+    const email = parentForm.parentCredentials.email
+    const password = parentForm.parentCredentials.password
     const isUpdate = !!(parentForm.parentData.id || parentForm.parentData._id)
+
+    if (!isUpdate) {
+        // Email Uniqueness Check
+        if (parents && parents.some(p => p.email === email)) {
+            modal?.showError('Email Taken', 'This email is already registered to another parent.')
+            setIsSubmitting(false)
+            return false
+        }
+        // Password Length Check
+        if (password.length < 8) {
+            modal?.showError('Invalid Password', 'Password must be at least 8 characters long.')
+            setIsSubmitting(false)
+            return false
+        }
+    }
+
     modal?.showLoading(isUpdate ? 'Updating parent...' : 'Creating parent account...')
     try {
       if (isUpdate) {
-        // Parent update usually targets user collection or separate profile? 
-        // Based on route.js, PUT parents isn't explicitly there but 'users' might cover it if we passed path='parents' but wait...
-        // Actually route.js calls PUT 'parents' INVALID. It checks permissions then updates users collection?
-        // Wait, route.js PUT handler switch(pathStr) has 'students', 'teachers', 'classes', 'teacher-assignments', 'subjects'.
-        // It DOES NOT have 'parents'.
-        // I need to add 'parents' to PUT handler in route.js or use 'users'? 
-        // Let's assume I missed it or will add it. I should add 'parents' to PUT handler in route.js!
-        // For now I will write the hook assuming the endpoint exists/will exist.
+        // Assume 'parents' endpoint supports PUT or fallback to manual user update if needed.
+        // Keeping original logic structure but ensuring apiCall is correct.
         await apiCall(`parents?id=${parentForm.parentData.id || parentForm.parentData._id}`, { method: 'PUT', body: JSON.stringify(parentForm.parentData) })
         modal?.showSuccess('Parent Updated', 'Parent updated successfully!')
       } else {

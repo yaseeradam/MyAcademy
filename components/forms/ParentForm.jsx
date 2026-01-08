@@ -2,13 +2,15 @@
 
 import React from 'react'
 import { Button } from '@/components/ui/button'
+import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ChevronLeft, Upload, Camera } from 'lucide-react'
 
-export default function ParentForm({ 
-  parentForm, 
+export default function ParentForm({
+  parentForm,
   setParentForm,
   parentPhotoPreview,
   handlePhotoUpload,
@@ -16,6 +18,20 @@ export default function ParentForm({
   setShowFormView,
   isSubmitting
 }) {
+  const [showPassword, setShowPassword] = useState(false)
+
+  // Quick strength check helper
+  const getStrength = (pass) => {
+      let strength = 0
+      if (!pass) return strength
+      if (pass.length >= 8) strength += 1
+      if (/[A-Z]/.test(pass)) strength += 1
+      if (/[0-9]/.test(pass)) strength += 1
+      if (/[^A-Za-z0-9]/.test(pass)) strength += 1
+      return strength
+  }
+  const strength = getStrength(parentForm?.parentCredentials?.password || '')
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-4 rounded-t-2xl shadow-lg">
@@ -26,7 +42,7 @@ export default function ParentForm({
         <h1 className="text-2xl font-bold mb-1">Add New Parent</h1>
         <p className="text-amber-100 text-sm">Fill in the parent information below</p>
       </div>
-      
+
       <form onSubmit={handleCreateParent} className="bg-white rounded-b-2xl shadow-lg p-6">
         <div className="space-y-5">
           {/* Photo Section */}
@@ -93,9 +109,47 @@ export default function ParentForm({
                 <Input type="email" value={parentForm.parentCredentials.email} onChange={(e) => setParentForm(prev => ({ ...prev, parentCredentials: { ...prev.parentCredentials, email: e.target.value }}))} className="h-10 text-base" placeholder="parent@email.com" required />
               </div>
               <div className="bg-white p-3 rounded-lg shadow-sm">
-                <Label className="text-sm font-bold text-gray-800 mb-1 block">Password *</Label>
-                <Input type="password" value={parentForm.parentCredentials.password} onChange={(e) => setParentForm(prev => ({ ...prev, parentCredentials: { ...prev.parentCredentials, password: e.target.value }}))} className="h-10 text-base" placeholder="Enter password" required />
+                <div className="space-y-2">
+              <Label className="text-sm font-bold text-gray-800 mb-1 block">Password *</Label>
+              <div className="relative">
+                <Input
+                    type={showPassword ? "text" : "password"}
+                    value={parentForm.parentCredentials.password}
+                    onChange={(e) => setParentForm(prev => ({ ...prev, parentCredentials: { ...prev.parentCredentials, password: e.target.value }}))}
+                    className="h-10 text-base pr-10"
+                    placeholder="Enter password"
+                    required={!parentForm.parentData.id && !parentForm.parentData._id} // Required only on create
+                />
+                <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
+
+              {/* Password Strength Meter - Only show if password creates/updates */}
+              {parentForm.parentCredentials.password && (
+                  <div className="space-y-1 mt-1">
+                      <div className="flex space-x-1 h-1">
+                          {[1, 2, 3, 4].map(level => (
+                              <div
+                                  key={level}
+                                  className={`h-full flex-1 rounded-full transition-colors duration-300 ${
+                                      strength >= level
+                                      ? (strength <= 2 ? 'bg-red-500' : strength === 3 ? 'bg-yellow-500' : 'bg-green-500')
+                                      : 'bg-gray-200'
+                                  }`}
+                              />
+                          ))}
+                      </div>
+                      <p className="text-xs text-gray-500 text-right">
+                          {strength <= 2 ? 'Weak' : strength === 3 ? 'Medium' : 'Strong'}
+                      </p>
+                  </div>
+              )}
+            </div>
             </div>
           </div>
         </div>

@@ -119,7 +119,32 @@ function App() {
   const filteredSubjects = user?.role === 'teacher' ? teacherRestrictions.filteredSubjects : subjects
   const filteredParents = user?.role === 'teacher' ? parents.filter(p => filteredStudents.some(s => s.parentId === p.id)) : parents
 
-  const formHandlers = useForms(apiCall, loadDashboardData, modal)
+  // Fetch Master Settings
+  useEffect(() => {
+    if (user?.role === 'developer') {
+      apiCall('master/settings')
+        .then(setMasterSettings)
+        .catch(err => {
+            console.error('Failed to fetch master settings', err)
+            // If fetch fails, we might still want default values which useState might already have or null
+        })
+    }
+  }, [user])
+
+  const handleSaveMasterSettings = async (e) => {
+    e.preventDefault()
+    try {
+      modal.showLoading('Saving master settings...')
+      await apiCall('master/settings', { method: 'POST', body: JSON.stringify(masterSettings) })
+      modal.showSuccess('Settings Saved', 'Master settings updated successfully!')
+    } catch (error) {
+       modal.showError('Save Failed', error.message)
+    } finally {
+        modal.hideLoading()
+    }
+  }
+
+  const formHandlers = useForms(apiCall, loadDashboardData, modal, parents)
   const filterHandlers = useFilters()
   const teacherAttendanceHandlers = useTeacherAttendance(user, apiCall, teachers, loadTodayAttendance, modal)
   const studentAttendanceHandlers = useStudentAttendance(user, apiCall, filteredStudents, loadTodayAttendance, modal)
@@ -462,7 +487,8 @@ function App() {
       {activeTab === 'student-attendance' && (user.role === 'school_admin' || user.role === 'teacher') && <StudentAttendancePage user={user} attendance={attendance.filter(a => a.studentId)} students={filteredStudents} classes={filteredClasses} {...studentAttendanceHandlers} loadAttendanceByDate={loadAttendanceByDate} />}
       {activeTab === 'schools' && user.role === 'developer' && <SchoolsPage schools={schools} showMasterSchoolModal={showMasterSchoolModal} setShowMasterSchoolModal={setShowMasterSchoolModal} masterSchoolForm={formHandlers.masterSchoolForm} setMasterSchoolForm={formHandlers.setMasterSchoolForm} handleCreateSchool={formHandlers.handleCreateSchool} onToggleSchoolStatus={handleToggleSchoolStatus} apiCall={apiCall} onEdit={(school) => { formHandlers.setMasterSchoolForm({ schoolName: school.name, adminName: '', adminEmail: '', adminPassword: '', id: school.id }); setShowMasterSchoolModal(true); }} onDelete={formHandlers.handleDeleteSchool} />}
       {activeTab === 'school-settings' && user.role === 'school_admin' && <SchoolSettingsPage schoolSettings={schoolSettings} setSchoolSettings={setSchoolSettings} handleLogoUpload={handleLogoUpload} handleSaveSettings={handleSaveSettings} />}
-      {activeTab === 'master-settings' && user.role === 'developer' && <MasterSettingsPage masterSettings={masterSettings} stats={stats} />}
+      {activeTab === 'school-settings' && user.role === 'school_admin' && <SchoolSettingsPage schoolSettings={schoolSettings} setSchoolSettings={setSchoolSettings} handleLogoUpload={handleLogoUpload} handleSaveSettings={handleSaveSettings} />}
+      {activeTab === 'master-settings' && user.role === 'developer' && <MasterSettingsPage masterSettings={masterSettings} setMasterSettings={setMasterSettings} handleSaveMasterSettings={handleSaveMasterSettings} stats={stats} />}
       {activeTab === 'more-features' && user.role === 'school_admin' && <MoreFeaturesPage setActiveTab={setActiveTab} />}
       {activeTab === 'timetable' && user.role === 'school_admin' && <TimetablePage timetables={newFeatures.timetables} classes={classes} subjects={subjects} teachers={teachers} showModal={showTimetableModal} setShowModal={setShowTimetableModal} form={timetableForm} setForm={setTimetableForm} handleSubmit={(e) => newFeatures.handleTimetableSubmit(e, timetableForm, setShowTimetableModal)} handleDelete={newFeatures.handleTimetableDelete} onBack={() => setActiveTab('more-features')} school={school} schoolSettings={schoolSettings} />}
       {activeTab === 'exams' && user.role === 'school_admin' && <ExamsPage exams={newFeatures.exams} classes={classes} subjects={subjects} students={students} showModal={showExamModal} setShowModal={setShowExamModal} showGradeModal={showGradeModal} setShowGradeModal={setShowGradeModal} form={examForm} setForm={setExamForm} gradeForm={gradeForm} setGradeForm={setGradeForm} handleSubmit={(e) => newFeatures.handleExamSubmit(e, examForm, setShowExamModal)} handleGradeSubmit={(e) => newFeatures.handleGradeSubmit(e, gradeForm, setShowGradeModal)} handleDelete={newFeatures.handleDeleteExam} onBack={() => setActiveTab('more-features')} school={school} schoolSettings={schoolSettings} />}
