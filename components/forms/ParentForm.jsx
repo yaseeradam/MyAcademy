@@ -152,6 +152,7 @@ export default function ParentForm({
             </div>
             </div>
           </div>
+          </div>
         </div>
 
         <div className="flex gap-3 mt-6">
