@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Calendar, CheckCircle, XCircle, Clock, Activity, Users } from 'lucide-react'
 
-export default function TeacherAttendancePage({ 
+export default function TeacherAttendancePage({
   user,
   attendance,
   teachers,
@@ -27,8 +27,8 @@ export default function TeacherAttendancePage({
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Teacher Attendance</h2>
-          <p className="text-sm text-gray-600 mt-1">Mark and track teacher attendance</p>
+          <h2 className="text-2xl font-bold text-white">Teacher Attendance</h2>
+          <p className="text-sm text-blue-200/60 mt-1">Mark and track teacher attendance</p>
         </div>
         <Dialog open={showAttendanceModal} onOpenChange={setShowAttendanceModal}>
           <DialogTrigger asChild>
@@ -65,7 +65,7 @@ export default function TeacherAttendancePage({
                     <div className="text-center py-8">
                       <div className="animate-pulse">
                         <Users className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3" />
-                        <p className="text-gray-500 text-sm sm:text-base">Loading teachers...</p>
+                        <p className="text-blue-200/60 text-sm sm:text-base">Loading teachers...</p>
                       </div>
                     </div>
                   ) : (
@@ -114,11 +114,10 @@ export default function TeacherAttendancePage({
                             <div className="grid grid-cols-4 gap-2">
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'present' 
-                                    ? 'border-green-500 bg-green-50 text-green-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'present'
+                                    ? 'border-green-500 bg-green-50 text-green-700'
                                     : 'border-gray-200 hover:border-green-300 hover:bg-green-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'present'
@@ -130,11 +129,10 @@ export default function TeacherAttendancePage({
                               </button>
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'absent' 
-                                    ? 'border-red-500 bg-red-50 text-red-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'absent'
+                                    ? 'border-red-500 bg-red-50 text-red-700'
                                     : 'border-gray-200 hover:border-red-300 hover:bg-red-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'absent'
@@ -146,11 +144,10 @@ export default function TeacherAttendancePage({
                               </button>
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'late' 
-                                    ? 'border-yellow-500 bg-yellow-50 text-yellow-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'late'
+                                    ? 'border-yellow-500 bg-yellow-50 text-yellow-700'
                                     : 'border-gray-200 hover:border-yellow-300 hover:bg-yellow-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'late'
@@ -162,11 +159,10 @@ export default function TeacherAttendancePage({
                               </button>
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'sick' 
-                                    ? 'border-orange-500 bg-orange-50 text-orange-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'sick'
+                                    ? 'border-orange-500 bg-orange-50 text-orange-700'
                                     : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'sick'
@@ -232,7 +228,7 @@ export default function TeacherAttendancePage({
             <div className="text-3xl font-bold text-green-600">
               {attendance.filter(a => a.status === 'present').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Teachers present</p>
+            <p className="text-sm text-blue-200/60 mt-1">Teachers present</p>
           </CardContent>
         </Card>
 
@@ -247,7 +243,7 @@ export default function TeacherAttendancePage({
             <div className="text-3xl font-bold text-red-600">
               {attendance.filter(a => a.status === 'absent').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Teachers absent</p>
+            <p className="text-sm text-blue-200/60 mt-1">Teachers absent</p>
           </CardContent>
         </Card>
 
@@ -262,7 +258,7 @@ export default function TeacherAttendancePage({
             <div className="text-3xl font-bold text-yellow-600">
               {attendance.filter(a => a.status === 'late').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Teachers late</p>
+            <p className="text-sm text-blue-200/60 mt-1">Teachers late</p>
           </CardContent>
         </Card>
 
@@ -277,7 +273,7 @@ export default function TeacherAttendancePage({
             <div className="text-3xl font-bold text-orange-600">
               {attendance.filter(a => a.status === 'sick').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Teachers sick</p>
+            <p className="text-sm text-blue-200/60 mt-1">Teachers sick</p>
           </CardContent>
         </Card>
       </div>
@@ -301,14 +297,14 @@ export default function TeacherAttendancePage({
               <TableBody>
                 {attendance.map((record) => {
                   const teacher = teachers.find(t => t.id === record.teacherId)
-                  
+
                   return (
                     <TableRow key={record.id}>
                       <TableCell className="font-medium">
                         {teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unknown'}
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={record.status === 'present' ? 'default' : record.status === 'absent' ? 'destructive' : record.status === 'sick' ? 'default' : 'secondary'}
                           className={record.status === 'sick' ? 'bg-orange-600' : ''}
                         >
@@ -319,10 +315,10 @@ export default function TeacherAttendancePage({
                           {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="text-sm text-blue-200/80">
                         {record.markedBy === user.id ? 'You' : 'Admin'}
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="text-sm text-blue-200/80">
                         {new Date(record.createdAt).toLocaleTimeString()}
                       </TableCell>
                     </TableRow>
@@ -333,8 +329,8 @@ export default function TeacherAttendancePage({
           ) : (
             <div className="text-center py-8">
               <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600">No attendance marked for today</p>
-              <p className="text-sm text-gray-500 mt-1">Click "Mark Teacher Attendance" to get started</p>
+              <p className="text-blue-200/80">No attendance marked for today</p>
+              <p className="text-sm text-blue-200/60 mt-1">Click "Mark Teacher Attendance" to get started</p>
             </div>
           )}
         </CardContent>

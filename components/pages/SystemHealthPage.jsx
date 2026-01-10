@@ -8,7 +8,7 @@ const Loader = ({ message }) => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
       <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-      <p className="text-gray-600">{message}</p>
+      <p className="text-blue-200">{message}</p>
     </div>
   </div>
 )
@@ -27,7 +27,7 @@ export default function SystemHealthPage() {
   const fetchSystemHealth = async () => {
     try {
       const token = localStorage.getItem('token')
-      
+
       const [healthRes, backupRes] = await Promise.all([
         fetch('/api/master/system-health', {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -98,7 +98,7 @@ export default function SystemHealthPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
           <Activity className="h-8 w-8 text-green-600" />
           System Health & Monitoring
         </h1>
@@ -206,26 +206,26 @@ export default function SystemHealthPage() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">RSS Memory</span>
-                <span className="font-semibold">
+                <span className="text-sm text-blue-200/60">RSS Memory</span>
+                <span className="font-semibold text-white">
                   {formatBytes(systemHealth?.memoryUsage?.rss || 0)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Heap Used</span>
-                <span className="font-semibold">
+                <span className="text-sm text-blue-200/60">Heap Used</span>
+                <span className="font-semibold text-white">
                   {formatBytes(systemHealth?.memoryUsage?.heapUsed || 0)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Heap Total</span>
-                <span className="font-semibold">
+                <span className="text-sm text-blue-200/60">Heap Total</span>
+                <span className="font-semibold text-white">
                   {formatBytes(systemHealth?.memoryUsage?.heapTotal || 0)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">External</span>
-                <span className="font-semibold">
+                <span className="text-sm text-blue-200/60">External</span>
+                <span className="font-semibold text-white">
                   {formatBytes(systemHealth?.memoryUsage?.external || 0)}
                 </span>
               </div>
@@ -235,7 +235,7 @@ export default function SystemHealthPage() {
 
         <Card className="border-0 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-white">
               <Cpu className="h-5 w-5 text-green-600" />
               System Information
             </CardTitle>
@@ -243,20 +243,20 @@ export default function SystemHealthPage() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Node.js Version</span>
-                <span className="font-semibold">{process.version || 'N/A'}</span>
+                <span className="text-sm text-blue-200/60">Node.js Version</span>
+                <span className="font-semibold text-white">{process.version || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Platform</span>
-                <span className="font-semibold">{process.platform || 'N/A'}</span>
+                <span className="text-sm text-blue-200/60">Platform</span>
+                <span className="font-semibold text-white capitalize">{process.platform || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Architecture</span>
-                <span className="font-semibold">{process.arch || 'N/A'}</span>
+                <span className="text-sm text-blue-200/60">Architecture</span>
+                <span className="font-semibold text-white">{process.arch || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Last Updated</span>
-                <span className="font-semibold">
+                <span className="text-sm text-blue-200/60">Last Updated</span>
+                <span className="font-semibold text-white">
                   {new Date(systemHealth?.timestamp || Date.now()).toLocaleTimeString()}
                 </span>
               </div>
@@ -285,17 +285,16 @@ export default function SystemHealthPage() {
         <CardContent>
           <div className="space-y-4">
             {backupStatus.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-blue-200/60">
                 No backup records found. Create your first backup to get started.
               </div>
             ) : (
               backupStatus.map((backup) => (
                 <div key={backup.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-4">
-                    <div className={`p-2 rounded-lg ${
-                      backup.status === 'completed' ? 'bg-green-100' :
+                    <div className={`p-2 rounded-lg ${backup.status === 'completed' ? 'bg-green-100' :
                       backup.status === 'failed' ? 'bg-red-100' : 'bg-yellow-100'
-                    }`}>
+                      }`}>
                       {backup.status === 'completed' ? (
                         <CheckCircle className="h-5 w-5 text-green-600" />
                       ) : backup.status === 'failed' ? (
@@ -308,20 +307,19 @@ export default function SystemHealthPage() {
                       <div className="font-medium">
                         {backup.type} Backup
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-blue-200">
                         Created: {new Date(backup.createdAt).toLocaleString()}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`px-3 py-1 rounded text-sm font-medium ${
-                      backup.status === 'completed' ? 'bg-green-100 text-green-700' :
+                    <div className={`px-3 py-1 rounded text-sm font-medium ${backup.status === 'completed' ? 'bg-green-100 text-green-700' :
                       backup.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                    }`}>
+                      }`}>
                       {backup.status}
                     </div>
                     {backup.size && (
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="text-sm text-blue-200/60 mt-1">
                         Size: {backup.size}
                       </div>
                     )}

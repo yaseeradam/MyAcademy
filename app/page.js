@@ -32,7 +32,7 @@ import ParentForm from '@/components/forms/ParentForm'
 import StudentForm from '@/components/forms/StudentForm'
 import MessagesPage from '@/components/chat/MessagesPage'
 import BillingDashboard from '@/components/billing/BillingDashboard'
-import GamificationDashboard from '@/components/gamification/GamificationDashboard'
+
 import CalculatorApp from '@/components/calculator/calculator'
 import QuickActions from '@/components/dashboard/QuickActions'
 import AttendanceCharts from '@/components/dashboard/AttendanceCharts'
@@ -386,7 +386,7 @@ function App() {
   const getNavigationItems = () => {
     const baseItems = [{ id: 'dashboard', label: 'Dashboard', icon: Home }, { id: 'messages', label: 'Messages', icon: MessageCircle }]
     if (user?.role === 'developer') return [...baseItems, { id: 'schools', label: 'Schools', icon: Building2 }, { id: 'master-settings', label: 'Master Settings', icon: SettingsIcon }]
-    if (user?.role === 'school_admin') return [...baseItems, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'students', label: 'Students', icon: Users }, { id: 'teachers', label: 'Teachers', icon: UserCheck }, { id: 'classes', label: 'Classes', icon: SchoolIcon }, { id: 'subjects', label: 'Subjects', icon: BookOpen }, { id: 'assignments', label: 'Assignments', icon: GraduationCap }, { id: 'teacher-attendance', label: 'Teacher Attendance', icon: Calendar }, { id: 'student-attendance', label: 'Student Attendance', icon: Clock }, { id: 'more-features', label: 'More Features', icon: Grid3x3 }, { id: 'gamification', label: 'Gamification', icon: Trophy }, { id: 'billing', label: 'Billing', icon: CreditCard }, { id: 'school-settings', label: 'School Settings', icon: SettingsIcon }]
+    if (user?.role === 'school_admin') return [...baseItems, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'students', label: 'Students', icon: Users }, { id: 'teachers', label: 'Teachers', icon: UserCheck }, { id: 'classes', label: 'Classes', icon: SchoolIcon }, { id: 'subjects', label: 'Subjects', icon: BookOpen }, { id: 'assignments', label: 'Assignments', icon: GraduationCap }, { id: 'teacher-attendance', label: 'Teacher Attendance', icon: Calendar }, { id: 'student-attendance', label: 'Student Attendance', icon: Clock }, { id: 'more-features', label: 'More Features', icon: Grid3x3 }, { id: 'billing', label: 'Billing', icon: CreditCard }, { id: 'school-settings', label: 'School Settings', icon: SettingsIcon }]
     if (user?.role === 'teacher') return [...baseItems, { id: 'gradebook', label: 'Gradebook', icon: BookOpen }, { id: 'my-classes', label: 'My Classes', icon: SchoolIcon }, { id: 'my-subjects', label: 'My Subjects', icon: BookOpen }, { id: 'students', label: 'My Students', icon: Users }, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'student-attendance', label: 'Mark Attendance', icon: Calendar }]
     if (user?.role === 'parent') return [...baseItems, { id: 'my-children', label: 'My Children', icon: Users }, { id: 'school-fees', label: 'School Fees', icon: CreditCard }, { id: 'attendance', label: 'Attendance Records', icon: Calendar }, { id: 'results', label: 'Results', icon: BarChart3 }]
     return baseItems
@@ -526,7 +526,7 @@ function App() {
       {activeTab === 'transport' && user.role === 'school_admin' && <TransportPage routes={newFeatures.routes} students={students} showModal={showRouteModal} setShowModal={setShowRouteModal} showAssignModal={showAssignRouteModal} setShowAssignModal={setShowAssignRouteModal} form={routeForm} setForm={setRouteForm} assignForm={assignRouteForm} setAssignForm={setAssignRouteForm} handleSubmit={(e) => newFeatures.handleRouteSubmit(e, routeForm, setShowRouteModal)} handleAssign={(e) => newFeatures.handleAssignRoute(e, assignRouteForm, setShowAssignRouteModal)} handleDelete={newFeatures.handleDeleteRoute} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'health' && user.role === 'school_admin' && <HealthPage healthRecords={newFeatures.healthRecords} students={students} showModal={showHealthModal} setShowModal={setShowHealthModal} form={healthForm} setForm={setHealthForm} handleSubmit={(e) => newFeatures.handleHealthSubmit(e, healthForm, setShowHealthModal)} handleDelete={newFeatures.handleDeleteHealthRecord} selectedStudent={selectedStudent} setSelectedStudent={setSelectedStudent} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'billing' && user.role === 'school_admin' && <BillingDashboard currentUser={user} school={school} />}
-      {activeTab === 'gamification' && <GamificationDashboard currentUser={user} />}
+
       {activeTab === 'messages' && <MessagesPage currentUser={user} onBack={() => setActiveTab('dashboard')} />}
       {activeTab === 'gradebook' && user.role === 'teacher' && (
         <GradebookPage

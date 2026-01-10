@@ -14,7 +14,7 @@ export default function TransportPage({ routes, students, showModal, setShowModa
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="sm" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" /> Back</Button>
-          <h2 className="text-2xl font-bold text-gray-800">Transport Management</h2>
+          <h2 className="text-2xl font-bold text-white">Transport Management</h2>
         </div>
         <Button onClick={() => { setForm({ routeName: '', busNumber: '', driverName: '', driverPhone: '', capacity: '', stops: '', fee: '' }); setShowModal(true) }} className="bg-blue-600 hover:bg-blue-700">
           <Plus className="h-4 w-4 mr-2" /> Add Route
@@ -39,7 +39,7 @@ export default function TransportPage({ routes, students, showModal, setShowModa
                     <Button size="sm" variant="ghost" onClick={() => { setForm(route); setShowModal(true) }}>
                       <Edit className="h-4 w-4 text-blue-600" />
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={() => { if(confirm('Delete this route?')) handleDelete(route.id || route._id) }}>
+                    <Button size="sm" variant="ghost" onClick={() => { if (confirm('Delete this route?')) handleDelete(route.id || route._id) }}>
                       <Trash2 className="h-4 w-4 text-red-600" />
                     </Button>
                   </div>
@@ -50,28 +50,28 @@ export default function TransportPage({ routes, students, showModal, setShowModa
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-gray-600" />
-                      <span className="text-gray-600">Driver:</span>
-                      <span className="font-semibold">{route.driverName}</span>
+                      <span className="text-blue-200/60">Driver:</span>
+                      <span className="font-semibold text-white">{route.driverName}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-600">Phone:</span>
-                      <span className="font-semibold">{route.driverPhone}</span>
+                      <span className="text-blue-200/60">Phone:</span>
+                      <span className="font-semibold text-white">{route.driverPhone}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-600">Capacity:</span>
-                      <span className="font-semibold">{assignedStudents.length}/{route.capacity}</span>
+                      <span className="text-blue-200/60">Capacity:</span>
+                      <span className="font-semibold text-white">{assignedStudents.length}/{route.capacity}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-600">Monthly Fee:</span>
-                      <span className="font-semibold">₦{route.fee?.toLocaleString()}</span>
+                      <span className="text-blue-200/60">Monthly Fee:</span>
+                      <span className="font-semibold text-white">₦{route.fee?.toLocaleString()}</span>
                     </div>
                   </div>
                   <div>
                     <div className="flex items-start gap-2 mb-2">
                       <MapPin className="h-4 w-4 text-gray-600 mt-1" />
                       <div>
-                        <div className="font-semibold mb-1">Stops:</div>
-                        <div className="text-sm text-gray-600 space-y-1">
+                        <div className="font-semibold mb-1 text-white">Stops:</div>
+                        <div className="text-sm text-blue-200/60 space-y-1">
                           {route.stops?.split(',').map((stop, i) => (
                             <div key={i} className="flex items-center gap-2">
                               <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -107,33 +107,33 @@ export default function TransportPage({ routes, students, showModal, setShowModa
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label>Route Name</Label>
-              <Input value={form.routeName} onChange={(e) => setForm({...form, routeName: e.target.value})} placeholder="e.g., Route A - Ikeja" required />
+              <Input value={form.routeName} onChange={(e) => setForm({ ...form, routeName: e.target.value })} placeholder="e.g., Route A - Ikeja" required />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Bus Number</Label>
-                <Input value={form.busNumber} onChange={(e) => setForm({...form, busNumber: e.target.value})} required />
+                <Input value={form.busNumber} onChange={(e) => setForm({ ...form, busNumber: e.target.value })} required />
               </div>
               <div>
                 <Label>Capacity</Label>
-                <Input type="number" value={form.capacity} onChange={(e) => setForm({...form, capacity: e.target.value})} required />
+                <Input type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} required />
               </div>
             </div>
             <div>
               <Label>Driver Name</Label>
-              <Input value={form.driverName} onChange={(e) => setForm({...form, driverName: e.target.value})} required />
+              <Input value={form.driverName} onChange={(e) => setForm({ ...form, driverName: e.target.value })} required />
             </div>
             <div>
               <Label>Driver Phone</Label>
-              <Input value={form.driverPhone} onChange={(e) => setForm({...form, driverPhone: e.target.value})} required />
+              <Input value={form.driverPhone} onChange={(e) => setForm({ ...form, driverPhone: e.target.value })} required />
             </div>
             <div>
               <Label>Stops (comma-separated)</Label>
-              <Input value={form.stops} onChange={(e) => setForm({...form, stops: e.target.value})} placeholder="Stop 1, Stop 2, Stop 3" required />
+              <Input value={form.stops} onChange={(e) => setForm({ ...form, stops: e.target.value })} placeholder="Stop 1, Stop 2, Stop 3" required />
             </div>
             <div>
               <Label>Monthly Fee (₦)</Label>
-              <Input type="number" value={form.fee} onChange={(e) => setForm({...form, fee: e.target.value})} required />
+              <Input type="number" value={form.fee} onChange={(e) => setForm({ ...form, fee: e.target.value })} required />
             </div>
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{form.id || form._id ? 'Update Route' : 'Add Route'}</Button>
           </form>
@@ -146,7 +146,7 @@ export default function TransportPage({ routes, students, showModal, setShowModa
           <form onSubmit={handleAssign} className="space-y-4">
             <div>
               <Label>Student</Label>
-              <Select value={assignForm.studentId} onValueChange={(v) => setAssignForm({...assignForm, studentId: v})}>
+              <Select value={assignForm.studentId} onValueChange={(v) => setAssignForm({ ...assignForm, studentId: v })}>
                 <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
                 <SelectContent>{students.map(s => <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>)}</SelectContent>
               </Select>

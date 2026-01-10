@@ -7,15 +7,15 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Download, Eye, Edit, Users, UserX, Trash2 } from 'lucide-react'
+import { Plus, Download, Eye, Edit, Users, Trash2, Search } from 'lucide-react'
 import { exportStudentsToCSV } from '@/lib/csv-export'
 import { ViewStudentModal } from '@/components/modals/ViewStudentModal'
 import { EditStudentModal } from '@/components/modals/EditStudentModal'
 
-export default function StudentsPage({ 
-  students, 
-  classes, 
-  parents, 
+export default function StudentsPage({
+  students,
+  classes,
+  parents,
   school,
   studentSearch,
   setStudentSearch,
@@ -36,8 +36,6 @@ export default function StudentsPage({
   const [showViewModal, setShowViewModal] = useState(false)
   const [editStudent, setEditStudent] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
-
-  console.log('StudentsPage - students:', students?.length, students)
 
   const handleView = (student) => {
     setViewStudent(student)
@@ -74,87 +72,98 @@ export default function StudentsPage({
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{readOnly ? 'My Students' : 'Students Management'}</h2>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-white">{readOnly ? 'My Students' : 'Students Management'}</h2>
+          <p className="text-blue-200/60 text-sm mt-1">Manage student records and enrollment</p>
+        </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => exportStudentsToCSV(students, classes, parents, school?.name)}>
+          <Button
+            variant="outline"
+            onClick={() => exportStudentsToCSV(students, classes, parents, school?.name)}
+            className="bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white"
+          >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
-          {!readOnly && <Button onClick={() => setShowFormView('student')}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Student
-          </Button>}
+          {!readOnly && (
+            <Button
+              onClick={() => setShowFormView('student')}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Student
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="mb-6 space-y-4">
+      {/* Search and Filters */}
+      <div className="space-y-4">
         <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40" />
           <Input
             type="text"
             placeholder="Search students by name, admission number..."
             value={studentSearch}
             onChange={(e) => setStudentSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full"
+            className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 focus:border-amber-500/50"
           />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
         </div>
-        
-        <div className="flex flex-wrap gap-4">
+
+        <div className="flex flex-wrap gap-3">
           <Select value={studentFilters.class} onValueChange={(value) => setStudentFilters(prev => ({ ...prev, class: value }))}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
               <SelectValue placeholder="Filter by class" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all_classes">All Classes</SelectItem>
+            <SelectContent className="bg-[#0f1d32] border-white/10">
+              <SelectItem value="all_classes" className="text-white hover:bg-white/10">All Classes</SelectItem>
               {classes.map((cls) => (
-                <SelectItem key={cls.id} value={cls.id}>{cls.name}</SelectItem>
+                <SelectItem key={cls.id} value={cls.id} className="text-white hover:bg-white/10">{cls.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
-          
+
           <Select value={studentFilters.gender} onValueChange={(value) => setStudentFilters(prev => ({ ...prev, gender: value }))}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
               <SelectValue placeholder="Filter by gender" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all_genders">All Genders</SelectItem>
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
+            <SelectContent className="bg-[#0f1d32] border-white/10">
+              <SelectItem value="all_genders" className="text-white hover:bg-white/10">All Genders</SelectItem>
+              <SelectItem value="male" className="text-white hover:bg-white/10">Male</SelectItem>
+              <SelectItem value="female" className="text-white hover:bg-white/10">Female</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <Select value={studentFilters.status} onValueChange={(value) => setStudentFilters(prev => ({ ...prev, status: value }))}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all_status">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectContent className="bg-[#0f1d32] border-white/10">
+              <SelectItem value="all_status" className="text-white hover:bg-white/10">All Status</SelectItem>
+              <SelectItem value="active" className="text-white hover:bg-white/10">Active</SelectItem>
+              <SelectItem value="inactive" className="text-white hover:bg-white/10">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <Card>
+      {/* Data Table */}
+      <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Admission Number</TableHead>
-                <TableHead>Class</TableHead>
-                <TableHead>Parent</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Gender</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+              <TableRow className="bg-[#0f1d32] border-b border-white/10 hover:bg-[#0f1d32]">
+                <TableHead className="text-white font-semibold">Name</TableHead>
+                <TableHead className="text-white font-semibold">Admission #</TableHead>
+                <TableHead className="text-white font-semibold">Class</TableHead>
+                <TableHead className="text-white font-semibold">Parent</TableHead>
+                <TableHead className="text-white font-semibold">Phone</TableHead>
+                <TableHead className="text-white font-semibold">Gender</TableHead>
+                <TableHead className="text-white font-semibold">Status</TableHead>
+                <TableHead className="text-white font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -162,33 +171,47 @@ export default function StudentsPage({
                 const studentClass = classes.find(c => c.id === student.classId)
                 const studentParent = parents.find(p => p.id === student.parentId)
                 return (
-                  <TableRow key={student.id}>
-                    <TableCell className="font-medium">
+                  <TableRow key={student.id} className="border-white/5 hover:bg-white/5">
+                    <TableCell className="font-medium text-white">
                       {student.firstName} {student.lastName}
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{student.admissionNumber}</TableCell>
-                    <TableCell>{studentClass?.name || 'Not assigned'}</TableCell>
-                    <TableCell className="max-w-xs truncate">{studentParent?.name || 'Not assigned'}</TableCell>
-                    <TableCell>{student.phoneNumber || 'N/A'}</TableCell>
-                    <TableCell className="capitalize">{student.gender || 'N/A'}</TableCell>
+                    <TableCell className="font-mono text-sm text-blue-200/70">{student.admissionNumber}</TableCell>
+                    <TableCell className="text-blue-200/70">{studentClass?.name || 'Not assigned'}</TableCell>
+                    <TableCell className="max-w-xs truncate text-blue-200/70">{studentParent?.name || 'Not assigned'}</TableCell>
+                    <TableCell className="text-blue-200/70">{student.phoneNumber || 'N/A'}</TableCell>
+                    <TableCell className="capitalize text-blue-200/70">{student.gender || 'N/A'}</TableCell>
                     <TableCell>
-                      <Badge variant={student.active ? "default" : "secondary"}>
+                      <Badge className={student.active
+                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30"
+                        : "bg-red-500/20 text-red-300 border-red-400/30"
+                      }>
                         {student.active ? 'Active' : 'Inactive'}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button size="sm" variant="outline" onClick={() => handleView(student)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleView(student)}
+                          className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
                         {!readOnly && <>
-                          <Button size="sm" variant="outline" onClick={() => { setViewStudent(student); onEdit(student); }}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => { setViewStudent(student); onEdit(student); }}
+                            className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            size="sm" 
-                            variant={student.active ? "destructive" : "default"}
-                            onClick={() => { if (window.confirm('Are you sure?')) onDelete(student.id) }} 
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => { if (window.confirm('Are you sure?')) onDelete(student.id) }}
+                            className="bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/20"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -203,12 +226,13 @@ export default function StudentsPage({
         </CardContent>
       </Card>
 
+      {/* Empty State */}
       {(!students || students.length === 0) && (
-        <Card>
+        <Card className="border-0 bg-white/5 backdrop-blur-xl">
           <CardContent className="p-8 text-center">
-            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No students enrolled yet.</p>
-            <p className="text-sm text-gray-500 mt-1">Add your first student to get started.</p>
+            <Users className="h-12 w-12 text-blue-200/40 mx-auto mb-4" />
+            <p className="text-white">No students enrolled yet.</p>
+            <p className="text-sm text-blue-200/60 mt-1">Add your first student to get started.</p>
           </CardContent>
         </Card>
       )}
@@ -222,7 +246,7 @@ export default function StudentsPage({
         onEdit={handleEdit}
         schoolName={school?.name}
       />
-      
+
       <EditStudentModal
         open={showEditModal}
         onOpenChange={setShowEditModal}

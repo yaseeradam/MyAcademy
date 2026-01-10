@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge'
 import { Plus, Eye, Edit, GraduationCap, Trash2 } from 'lucide-react'
 
-export default function AssignmentsPage({ 
+export default function AssignmentsPage({
   assignments,
   teachers,
   classes,
@@ -25,7 +25,7 @@ export default function AssignmentsPage({
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Teacher Assignments</h2>
+        <h2 className="text-2xl font-bold text-white">Teacher Assignments</h2>
         <Dialog open={showAssignmentModal} onOpenChange={setShowAssignmentModal}>
           <DialogTrigger asChild>
             <Button>
@@ -140,8 +140,8 @@ export default function AssignmentsPage({
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => {
                             setAssignmentForm({
@@ -157,8 +157,8 @@ export default function AssignmentsPage({
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="destructive" // Use destructive variant for Delete
                           onClick={() => {
                             if (window.confirm('Are you sure you want to delete this assignment?')) {
@@ -181,9 +181,9 @@ export default function AssignmentsPage({
       {assignments.length === 0 && (
         <Card>
           <CardContent className="p-8 text-center">
-            <GraduationCap className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No teacher assignments yet.</p>
-            <p className="text-sm text-gray-500 mt-1">Assign teachers to subjects and classes to get started.</p>
+            <GraduationCap className="h-12 w-12 text-blue-200/40 mx-auto mb-4" />
+            <p className="text-blue-200">No teacher assignments yet.</p>
+            <p className="text-sm text-blue-200/60 mt-1">Assign teachers to subjects and classes to get started.</p>
           </CardContent>
         </Card>
       )}

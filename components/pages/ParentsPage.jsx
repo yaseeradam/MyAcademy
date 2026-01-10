@@ -7,13 +7,13 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Download, UserPlus, Edit, Users2, UserX } from 'lucide-react'
+import { Download, UserPlus, Edit, Users2, Trash2, Search } from 'lucide-react'
 import { exportParentsToCSV } from '@/lib/csv-export'
 
 
-export default function ParentsPage({ 
-  parents, 
-  students, 
+export default function ParentsPage({
+  parents,
+  students,
   school,
   parentSearch,
   setParentSearch,
@@ -50,104 +50,123 @@ export default function ParentsPage({
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{readOnly ? 'Parents' : 'Parents Management'}</h2>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-white">{readOnly ? 'Parents' : 'Parents Management'}</h2>
+          <p className="text-blue-200/60 text-sm mt-1">Manage parent accounts and contact information</p>
+        </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => exportParentsToCSV(parents, students, school?.name)}>
+          <Button
+            variant="outline"
+            onClick={() => exportParentsToCSV(parents, students, school?.name)}
+            className="bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white"
+          >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
-          {!readOnly && <Button onClick={() => setShowFormView('parent')}>
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add Parent
-          </Button>}
+          {!readOnly && (
+            <Button
+              onClick={() => setShowFormView('parent')}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add Parent
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="mb-6 space-y-4">
+      <div className="space-y-4">
         <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40" />
           <Input
             type="text"
             placeholder="Search parents by name, email, phone..."
             value={parentSearch}
             onChange={(e) => setParentSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full"
+            className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 focus:border-amber-500/50"
           />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
         </div>
-        
-        <div className="flex flex-wrap gap-4">
+
+        <div className="flex flex-wrap gap-3">
           <Select value={parentFilters.childrenCount} onValueChange={(value) => setParentFilters(prev => ({ ...prev, childrenCount: value }))}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
               <SelectValue placeholder="Filter by children count" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all_parents">All Parents</SelectItem>
-              <SelectItem value="1">1 Child</SelectItem>
-              <SelectItem value="2+">2+ Children</SelectItem>
+            <SelectContent className="bg-[#0f1d32] border-white/10">
+              <SelectItem value="all_parents" className="text-white hover:bg-white/10">All Parents</SelectItem>
+              <SelectItem value="1" className="text-white hover:bg-white/10">1 Child</SelectItem>
+              <SelectItem value="2+" className="text-white hover:bg-white/10">2+ Children</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <Select value={parentFilters.status} onValueChange={(value) => setParentFilters(prev => ({ ...prev, status: value }))}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all_status">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectContent className="bg-[#0f1d32] border-white/10">
+              <SelectItem value="all_status" className="text-white hover:bg-white/10">All Status</SelectItem>
+              <SelectItem value="active" className="text-white hover:bg-white/10">Active</SelectItem>
+              <SelectItem value="inactive" className="text-white hover:bg-white/10">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <Card>
+      {/* Data Table */}
+      <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Children</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+              <TableRow className="bg-[#0f1d32] border-b border-white/10 hover:bg-[#0f1d32]">
+                <TableHead className="text-white font-semibold">Name</TableHead>
+                <TableHead className="text-white font-semibold">Email</TableHead>
+                <TableHead className="text-white font-semibold">Phone</TableHead>
+                <TableHead className="text-white font-semibold">Address</TableHead>
+                <TableHead className="text-white font-semibold">Children</TableHead>
+                <TableHead className="text-white font-semibold">Status</TableHead>
+                <TableHead className="text-white font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filterParents(parents, students).map((parent) => (
-                <TableRow key={parent.id}>
-                  <TableCell className="font-medium">{parent.name}</TableCell>
-                  <TableCell className="max-w-xs truncate">{parent.email}</TableCell>
-                  <TableCell>{parent.phoneNumber || 'N/A'}</TableCell>
-                  <TableCell className="max-w-xs truncate">{parent.address || 'N/A'}</TableCell>
+                <TableRow key={parent.id} className="border-white/5 hover:bg-white/5">
+                  <TableCell className="font-medium text-white">{parent.name}</TableCell>
+                  <TableCell className="max-w-xs truncate text-blue-200/70">{parent.email}</TableCell>
+                  <TableCell className="text-blue-200/70">{parent.phoneNumber || 'N/A'}</TableCell>
+                  <TableCell className="max-w-xs truncate text-blue-200/70">{parent.address || 'N/A'}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">
+                    <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/30">
                       {students.filter(s => s.parentId === parent.id).length} children
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={parent.active ? "default" : "secondary"}>
+                    <Badge className={parent.active
+                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30"
+                      : "bg-red-500/20 text-red-300 border-red-400/30"
+                    }>
                       {parent.active ? 'Active' : 'Inactive'}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
                       {!readOnly && <>
-                        <Button size="sm" variant="outline" onClick={() => onEdit(parent)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onEdit(parent)}
+                          className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button 
-                          size="sm" 
-                          variant="destructive"
-                          onClick={() => { if (confirm('Are you sure?')) onDelete(parent.id) }} 
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => { if (confirm('Are you sure?')) onDelete(parent.id) }}
+                          className="bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/20"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -161,16 +180,16 @@ export default function ParentsPage({
         </CardContent>
       </Card>
 
+      {/* Empty State */}
       {parents.length === 0 && (
-        <Card>
+        <Card className="border-0 bg-white/5 backdrop-blur-xl">
           <CardContent className="p-8 text-center">
-            <Users2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No parents registered yet.</p>
-            <p className="text-sm text-gray-500 mt-1">Add your first parent to get started.</p>
+            <Users2 className="h-12 w-12 text-blue-200/40 mx-auto mb-4" />
+            <p className="text-white">No parents registered yet.</p>
+            <p className="text-sm text-blue-200/60 mt-1">Add your first parent to get started.</p>
           </CardContent>
         </Card>
       )}
-
     </div>
   )
 }

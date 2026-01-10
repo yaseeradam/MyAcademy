@@ -1,42 +1,114 @@
 'use client'
 
+import React from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { UserPlus, Users2, Calendar, FileText } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { UserPlus, Users2, Calendar, FileText, Sparkles, Send, GraduationCap } from 'lucide-react'
 
 export default function QuickActions({ onAction, userRole }) {
   const actions = {
     school_admin: [
-      { id: 'add-student', label: 'Add Student', icon: UserPlus, color: 'bg-blue-500' },
-      { id: 'add-teacher', label: 'Add Teacher', icon: UserPlus, color: 'bg-green-500' },
-      { id: 'add-parent', label: 'Add Parent', icon: Users2, color: 'bg-purple-500' },
-      { id: 'mark-attendance', label: 'Mark Attendance', icon: Calendar, color: 'bg-orange-500' },
-      { id: 'generate-report', label: 'Generate Report', icon: FileText, color: 'bg-pink-500' }
+      {
+        id: 'add-student',
+        label: 'Add Student',
+        icon: UserPlus,
+        gradient: 'from-blue-500 to-indigo-600',
+        shadow: 'shadow-blue-500/20',
+        description: 'Enrol a new student'
+      },
+      {
+        id: 'add-teacher',
+        label: 'Add Teacher',
+        icon: GraduationCap,
+        gradient: 'from-emerald-500 to-teal-600',
+        shadow: 'shadow-emerald-500/20',
+        description: 'Register staff member'
+      },
+      {
+        id: 'add-parent',
+        label: 'Add Parent',
+        icon: Users2,
+        gradient: 'from-purple-500 to-violet-600',
+        shadow: 'shadow-purple-500/20',
+        description: 'Link parent account'
+      },
+      {
+        id: 'mark-attendance',
+        label: 'Take Attendance',
+        icon: Calendar,
+        gradient: 'from-amber-500 to-orange-600',
+        shadow: 'shadow-amber-500/20',
+        description: 'Mark daily attendance'
+      },
+      {
+        id: 'send-notice',
+        label: 'Send Notice',
+        icon: Send,
+        gradient: 'from-pink-500 to-rose-600',
+        shadow: 'shadow-pink-500/20',
+        description: 'Broadcast message'
+      }
     ],
     teacher: [
-      { id: 'mark-attendance', label: 'Mark Attendance', icon: Calendar, color: 'bg-orange-500' }
+      {
+        id: 'mark-attendance',
+        label: 'Mark Attendance',
+        icon: Calendar,
+        gradient: 'from-amber-500 to-orange-600',
+        shadow: 'shadow-amber-500/20',
+        description: 'Record class attendance'
+      },
+      {
+        id: 'add-assignment',
+        label: 'Add Assignment',
+        icon: FileText,
+        gradient: 'from-blue-500 to-indigo-600',
+        shadow: 'shadow-blue-500/20',
+        description: 'Create new task'
+      }
     ]
   }
 
   const userActions = actions[userRole] || []
 
+  if (userActions.length === 0) return null
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
+    <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-4 opacity-5">
+        <Sparkles className="h-24 w-24 text-white" />
+      </div>
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl text-white flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-amber-400" />
+          Quick Actions
+        </CardTitle>
+        <CardDescription className="text-blue-200/60">
+          Frequently used actions for efficient management
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {userActions.map((action) => {
             const Icon = action.icon
             return (
               <Button
                 key={action.id}
                 onClick={() => onAction(action.id)}
-                className={`${action.color} hover:opacity-90 h-auto py-4 flex flex-col items-center gap-2`}
+                className={`
+                  group relative flex flex-col items-center justify-center gap-3 h-auto py-6
+                  bg-gradient-to-br ${action.gradient} border-0
+                  hover:scale-[1.02] transition-all duration-300
+                  shadow-lg ${action.shadow}
+                `}
               >
-                <Icon className="h-6 w-6" />
-                <span className="text-xs text-center">{action.label}</span>
+                <div className="p-2 bg-white/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+                  <Icon className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <span className="font-semibold text-white tracking-wide">{action.label}</span>
+                  <span className="text-[10px] text-white/80 font-normal hidden sm:inline-block">{action.description}</span>
+                </div>
               </Button>
             )
           })}

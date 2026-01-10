@@ -7,12 +7,12 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Download, UserPlus, Edit, UserCheck, UserX, Trash2 } from 'lucide-react'
+import { Download, UserPlus, Edit, UserCheck, Trash2, Search } from 'lucide-react'
 import { exportTeachersToCSV } from '@/lib/csv-export'
 import { EditTeacherModal } from '@/components/modals/EditTeacherModal'
 
-export default function TeachersPage({ 
-  teachers, 
+export default function TeachersPage({
+  teachers,
   school,
   teacherSearch,
   setTeacherSearch,
@@ -71,15 +71,26 @@ export default function TeachersPage({
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Teachers Management</h2>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Teachers Management</h2>
+          <p className="text-blue-200/60 text-sm mt-1">Manage teaching staff and assignments</p>
+        </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => exportTeachersToCSV(teachers, school?.name)}>
+          <Button
+            variant="outline"
+            onClick={() => exportTeachersToCSV(teachers, school?.name)}
+            className="bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white"
+          >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
-          <Button onClick={() => setShowFormView('teacher')}>
+          <Button
+            onClick={() => setShowFormView('teacher')}
+            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+          >
             <UserPlus className="h-4 w-4 mr-2" />
             Add Teacher
           </Button>
@@ -87,81 +98,91 @@ export default function TeachersPage({
       </div>
 
       {/* Search and Filters */}
-      <div className="mb-6 space-y-4">
+      <div className="space-y-4">
         <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40" />
           <Input
             type="text"
             placeholder="Search teachers by name, email, qualification..."
             value={teacherSearch}
             onChange={(e) => setTeacherSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full"
+            className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 focus:border-amber-500/50"
           />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
         </div>
 
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-3">
           <Input
             placeholder="Filter by specialization"
             value={teacherFilters.specialization}
             onChange={(e) => setTeacherFilters(prev => ({ ...prev, specialization: e.target.value }))}
-            className="w-48"
+            className="w-48 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
           />
 
           <Select value={teacherFilters.status} onValueChange={(value) => setTeacherFilters(prev => ({ ...prev, status: value }))}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all_status">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectContent className="bg-[#0f1d32] border-white/10">
+              <SelectItem value="all_status" className="text-white hover:bg-white/10">All Status</SelectItem>
+              <SelectItem value="active" className="text-white hover:bg-white/10">Active</SelectItem>
+              <SelectItem value="inactive" className="text-white hover:bg-white/10">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <Card>
+      {/* Data Table */}
+      <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Qualification</TableHead>
-                <TableHead>Specialization</TableHead>
-                <TableHead>Experience</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+              <TableRow className="bg-[#0f1d32] border-b border-white/10 hover:bg-[#0f1d32]">
+                <TableHead className="text-white font-semibold">Name</TableHead>
+                <TableHead className="text-white font-semibold">Email</TableHead>
+                <TableHead className="text-white font-semibold">Phone</TableHead>
+                <TableHead className="text-white font-semibold">Qualification</TableHead>
+                <TableHead className="text-white font-semibold">Specialization</TableHead>
+                <TableHead className="text-white font-semibold">Experience</TableHead>
+                <TableHead className="text-white font-semibold">Status</TableHead>
+                <TableHead className="text-white font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filterTeachers(teachers).map((teacher) => (
-                <TableRow key={teacher.id}>
-                  <TableCell className="font-medium">
+                <TableRow key={teacher.id} className="border-white/5 hover:bg-white/5">
+                  <TableCell className="font-medium text-white">
                     {teacher.firstName} {teacher.lastName}
                   </TableCell>
-                  <TableCell className="max-w-xs truncate">{teacher.email}</TableCell>
-                  <TableCell>{teacher.phoneNumber || 'N/A'}</TableCell>
-                  <TableCell className="max-w-xs truncate">{teacher.qualification || 'N/A'}</TableCell>
-                  <TableCell>{teacher.specialization || 'N/A'}</TableCell>
-                  <TableCell>{teacher.experience || 'N/A'}</TableCell>
+                  <TableCell className="max-w-xs truncate text-blue-200/70">{teacher.email}</TableCell>
+                  <TableCell className="text-blue-200/70">{teacher.phoneNumber || 'N/A'}</TableCell>
+                  <TableCell className="max-w-xs truncate text-blue-200/70">{teacher.qualification || 'N/A'}</TableCell>
+                  <TableCell className="text-blue-200/70">{teacher.specialization || 'N/A'}</TableCell>
+                  <TableCell className="text-blue-200/70">{teacher.experience || 'N/A'}</TableCell>
                   <TableCell>
-                    <Badge variant={teacher.active ? "default" : "secondary"}>
+                    <Badge className={teacher.active
+                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30"
+                      : "bg-red-500/20 text-red-300 border-red-400/30"
+                    }>
                       {teacher.active ? 'Active' : 'Inactive'}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     {!readOnly && (
                       <div className="flex space-x-2">
-                        <Button size="sm" variant="outline" onClick={() => onEdit(teacher)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onEdit(teacher)}
+                          className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="destructive" onClick={() => { if (window.confirm('Are you sure you want to delete this teacher?')) onDelete(teacher.id) }}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => { if (window.confirm('Are you sure you want to delete this teacher?')) onDelete(teacher.id) }}
+                          className="bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/20"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -174,12 +195,13 @@ export default function TeachersPage({
         </CardContent>
       </Card>
 
+      {/* Empty State */}
       {(!teachers || teachers.length === 0) && (
-        <Card>
+        <Card className="border-0 bg-white/5 backdrop-blur-xl">
           <CardContent className="p-8 text-center">
-            <UserCheck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No teachers added yet.</p>
-            <p className="text-sm text-gray-500 mt-1">Add your first teacher to get started.</p>
+            <UserCheck className="h-12 w-12 text-blue-200/40 mx-auto mb-4" />
+            <p className="text-white">No teachers added yet.</p>
+            <p className="text-sm text-blue-200/60 mt-1">Add your first teacher to get started.</p>
           </CardContent>
         </Card>
       )}

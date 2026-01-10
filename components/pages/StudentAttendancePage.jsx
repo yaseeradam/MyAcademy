@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Calendar, CheckCircle, XCircle, Clock, Activity, Users, School } from 'lucide-react'
 
-export default function StudentAttendancePage({ 
+export default function StudentAttendancePage({
   user,
   attendance,
   students,
@@ -51,8 +51,8 @@ export default function StudentAttendancePage({
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Student Attendance</h2>
-          <p className="text-sm text-gray-600 mt-1">Mark and track student attendance</p>
+          <h2 className="text-2xl font-bold text-white">Student Attendance</h2>
+          <p className="text-sm text-blue-200/60 mt-1">Mark and track student attendance</p>
         </div>
         <Dialog open={showAttendanceModal} onOpenChange={setShowAttendanceModal}>
           <DialogTrigger asChild>
@@ -113,7 +113,7 @@ export default function StudentAttendancePage({
                     <div className="text-center py-8">
                       <div className="animate-pulse">
                         <Users className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3" />
-                        <p className="text-gray-500 text-sm sm:text-base">Loading students...</p>
+                        <p className="text-blue-200/60 text-sm sm:text-base">Loading students...</p>
                       </div>
                     </div>
                   ) : (
@@ -156,18 +156,17 @@ export default function StudentAttendancePage({
                               </Avatar>
                               <div className="min-w-0 flex-1">
                                 <span className="font-medium text-sm sm:text-base block truncate">{item.studentName}</span>
-                                <p className="text-xs text-gray-500">ID: {item.studentId.slice(0, 8)}</p>
+                                <p className="text-xs text-blue-200/60">ID: {item.studentId.slice(0, 8)}</p>
                               </div>
                             </div>
                             {/* Mobile-friendly status selector - icon buttons in a grid */}
                             <div className="grid grid-cols-4 gap-2">
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'present' 
-                                    ? 'border-green-500 bg-green-50 text-green-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'present'
+                                    ? 'border-green-500 bg-green-50 text-green-700'
                                     : 'border-gray-200 hover:border-green-300 hover:bg-green-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'present'
@@ -179,11 +178,10 @@ export default function StudentAttendancePage({
                               </button>
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'absent' 
-                                    ? 'border-red-500 bg-red-50 text-red-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'absent'
+                                    ? 'border-red-500 bg-red-50 text-red-700'
                                     : 'border-gray-200 hover:border-red-300 hover:bg-red-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'absent'
@@ -195,11 +193,10 @@ export default function StudentAttendancePage({
                               </button>
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'late' 
-                                    ? 'border-yellow-500 bg-yellow-50 text-yellow-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'late'
+                                    ? 'border-yellow-500 bg-yellow-50 text-yellow-700'
                                     : 'border-gray-200 hover:border-yellow-300 hover:bg-yellow-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'late'
@@ -211,11 +208,10 @@ export default function StudentAttendancePage({
                               </button>
                               <button
                                 type="button"
-                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${
-                                  item.status === 'sick' 
-                                    ? 'border-orange-500 bg-orange-50 text-orange-700' 
+                                className={`flex flex-col items-center justify-center p-2 sm:p-3 rounded-lg border-2 transition-all ${item.status === 'sick'
+                                    ? 'border-orange-500 bg-orange-50 text-orange-700'
                                     : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/50'
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   const newList = [...attendanceList]
                                   newList[index].status = 'sick'
@@ -263,11 +259,11 @@ export default function StudentAttendancePage({
                   )}
                 </div>
               )}
-              
+
               {!selectedClass && (
                 <div className="text-center py-8">
                   <School className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm sm:text-base">Please select a class to view students</p>
+                  <p className="text-blue-200/60 text-sm sm:text-base">Please select a class to view students</p>
                 </div>
               )}
             </div>
@@ -298,8 +294,8 @@ export default function StudentAttendancePage({
                 ))}
               </SelectContent>
             </Select>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setFilterDate(new Date().toISOString().split('T')[0])
                 setFilterClass('all')
@@ -324,7 +320,7 @@ export default function StudentAttendancePage({
             <div className="text-3xl font-bold text-green-600">
               {filteredAttendance.filter(a => a.status === 'present').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Students present</p>
+            <p className="text-sm text-blue-200/60 mt-1">Students present</p>
           </CardContent>
         </Card>
 
@@ -339,7 +335,7 @@ export default function StudentAttendancePage({
             <div className="text-3xl font-bold text-red-600">
               {filteredAttendance.filter(a => a.status === 'absent').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Students absent</p>
+            <p className="text-sm text-blue-200/60 mt-1">Students absent</p>
           </CardContent>
         </Card>
 
@@ -354,7 +350,7 @@ export default function StudentAttendancePage({
             <div className="text-3xl font-bold text-yellow-600">
               {filteredAttendance.filter(a => a.status === 'late').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Students late</p>
+            <p className="text-sm text-blue-200/60 mt-1">Students late</p>
           </CardContent>
         </Card>
 
@@ -369,7 +365,7 @@ export default function StudentAttendancePage({
             <div className="text-3xl font-bold text-orange-600">
               {filteredAttendance.filter(a => a.status === 'sick').length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Students sick</p>
+            <p className="text-sm text-blue-200/60 mt-1">Students sick</p>
           </CardContent>
         </Card>
       </div>
@@ -380,7 +376,7 @@ export default function StudentAttendancePage({
           <CardTitle>
             Attendance Details - {new Date(filterDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             {filterClass !== 'all' && (
-              <span className="text-sm font-normal text-gray-600 ml-2">
+              <span className="text-sm font-normal text-blue-200/60 ml-2">
                 ({classes.find(c => c.id === filterClass)?.name})
               </span>
             )}
@@ -402,7 +398,7 @@ export default function StudentAttendancePage({
                 {filteredAttendance.map((record) => {
                   const student = students.find(s => s.id === record.studentId)
                   const className = classes.find(c => c.id === record.classId)?.name
-                  
+
                   return (
                     <TableRow key={record.id}>
                       <TableCell className="font-medium">
@@ -410,7 +406,7 @@ export default function StudentAttendancePage({
                       </TableCell>
                       <TableCell>{className || 'N/A'}</TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={record.status === 'present' ? 'default' : record.status === 'absent' ? 'destructive' : record.status === 'sick' ? 'default' : 'secondary'}
                           className={record.status === 'sick' ? 'bg-orange-600' : ''}
                         >
@@ -421,10 +417,10 @@ export default function StudentAttendancePage({
                           {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="text-sm text-blue-200/80">
                         {record.markedBy === user.id ? 'You' : 'Admin'}
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="text-sm text-blue-200/80">
                         {new Date(record.createdAt).toLocaleTimeString()}
                       </TableCell>
                     </TableRow>
@@ -435,8 +431,8 @@ export default function StudentAttendancePage({
           ) : (
             <div className="text-center py-8">
               <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600">No attendance marked for {new Date(filterDate).toLocaleDateString()}</p>
-              <p className="text-sm text-gray-500 mt-1">Select a different date/class or click "Mark Student Attendance" to add records</p>
+              <p className="text-blue-200/80">No attendance marked for {new Date(filterDate).toLocaleDateString()}</p>
+              <p className="text-sm text-blue-200/60 mt-1">Select a different date/class or click "Mark Student Attendance" to add records</p>
             </div>
           )}
         </CardContent>
