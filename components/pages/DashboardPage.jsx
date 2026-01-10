@@ -15,101 +15,101 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
     const attendanceRate = childrenAttendance.length > 0 ? Math.round((presentCount / childrenAttendance.length) * 100) : 0
     const paidFees = feePayments?.filter(f => f.status === 'paid' && myChildren.some(c => c.id === f.studentId)) || []
     const unpaidChildren = myChildren.filter(c => !paidFees.some(f => f.studentId === c.id))
-    
+
     return (
-      <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 lg:p-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Stats Cards Grid - Responsive */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-blue-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-blue-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <GraduationCap className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
+                  <GraduationCap className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-blue-900 mb-1 sm:mb-2">{totalChildren}</CardTitle>
-              <CardDescription className="text-blue-700 font-medium text-sm sm:text-base">My Children</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{totalChildren}</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">My Children</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-emerald-50 to-emerald-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-emerald-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-emerald-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/30">
+                  <Calendar className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-emerald-900 mb-1 sm:mb-2">{attendanceRate}%</CardTitle>
-              <CardDescription className="text-emerald-700 font-medium text-sm sm:text-base">Attendance Rate</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{attendanceRate}%</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">Attendance Rate</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-amber-50 to-amber-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-amber-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-amber-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <CreditCard className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-amber-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30">
+                  <CreditCard className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-amber-900 mb-1 sm:mb-2">{paidFees.length}</CardTitle>
-              <CardDescription className="text-amber-700 font-medium text-sm sm:text-base">Fees Paid</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{paidFees.length}</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">Fees Paid</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-red-50 to-red-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-red-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-red-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <CreditCard className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-red-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg shadow-red-500/30">
+                  <CreditCard className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-red-900 mb-1 sm:mb-2">{unpaidChildren.length}</CardTitle>
-              <CardDescription className="text-red-700 font-medium text-sm sm:text-base">Pending Fees</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{unpaidChildren.length}</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">Pending Fees</CardDescription>
             </CardHeader>
           </Card>
         </div>
 
-        {/* Children List - Mobile Optimized */}
-        <Card className="overflow-hidden">
-          <CardHeader className="p-3 sm:p-6">
-            <CardTitle className="text-lg sm:text-xl">My Children</CardTitle>
-            <CardDescription className="text-sm sm:text-base">Academic progress and attendance for each child</CardDescription>
+        {/* Children List */}
+        <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="border-b border-white/5 p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl text-white">My Children</CardTitle>
+            <CardDescription className="text-blue-200/60">Academic progress and attendance for each child</CardDescription>
           </CardHeader>
-          <CardContent className="p-3 sm:p-6 pt-0">
-            <div className="space-y-3 sm:space-y-4">
+          <CardContent className="p-4 sm:p-6">
+            <div className="space-y-3">
               {myChildren.map((child) => {
                 const childAttendance = childrenAttendance.filter(a => a.studentId === child.id)
                 const childPresent = childAttendance.filter(a => a.status === 'present').length
                 const childRate = childAttendance.length > 0 ? Math.round((childPresent / childAttendance.length) * 100) : 0
                 const hasPaid = paidFees.some(f => f.studentId === child.id)
-                
+
                 return (
-                  <div key={child.id} className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100">
+                  <div key={child.id} className="p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-base sm:text-lg text-gray-900 truncate">{child.firstName} {child.lastName}</h3>
-                        <p className="text-xs sm:text-sm text-gray-600">Class: {classes?.find(c => c.id === child.classId)?.name || 'N/A'}</p>
+                        <h3 className="font-semibold text-white truncate">{child.firstName} {child.lastName}</h3>
+                        <p className="text-sm text-blue-200/60">Class: {classes?.find(c => c.id === child.classId)?.name || 'N/A'}</p>
                       </div>
-                      <Badge variant={hasPaid ? 'default' : 'destructive'} className="self-start sm:self-center text-xs">
+                      <Badge variant={hasPaid ? 'default' : 'destructive'} className={hasPaid ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30' : 'bg-red-500/20 text-red-300 border-red-400/30'}>
                         {hasPaid ? 'Fees Paid' : 'Fees Pending'}
                       </Badge>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600 flex-shrink-0" />
-                        <span className="text-xs sm:text-sm text-gray-700">Attendance: <strong>{childRate}%</strong></span>
+                        <Calendar className="h-4 w-4 text-emerald-400" />
+                        <span className="text-sm text-blue-200/70">Attendance: <strong className="text-white">{childRate}%</strong></span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 flex-shrink-0" />
-                        <span className="text-xs sm:text-sm text-gray-700">Records: <strong>{childAttendance.length}</strong></span>
+                        <BarChart3 className="h-4 w-4 text-blue-400" />
+                        <span className="text-sm text-blue-200/70">Records: <strong className="text-white">{childAttendance.length}</strong></span>
                       </div>
                     </div>
                     {!hasPaid && onPayFees && (
-                      <Button onClick={() => onPayFees(child)} size="sm" className="mt-3 w-full bg-gradient-to-r from-blue-500 to-purple-600 text-xs sm:text-sm">
+                      <Button onClick={() => onPayFees(child)} size="sm" className="mt-3 w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">
                         Pay Fees
                       </Button>
                     )}
@@ -117,9 +117,9 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
                 )
               })}
               {myChildren.length === 0 && (
-                <div className="text-center py-6 sm:py-8 text-gray-500">
-                  <GraduationCap className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm sm:text-base">No children linked to your account</p>
+                <div className="text-center py-8 text-blue-200/60">
+                  <GraduationCap className="h-12 w-12 mx-auto mb-2 text-blue-200/40" />
+                  <p>No children linked to your account</p>
                 </div>
               )}
             </div>
@@ -128,7 +128,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
       </div>
     )
   }
-  
+
   // Teacher Dashboard - Show only assigned data
   if (userRole === 'teacher') {
     const myAssignments = assignments?.filter(a => a.active !== false) || []
@@ -137,208 +137,223 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
     const myStudents = students?.filter(s => myClassIds.includes(s.classId)) || []
     const myParentIds = [...new Set(myStudents.map(s => s.parentId).filter(Boolean))]
     const myParents = parents?.filter(p => myParentIds.includes(p.id)) || []
-    
+
     return (
-      <div className="p-2 sm:p-4 lg:p-6">
+      <div className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-blue-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-blue-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Users className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
+                  <Users className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-blue-900 mb-1 sm:mb-2">
-                {myStudents.length}
-              </CardTitle>
-              <CardDescription className="text-blue-700 font-medium text-sm sm:text-base">My Students</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{myStudents.length}</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">My Students</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-emerald-50 to-emerald-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-emerald-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-emerald-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <School className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/30">
+                  <School className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-emerald-900 mb-1 sm:mb-2">
-                {myClassIds.length}
-              </CardTitle>
-              <CardDescription className="text-emerald-700 font-medium text-sm sm:text-base">My Classes</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{myClassIds.length}</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">My Classes</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-amber-50 to-amber-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-amber-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-amber-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Users2 className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-amber-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30">
+                  <Users2 className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-amber-900 mb-1 sm:mb-2">
-                {myParents.length}
-              </CardTitle>
-              <CardDescription className="text-amber-700 font-medium text-sm sm:text-base">Connected Parents</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{myParents.length}</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">Connected Parents</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-purple-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-purple-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <School className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5" />
+            <CardHeader className="relative z-10 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2.5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/30">
+                  <School className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-purple-900 mb-1 sm:mb-2">
-                {mySubjectIds.length}
-              </CardTitle>
-              <CardDescription className="text-purple-700 font-medium text-sm sm:text-base">My Subjects</CardDescription>
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{mySubjectIds.length}</CardTitle>
+              <CardDescription className="text-blue-200/60 font-medium">My Subjects</CardDescription>
             </CardHeader>
           </Card>
         </div>
       </div>
     )
   }
-  
+
   // Developer Dashboard - Show only schools
   if (userRole === 'developer') {
     const activeSchools = schools?.filter(s => s.active !== false).length || 0
     const inactiveSchools = schools?.filter(s => s.active === false).length || 0
     const totalSchools = schools?.length || 0
-    
+
     return (
-      <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 lg:p-6">
+      <div className="space-y-6">
         {/* Stats Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-blue-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-blue-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Building2 className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+          {/* Total Schools Card */}
+          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16" />
+            <CardHeader className="relative z-10 p-6">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-all duration-300">
+                  <Building2 className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex items-center gap-1 text-blue-400 text-xs font-medium">
+                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                  Live
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-blue-900 mb-1 sm:mb-2">
-                {totalSchools}
-              </CardTitle>
-              <CardDescription className="text-blue-700 font-medium text-sm sm:text-base">Total Schools</CardDescription>
+              <div className="mt-4">
+                <CardTitle className="text-4xl font-bold text-white">{totalSchools}</CardTitle>
+                <CardDescription className="text-blue-200/70 font-medium mt-1">Total Schools</CardDescription>
+              </div>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-emerald-50 to-emerald-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-emerald-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-emerald-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          {/* Active Schools Card */}
+          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-16 -mt-16" />
+            <CardHeader className="relative z-10 p-6">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-all duration-300">
+                  <CheckCircle className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-emerald-400 text-xs font-medium flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  Online
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-emerald-900 mb-1 sm:mb-2">
-                {activeSchools}
-              </CardTitle>
-              <CardDescription className="text-emerald-700 font-medium text-sm sm:text-base">Active Schools</CardDescription>
+              <div className="mt-4">
+                <CardTitle className="text-4xl font-bold text-white">{activeSchools}</CardTitle>
+                <CardDescription className="text-blue-200/70 font-medium mt-1">Active Schools</CardDescription>
+              </div>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-red-50 to-red-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-red-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-red-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <XCircle className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          {/* Inactive Schools Card */}
+          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full -mr-16 -mt-16" />
+            <CardHeader className="relative z-10 p-6">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl shadow-lg shadow-red-500/30 group-hover:scale-110 transition-all duration-300">
+                  <XCircle className="h-6 w-6 text-white" />
                 </div>
+                <div className="text-red-400 text-xs font-medium">Offline</div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-red-900 mb-1 sm:mb-2">
-                {inactiveSchools}
-              </CardTitle>
-              <CardDescription className="text-red-700 font-medium text-sm sm:text-base">Inactive Schools</CardDescription>
+              <div className="mt-4">
+                <CardTitle className="text-4xl font-bold text-white">{inactiveSchools}</CardTitle>
+                <CardDescription className="text-blue-200/70 font-medium mt-1">Inactive Schools</CardDescription>
+              </div>
             </CardHeader>
           </Card>
 
-          <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-purple-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <CardHeader className="relative z-10 p-3 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <div className="p-2 sm:p-3 bg-purple-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <TrendingUp className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+          {/* Active Rate Card */}
+          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mt-16" />
+            <CardHeader className="relative z-10 p-6">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-all duration-300">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-amber-400 text-xs font-medium">Rate</div>
+              </div>
+              <div className="mt-4">
+                <CardTitle className="text-4xl font-bold text-white">
+                  {activeSchools > 0 ? Math.round((activeSchools / totalSchools) * 100) : 0}%
+                </CardTitle>
+                <CardDescription className="text-blue-200/70 font-medium mt-1">Active Rate</CardDescription>
+                {/* Progress bar */}
+                <div className="mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
+                    style={{ width: `${activeSchools > 0 ? Math.round((activeSchools / totalSchools) * 100) : 0}%` }}
+                  />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-purple-900 mb-1 sm:mb-2">
-                {activeSchools > 0 ? Math.round((activeSchools / totalSchools) * 100) : 0}%
-              </CardTitle>
-              <CardDescription className="text-purple-700 font-medium text-sm sm:text-base">Active Rate</CardDescription>
             </CardHeader>
           </Card>
         </div>
 
-        {/* Analytics Section - Responsive Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-          <Card className="overflow-hidden">
-            <CardHeader className="p-3 sm:p-6">
-              <CardTitle className="text-base sm:text-lg">Total Users</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Across all schools</CardDescription>
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="border-b border-white/5 p-4">
+              <CardTitle className="text-white">Total Users</CardTitle>
+              <CardDescription className="text-blue-200/60">Across all schools</CardDescription>
             </CardHeader>
-            <CardContent className="p-3 sm:p-6 pt-0">
-              <div className="text-2xl sm:text-3xl font-bold text-blue-600">{stats?.totalUsers || 0}</div>
-              <p className="text-xs sm:text-sm text-gray-600 mt-2">System-wide users</p>
+            <CardContent className="p-4">
+              <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">{stats?.totalUsers || 0}</div>
+              <p className="text-sm text-blue-200/60 mt-2">System-wide users</p>
             </CardContent>
           </Card>
 
-          <Card className="overflow-hidden">
-            <CardHeader className="p-3 sm:p-6">
-              <CardTitle className="text-base sm:text-lg">Total Students</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Enrolled students</CardDescription>
+          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="border-b border-white/5 p-4">
+              <CardTitle className="text-white">Total Students</CardTitle>
+              <CardDescription className="text-blue-200/60">Enrolled students</CardDescription>
             </CardHeader>
-            <CardContent className="p-3 sm:p-6 pt-0">
-              <div className="text-2xl sm:text-3xl font-bold text-green-600">{stats?.totalStudents || 0}</div>
-              <p className="text-xs sm:text-sm text-gray-600 mt-2">Across all schools</p>
+            <CardContent className="p-4">
+              <div className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent">{stats?.totalStudents || 0}</div>
+              <p className="text-sm text-blue-200/60 mt-2">Across all schools</p>
             </CardContent>
           </Card>
 
-          <Card className="overflow-hidden md:col-span-2 xl:col-span-1">
-            <CardHeader className="p-3 sm:p-6">
-              <CardTitle className="text-base sm:text-lg">Total Teachers</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Teaching staff</CardDescription>
+          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="border-b border-white/5 p-4">
+              <CardTitle className="text-white">Total Teachers</CardTitle>
+              <CardDescription className="text-blue-200/60">Teaching staff</CardDescription>
             </CardHeader>
-            <CardContent className="p-3 sm:p-6 pt-0">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-600">{stats?.totalTeachers || 0}</div>
-              <p className="text-xs sm:text-sm text-gray-600 mt-2">Across all schools</p>
+            <CardContent className="p-4">
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-500 bg-clip-text text-transparent">{stats?.totalTeachers || 0}</div>
+              <p className="text-sm text-blue-200/60 mt-2">Across all schools</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Schools List - Mobile Optimized */}
-        <Card className="overflow-hidden">
-          <CardHeader className="p-3 sm:p-6">
-            <CardTitle className="text-lg sm:text-xl">Recent Schools</CardTitle>
-            <CardDescription className="text-sm sm:text-base">Latest registered schools in the system</CardDescription>
+        {/* Schools List */}
+        <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="border-b border-white/5 p-5">
+            <CardTitle className="text-xl text-white">Recent Schools</CardTitle>
+            <CardDescription className="text-blue-200/60">Latest registered schools in the system</CardDescription>
           </CardHeader>
-          <CardContent className="p-3 sm:p-6 pt-0">
-            <div className="space-y-2 sm:space-y-3">
+          <CardContent className="p-5">
+            <div className="space-y-3">
               {schools?.slice(0, 5).map((school) => (
-                <div key={school.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3 sm:gap-0">
+                <div key={school.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                      <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    <div className="p-2.5 bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-xl">
+                      <Building2 className="h-5 w-5 text-blue-400" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{school.name}</p>
-                      <p className="text-xs sm:text-sm text-gray-600 truncate">{school.email}</p>
+                      <p className="font-semibold text-white truncate">{school.name}</p>
+                      <p className="text-sm text-blue-200/60 truncate">{school.email}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-center">
                     {school.active !== false ? (
                       <>
-                        <span className="px-2 sm:px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Active</span>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-red-600 hover:bg-red-50 border-red-200 text-xs sm:text-sm px-2 sm:px-3"
+                        <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-medium border border-emerald-400/30">Active</span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-400 hover:bg-red-500/20 border-red-500/30 hover:border-red-500/50"
                           onClick={() => onToggleSchoolStatus?.(school.id, false)}
                         >
                           Deactivate
@@ -346,11 +361,11 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
                       </>
                     ) : (
                       <>
-                        <span className="px-2 sm:px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">Inactive</span>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-green-600 hover:bg-green-50 border-green-200 text-xs sm:text-sm px-2 sm:px-3"
+                        <span className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-xs font-medium border border-red-400/30">Inactive</span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/30 hover:border-emerald-500/50"
                           onClick={() => onToggleSchoolStatus?.(school.id, true)}
                         >
                           Activate
@@ -361,9 +376,9 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
                 </div>
               ))}
               {(!schools || schools.length === 0) && (
-                <div className="text-center py-6 sm:py-8 text-gray-500">
-                  <Building2 className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm sm:text-base">No schools registered yet</p>
+                <div className="text-center py-8 text-blue-200/60">
+                  <Building2 className="h-12 w-12 mx-auto mb-2 text-blue-200/40" />
+                  <p>No schools registered yet</p>
                 </div>
               )}
             </div>
@@ -377,63 +392,63 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-        <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-blue-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardHeader className="relative z-10 p-3 sm:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-4">
-              <div className="p-2 sm:p-3 bg-blue-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Users className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+        <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5" />
+          <CardHeader className="relative z-10 p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
+                <Users className="h-5 w-5 text-white" />
               </div>
             </div>
-            <CardTitle className="text-2xl sm:text-3xl font-bold text-blue-900 mb-1 sm:mb-2">
+            <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">
               {stats.totalStudents || students.length || 0}
             </CardTitle>
-            <CardDescription className="text-blue-700 font-medium text-sm sm:text-base">Total Students</CardDescription>
+            <CardDescription className="text-blue-200/60 font-medium">Total Students</CardDescription>
           </CardHeader>
         </Card>
 
-        <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-emerald-50 to-emerald-100 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-emerald-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardHeader className="relative z-10 p-3 sm:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-4">
-              <div className="p-2 sm:p-3 bg-emerald-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <UserCheck className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+        <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5" />
+          <CardHeader className="relative z-10 p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/30">
+                <UserCheck className="h-5 w-5 text-white" />
               </div>
             </div>
-            <CardTitle className="text-2xl sm:text-3xl font-bold text-emerald-900 mb-1 sm:mb-2">
+            <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">
               {stats.totalTeachers || teachers.length || 0}
             </CardTitle>
-            <CardDescription className="text-emerald-700 font-medium text-sm sm:text-base">Total Teachers</CardDescription>
+            <CardDescription className="text-blue-200/60 font-medium">Total Teachers</CardDescription>
           </CardHeader>
         </Card>
 
-        <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-amber-50 to-amber-100 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-amber-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardHeader className="relative z-10 p-3 sm:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-4">
-              <div className="p-2 sm:p-3 bg-amber-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Users2 className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+        <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-amber-600/5" />
+          <CardHeader className="relative z-10 p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30">
+                <Users2 className="h-5 w-5 text-white" />
               </div>
             </div>
-            <CardTitle className="text-2xl sm:text-3xl font-bold text-amber-900 mb-1 sm:mb-2">
+            <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">
               {stats.totalParents || parents.length || 0}
             </CardTitle>
-            <CardDescription className="text-amber-700 font-medium text-sm sm:text-base">Total Parents</CardDescription>
+            <CardDescription className="text-blue-200/60 font-medium">Total Parents</CardDescription>
           </CardHeader>
         </Card>
 
-        <Card className="group hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-purple-200 rounded-full -mr-10 sm:-mr-16 -mt-10 sm:-mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-          <CardHeader className="relative z-10 p-3 sm:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-4">
-              <div className="p-2 sm:p-3 bg-purple-500 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <School className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+        <Card className="group hover:scale-[1.02] transition-all duration-300 border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5" />
+          <CardHeader className="relative z-10 p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/30">
+                <School className="h-5 w-5 text-white" />
               </div>
             </div>
-            <CardTitle className="text-2xl sm:text-3xl font-bold text-purple-900 mb-1 sm:mb-2">
+            <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">
               {stats.totalClasses || classes.length || 0}
             </CardTitle>
-            <CardDescription className="text-purple-700 font-medium text-sm sm:text-base">Total Classes</CardDescription>
+            <CardDescription className="text-blue-200/60 font-medium">Total Classes</CardDescription>
           </CardHeader>
         </Card>
       </div>

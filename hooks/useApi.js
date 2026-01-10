@@ -11,24 +11,25 @@ export function useApi(token) {
         },
         ...options
       })
-      
+
       if (!response.ok) {
         if (response.status === 401) {
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
-          localStorage.removeItem('school')
-          toast.error('Session expired. Redirecting to login...')
-          window.location.reload()
-          throw new Error('Session expired')
+          // Don't aggressively logout - just throw an error
+          // Session management is handled by useAppData
+          const error = await response.json().catch(() => ({}))
+          throw new Error(error.error || 'Unauthorized')
         }
         const error = await response.json()
         throw new Error(error.error || 'API Error')
       }
-      
+
       return await response.json()
     } catch (error) {
       console.error('API Error:', error)
-      toast.error(error.message || 'Something went wrong')
+      // Only show toast for non-401 errors to avoid duplicate messages
+      if (!error.message?.includes('Unauthorized')) {
+        toast.error(error.message || 'Something went wrong')
+      }
       throw error
     }
   }

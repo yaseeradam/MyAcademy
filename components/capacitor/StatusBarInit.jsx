@@ -1,29 +1,37 @@
 "use client"
 
 import { useEffect } from 'react'
-import { StatusBar, Style } from '@capacitor/status-bar'
+import { Capacitor } from '@capacitor/core'
 
 export default function StatusBarInit() {
   useEffect(() => {
-    const applyStatusBar = () => {
+    // Only run on native platforms (iOS/Android), not on web
+    if (!Capacitor.isNativePlatform()) {
+      return
+    }
+
+    const applyStatusBar = async () => {
       try {
+        // Dynamically import StatusBar only on native platforms
+        const { StatusBar, Style } = await import('@capacitor/status-bar')
+
         const root = document.documentElement
         const isDark = root.classList.contains('dark')
         const styles = getComputedStyle(root)
 
         const primary = styles.getPropertyValue('--theme-primary').trim() || '#3B82F6'
-        const light100 = styles.getPropertyValue('--theme-light-100').trim() || '#DBEAFE'
         const dark700 = styles.getPropertyValue('--theme-dark-700').trim() || '#1D4ED8'
 
         const bgColor = isDark ? dark700 : primary
-        const iconStyle = isDark ? Style.Light : Style.Light // keep white icons on brand/light backgrounds
-        // Ensure webview does not overlay the status bar; creates a safe area
+        const iconStyle = isDark ? Style.Light : Style.Light
+
         StatusBar.setOverlaysWebView({ overlay: false })
         StatusBar.show()
         StatusBar.setStyle({ style: iconStyle })
         StatusBar.setBackgroundColor({ color: bgColor })
       } catch (e) {
         // Ignore errors on web/non-capacitor envs
+        console.log('StatusBar not available:', e.message)
       }
     }
 
@@ -46,4 +54,3 @@ export default function StatusBarInit() {
 
   return null
 }
-

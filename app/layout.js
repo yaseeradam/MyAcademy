@@ -8,15 +8,24 @@ export const metadata = {
   description: "Comprehensive school management system for My Academy",
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo.jpg",
-    shortcut: "/logo.jpg",
-    apple: "/logo.jpg",
+    icon: [
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/android-chrome-192x192.png",
+    apple: "/apple-touch-icon.png",
   },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Use larger favicon for better visibility */}
+        <link rel="icon" href="/android-chrome-192x192.png" type="image/png" />
+        <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      </head>
       <body
         className="antialiased"
       >

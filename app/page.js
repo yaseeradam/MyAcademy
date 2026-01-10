@@ -66,7 +66,7 @@ function App() {
   const [authData, setAuthData] = useState({ email: '', password: '' })
   const [schoolSettings, setSchoolSettings] = useState({ schoolName: '', logo: '', primaryColor: '#3b82f6', secondaryColor: '#64748b', address: '', phoneNumber: '', email: '' })
   const [masterSettings, setMasterSettings] = useState({ systemName: 'My Academy', systemEmail: 'admin@myacademy.com', defaultCurrency: 'NGN', timezone: 'Africa/Lagos', maintenanceMode: false, allowRegistration: true, maxSchools: 1000, systemVersion: '1.0.0' })
-  
+
   // Subscription State
   const [subscriptionStatus, setSubscriptionStatus] = useState({ status: 'active', daysRemaining: 0, message: '' })
 
@@ -125,8 +125,8 @@ function App() {
       apiCall('master/settings')
         .then(setMasterSettings)
         .catch(err => {
-            console.error('Failed to fetch master settings', err)
-            // If fetch fails, we might still want default values which useState might already have or null
+          console.error('Failed to fetch master settings', err)
+          // If fetch fails, we might still want default values which useState might already have or null
         })
     }
   }, [user])
@@ -138,9 +138,9 @@ function App() {
       await apiCall('master/settings', { method: 'POST', body: JSON.stringify(masterSettings) })
       modal.showSuccess('Settings Saved', 'Master settings updated successfully!')
     } catch (error) {
-       modal.showError('Save Failed', error.message)
+      modal.showError('Save Failed', error.message)
     } finally {
-        modal.hideLoading()
+      modal.hideLoading()
     }
   }
 
@@ -151,13 +151,18 @@ function App() {
   const newFeatures = useNewFeatures(user, token, apiCall, loadDashboardData, modal)
 
   useEffect(() => {
+    console.log('🔄 Checking localStorage for saved session...')
     const savedToken = localStorage.getItem('token')
     const savedUser = localStorage.getItem('user')
     const savedSchool = localStorage.getItem('school')
+    console.log('📦 Found in localStorage:', { hasToken: !!savedToken, hasUser: !!savedUser })
     if (savedToken && savedUser) {
       setToken(savedToken)
       setUser(JSON.parse(savedUser))
       if (savedSchool) setSchool(JSON.parse(savedSchool))
+      console.log('✅ Session restored from localStorage')
+    } else {
+      console.log('❌ No saved session found')
     }
     setLoading(false)
   }, [])
@@ -166,49 +171,49 @@ function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const reference = params.get('reference')
-    
+
     const verifyPayment = async () => {
-        if (reference) {
-            setSubscriptionStatus(null) // Show loading
-            try {
-               const res = await fetch(`/api/payments/verify?reference=${reference}`)
-               const data = await res.json()
-               if (data.success) {
-                   toast.success('Subscription Renewed!')
-                   // Clear URL param
-                   window.history.replaceState({}, document.title, "/")
-                   // Fetch fresh status
-                   fetchStatus()
-               } else {
-                   toast.error('Payment verification failed')
-                   fetchStatus()
-               }
-            } catch (e) {
-                console.error(e)
-                fetchStatus()
-            }
-        } else {
+      if (reference) {
+        setSubscriptionStatus(null) // Show loading
+        try {
+          const res = await fetch(`/api/payments/verify?reference=${reference}`)
+          const data = await res.json()
+          if (data.success) {
+            toast.success('Subscription Renewed!')
+            // Clear URL param
+            window.history.replaceState({}, document.title, "/")
+            // Fetch fresh status
             fetchStatus()
+          } else {
+            toast.error('Payment verification failed')
+            fetchStatus()
+          }
+        } catch (e) {
+          console.error(e)
+          fetchStatus()
         }
+      } else {
+        fetchStatus()
+      }
     }
 
     const fetchStatus = () => {
-        if (user && user.role !== 'developer' && user.schoolId && token) {
-            fetch('/api/school/subscription/check', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status) {
-                    setSubscriptionStatus(data)
-                }
-            })
-            .catch(err => console.error(err))
-        }
+      if (user && user.role !== 'developer' && user.schoolId && token) {
+        fetch('/api/school/subscription/check', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status) {
+              setSubscriptionStatus(data)
+            }
+          })
+          .catch(err => console.error(err))
+      }
     }
 
     if (user && token) {
-        verifyPayment()
+      verifyPayment()
     }
 
   }, [user, token])
@@ -216,13 +221,13 @@ function App() {
   useEffect(() => {
     if (user?.role === 'school_admin' && school) {
       apiCall('school/settings').then(settings => {
-        setSchoolSettings({ 
-          schoolName: settings?.schoolName || school?.name || '', 
-          logo: settings?.logo || '', 
-          primaryColor: settings?.primaryColor || '#3b82f6', 
-          secondaryColor: settings?.secondaryColor || '#64748b', 
-          address: settings?.address || '', 
-          phoneNumber: settings?.phoneNumber || '', 
+        setSchoolSettings({
+          schoolName: settings?.schoolName || school?.name || '',
+          logo: settings?.logo || '',
+          primaryColor: settings?.primaryColor || '#3b82f6',
+          secondaryColor: settings?.secondaryColor || '#64748b',
+          address: settings?.address || '',
+          phoneNumber: settings?.phoneNumber || '',
           email: settings?.email || '',
           gradingScale: settings?.gradingScale || []
         })
@@ -262,6 +267,7 @@ function App() {
 
   const handleAuth = async (authData) => {
     try {
+      console.log('🔐 Attempting login with:', authData.email)
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -276,6 +282,7 @@ function App() {
       }
 
       const result = await response.json()
+      console.log('✅ Login response received:', { user: result.user?.email, hasToken: !!result.token })
 
       setToken(result.token)
       setUser(result.user)
@@ -283,9 +290,10 @@ function App() {
       localStorage.setItem('token', result.token)
       localStorage.setItem('user', JSON.stringify(result.user))
       if (result.school) localStorage.setItem('school', JSON.stringify(result.school))
+      console.log('💾 Saved to localStorage and state')
       modal.showSuccess('Login Successful', 'Welcome to My Academy!')
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('❌ Login error:', error)
       modal.showError('Login Failed', error.message || 'Please check your credentials')
       throw error // Re-throw to handle in LoginPage
     }
@@ -331,9 +339,9 @@ function App() {
       modal.showLoading('Saving settings...')
       await apiCall('school/settings', { method: 'POST', body: JSON.stringify(schoolSettings) })
       if (school) {
-        const updatedSchool = { 
-          ...school, 
-          name: schoolSettings.schoolName, 
+        const updatedSchool = {
+          ...school,
+          name: schoolSettings.schoolName,
           logo: schoolSettings.logo,
           gradingScale: schoolSettings.gradingScale
         }
@@ -412,17 +420,35 @@ function App() {
   }
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a1628]">
       <div className="text-center">
-        <div className="relative">
-          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <School className="h-8 w-8 text-blue-600 mx-auto mb-4 absolute top-4 left-1/2 transform -translate-x-1/2" />
+        <div className="relative mb-6">
+          {/* Glowing backdrop */}
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl blur-xl opacity-30 animate-pulse" />
+          {/* Logo */}
+          <img
+            src="/logo.png"
+            alt="My Academy"
+            className="relative w-20 h-20 rounded-2xl mx-auto shadow-2xl"
+          />
         </div>
-        <p className="text-gray-600 animate-pulse">Loading My Academy...</p>
-        <div className="mt-4 w-64 bg-gray-200 rounded-full h-2 mx-auto">
-          <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+        <h2 className="text-2xl font-bold text-white mb-2">My Academy</h2>
+        <p className="text-blue-200/60 animate-pulse mb-6">Loading your dashboard...</p>
+        {/* Loading bar */}
+        <div className="w-64 bg-white/10 rounded-full h-1.5 mx-auto overflow-hidden">
+          <div className="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full animate-loading-bar" />
         </div>
       </div>
+      <style jsx global>{`
+        @keyframes loading-bar {
+          0% { width: 0%; }
+          50% { width: 70%; }
+          100% { width: 100%; }
+        }
+        .animate-loading-bar {
+          animation: loading-bar 1.5s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   )
   if (!user) return <LoginPage onLogin={handleAuth} />
@@ -439,12 +465,12 @@ function App() {
 
   return (
     <MainLayout user={user} school={school} schoolSettings={schoolSettings} activeTab={activeTab} setActiveTab={setActiveTab} navigationItems={getNavigationItems()} handleLogout={handleLogout} setShowCalculator={setShowCalculator} unreadMessages={unreadMessages}>
-      
+
       {/* Show Warning Banner */}
-      <SubscriptionBanner 
-        status={subscriptionStatus.status} 
-        daysRemaining={subscriptionStatus.daysRemaining} 
-        message={subscriptionStatus.message} 
+      <SubscriptionBanner
+        status={subscriptionStatus.status}
+        daysRemaining={subscriptionStatus.daysRemaining}
+        message={subscriptionStatus.message}
       />
 
       {activeTab === 'dashboard' && (

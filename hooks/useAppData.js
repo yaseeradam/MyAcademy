@@ -26,27 +26,27 @@ export function useAppData(user, token) {
         },
         ...options
       })
-      
+
       if (!response.ok) {
         if (response.status === 401) {
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
-          localStorage.removeItem('school')
-          toast.error('Session expired. Redirecting to login...')
-          window.location.reload()
-          throw new Error('Session expired')
+          const error = await response.json().catch(() => ({}))
+          // Don't auto-logout - just log and throw the error
+          console.warn('401 error on endpoint:', endpoint, error)
+          throw new Error(error.error || 'Unauthorized')
         }
         const error = await response.json()
         const errorMessage = error.error || `HTTP ${response.status}: ${response.statusText}`
         throw new Error(errorMessage)
       }
-      
+
       return await response.json()
     } catch (error) {
       console.error('API Error:', error)
+      // Don't show toast for 401 errors or network errors during initial load
+      const is401 = error.message?.includes('Unauthorized')
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         toast.error('❌ Network error: Please check your connection')
-      } else {
+      } else if (!is401) {
         toast.error('❌ ' + (error.message || 'Something went wrong'))
       }
       throw error
@@ -55,12 +55,12 @@ export function useAppData(user, token) {
 
   const loadDashboardData = useCallback(async (forceReload = false) => {
     if (!isMountedRef.current) return
-    
+
     // Reset cache flag if force reload
     if (forceReload) {
       dataLoadedRef.current = false
     }
-    
+
     try {
       // Load all data in parallel based on role
       if (user.role === 'developer') {
@@ -162,16 +162,19 @@ export function useAppData(user, token) {
 
   useEffect(() => {
     isMountedRef.current = true
-    
+
     if (user && token && !dataLoadedRef.current) {
       dataLoadedRef.current = true
       loadDashboardData()
-      loadNotifications()
+      // Only load notifications for roles with a schoolId
+      if (user.role !== 'developer') {
+        loadNotifications()
+      }
       if (user.role === 'school_admin' || user.role === 'teacher') {
         loadTodayAttendance()
       }
     }
-    
+
     return () => {
       isMountedRef.current = false
     }
