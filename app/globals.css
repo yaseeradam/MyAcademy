@@ -336,3 +336,44 @@ code {
 .theme-soft .bg-indigo-900 {
     background-color: rgba(255, 255, 255, 0.88);
 }
+
+.academic-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.academic-table thead tr {
+    background: linear-gradient(90deg, rgba(186, 230, 253, 0.35), rgba(226, 232, 240, 0.6));
+}
+
+.academic-table th {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 11px;
+    color: rgba(71, 85, 105, 0.9);
+}
+
+.academic-table tbody tr {
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.academic-table tbody tr:nth-child(even) {
+    background-color: rgba(248, 250, 252, 0.7);
+}
+
+.academic-table tbody tr:hover {
+    background-color: rgba(224, 242, 254, 0.6);
+}
+
+.academic-table td,
+.academic-table th {
+    padding: 14px 16px;
+}
+
+.academic-table tbody td {
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.academic-table tbody tr:last-child td {
+    border-bottom: none;
+}

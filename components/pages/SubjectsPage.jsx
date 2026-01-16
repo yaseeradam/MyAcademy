@@ -26,8 +26,8 @@ export default function SubjectsPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">{readOnly ? 'My Subjects' : 'Subjects Management'}</h2>
-          <p className="text-blue-200/60 text-sm mt-1">Manage curriculum subjects and credits</p>
+          <h2 className="text-2xl font-bold text-slate-900">{readOnly ? 'My Subjects' : 'Subjects Management'}</h2>
+          <p className="text-slate-500 text-sm mt-1">Manage curriculum subjects and credits</p>
         </div>
         {!readOnly && (
           <Dialog open={showSubjectModal} onOpenChange={setShowSubjectModal}>
@@ -37,57 +37,57 @@ export default function SubjectsPage({
                 Add Subject
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl bg-[#0f1d32] border-white/10 text-white">
+            <DialogContent className="max-w-2xl bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
               <DialogHeader>
-                <DialogTitle className="text-white">{subjectForm.id ? 'Edit Subject' : 'Create New Subject'}</DialogTitle>
-                <DialogDescription className="text-blue-200/60">
+                <DialogTitle className="text-slate-900">{subjectForm.id ? 'Edit Subject' : 'Create New Subject'}</DialogTitle>
+                <DialogDescription className="text-slate-500">
                   Add a new subject to the curriculum.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateSubject}>
                 <div className="grid gap-4 py-4">
                   <div className="space-y-4">
-                    <h3 className="font-medium text-white">Subject Information</h3>
+                    <h3 className="font-medium text-slate-800">Subject Information</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="subjectName" className="text-blue-200/80">Subject Name</Label>
+                        <Label htmlFor="subjectName" className="text-slate-600">Subject Name</Label>
                         <Input
                           id="subjectName"
                           value={subjectForm.name}
                           onChange={(e) => setSubjectForm(prev => ({ ...prev, name: e.target.value }))}
                           placeholder="e.g., Mathematics, English Language"
                           required
-                          className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                          className="bg-white/80 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-300 focus:ring-sky-200/60"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="subjectCode" className="text-blue-200/80">Subject Code</Label>
+                        <Label htmlFor="subjectCode" className="text-slate-600">Subject Code</Label>
                         <Input
                           id="subjectCode"
                           value={subjectForm.code}
                           onChange={(e) => setSubjectForm(prev => ({ ...prev, code: e.target.value }))}
                           placeholder="e.g., MATH101, ENG201"
                           required
-                          className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                          className="bg-white/80 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-300 focus:ring-sky-200/60"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="subjectDescription" className="text-blue-200/80">Description</Label>
+                      <Label htmlFor="subjectDescription" className="text-slate-600">Description</Label>
                       <Textarea
                         id="subjectDescription"
                         value={subjectForm.description}
                         onChange={(e) => setSubjectForm(prev => ({ ...prev, description: e.target.value }))}
                         placeholder="Brief description of the subject"
                         rows={2}
-                        className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                        className="bg-white/80 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-300 focus:ring-sky-200/60"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="subjectCredits" className="text-blue-200/80">Credits</Label>
+                      <Label htmlFor="subjectCredits" className="text-slate-600">Credits</Label>
                       <Input
                         id="subjectCredits"
                         type="number"
@@ -96,13 +96,13 @@ export default function SubjectsPage({
                         placeholder="Number of credits"
                         min="1"
                         step="0.5"
-                        className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                        className="bg-white/80 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-300 focus:ring-sky-200/60"
                       />
                     </div>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setShowSubjectModal(false)} className="bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10">
+                  <Button type="button" variant="outline" onClick={() => setShowSubjectModal(false)} className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100">
                     Cancel
                   </Button>
                   <Button type="submit" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">

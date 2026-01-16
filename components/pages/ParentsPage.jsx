@@ -119,9 +119,9 @@ export default function ParentsPage({
       {/* Data Table */}
       <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl overflow-hidden">
         <CardContent className="p-0">
-          <Table>
+          <Table className="academic-table">
             <TableHeader>
-              <TableRow className="bg-slate-50/80 border-b border-slate-200/80 hover:bg-slate-50/80">
+              <TableRow className="border-b border-slate-200/80">
                 <TableHead className="text-slate-700 font-semibold">Name</TableHead>
                 <TableHead className="text-slate-700 font-semibold">Email</TableHead>
                 <TableHead className="text-slate-700 font-semibold">Phone</TableHead>
