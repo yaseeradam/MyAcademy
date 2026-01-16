@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
 async function connect() {
   const client = new MongoClient(MONGO_URL)
@@ -16,8 +17,7 @@ function verify(request) {
     const auth = request.headers.get('authorization')
     if (!auth || !auth.startsWith('Bearer ')) return null
     const token = auth.slice(7)
-    const secret = process.env.JWT_SECRET
-    return jwt.verify(token, secret)
+    return jwt.verify(token, JWT_SECRET)
   } catch {
     return null
   }

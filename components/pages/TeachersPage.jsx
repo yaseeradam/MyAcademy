@@ -75,14 +75,14 @@ export default function TeachersPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Teachers Management</h2>
-          <p className="text-blue-200/60 text-sm mt-1">Manage teaching staff and assignments</p>
+          <h2 className="text-2xl font-bold text-slate-900">Teachers Management</h2>
+          <p className="text-slate-500 text-sm mt-1">Manage teaching staff and assignments</p>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
             onClick={() => exportTeachersToCSV(teachers, school?.name)}
-            className="bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white"
+            className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
           >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
@@ -100,13 +100,13 @@ export default function TeachersPage({
       {/* Search and Filters */}
       <div className="space-y-4">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             type="text"
             placeholder="Search teachers by name, email, qualification..."
             value={teacherSearch}
             onChange={(e) => setTeacherSearch(e.target.value)}
-            className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 focus:border-amber-500/50"
+            className="pl-11 bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-300"
           />
         </div>
 
@@ -115,53 +115,53 @@ export default function TeachersPage({
             placeholder="Filter by specialization"
             value={teacherFilters.specialization}
             onChange={(e) => setTeacherFilters(prev => ({ ...prev, specialization: e.target.value }))}
-            className="w-48 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+            className="w-48 bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
           />
 
           <Select value={teacherFilters.status} onValueChange={(value) => setTeacherFilters(prev => ({ ...prev, status: value }))}>
-            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
+            <SelectTrigger className="w-48 bg-white border-slate-200 text-slate-800">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0f1d32] border-white/10">
-              <SelectItem value="all_status" className="text-white hover:bg-white/10">All Status</SelectItem>
-              <SelectItem value="active" className="text-white hover:bg-white/10">Active</SelectItem>
-              <SelectItem value="inactive" className="text-white hover:bg-white/10">Inactive</SelectItem>
+            <SelectContent className="bg-white border-slate-200">
+              <SelectItem value="all_status" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">All Status</SelectItem>
+              <SelectItem value="active" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Active</SelectItem>
+              <SelectItem value="inactive" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       {/* Data Table */}
-      <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+      <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#0f1d32] border-b border-white/10 hover:bg-[#0f1d32]">
-                <TableHead className="text-white font-semibold">Name</TableHead>
-                <TableHead className="text-white font-semibold">Email</TableHead>
-                <TableHead className="text-white font-semibold">Phone</TableHead>
-                <TableHead className="text-white font-semibold">Qualification</TableHead>
-                <TableHead className="text-white font-semibold">Specialization</TableHead>
-                <TableHead className="text-white font-semibold">Experience</TableHead>
-                <TableHead className="text-white font-semibold">Status</TableHead>
-                <TableHead className="text-white font-semibold">Actions</TableHead>
+              <TableRow className="bg-slate-50/80 border-b border-slate-200/80 hover:bg-slate-50/80">
+                <TableHead className="text-slate-700 font-semibold">Name</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Email</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Phone</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Qualification</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Specialization</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Experience</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Status</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filterTeachers(teachers).map((teacher) => (
-                <TableRow key={teacher.id} className="border-white/5 hover:bg-white/5">
-                  <TableCell className="font-medium text-white">
+                <TableRow key={teacher.id} className="border-slate-200/80 hover:bg-slate-50">
+                  <TableCell className="font-medium text-slate-900">
                     {teacher.firstName} {teacher.lastName}
                   </TableCell>
-                  <TableCell className="max-w-xs truncate text-blue-200/70">{teacher.email}</TableCell>
-                  <TableCell className="text-blue-200/70">{teacher.phoneNumber || 'N/A'}</TableCell>
-                  <TableCell className="max-w-xs truncate text-blue-200/70">{teacher.qualification || 'N/A'}</TableCell>
-                  <TableCell className="text-blue-200/70">{teacher.specialization || 'N/A'}</TableCell>
-                  <TableCell className="text-blue-200/70">{teacher.experience || 'N/A'}</TableCell>
+                  <TableCell className="max-w-xs truncate text-slate-600">{teacher.email}</TableCell>
+                  <TableCell className="text-slate-600">{teacher.phoneNumber || 'N/A'}</TableCell>
+                  <TableCell className="max-w-xs truncate text-slate-600">{teacher.qualification || 'N/A'}</TableCell>
+                  <TableCell className="text-slate-600">{teacher.specialization || 'N/A'}</TableCell>
+                  <TableCell className="text-slate-600">{teacher.experience || 'N/A'}</TableCell>
                   <TableCell>
                     <Badge className={teacher.active
-                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30"
-                      : "bg-red-500/20 text-red-300 border-red-400/30"
+                      ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                      : "bg-rose-100 text-rose-700 border-rose-200"
                     }>
                       {teacher.active ? 'Active' : 'Inactive'}
                     </Badge>
@@ -173,7 +173,7 @@ export default function TeachersPage({
                           size="sm"
                           variant="outline"
                           onClick={() => onEdit(teacher)}
-                          className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                          className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -181,7 +181,7 @@ export default function TeachersPage({
                           size="sm"
                           variant="outline"
                           onClick={() => { if (window.confirm('Are you sure you want to delete this teacher?')) onDelete(teacher.id) }}
-                          className="bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/20"
+                          className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -197,11 +197,11 @@ export default function TeachersPage({
 
       {/* Empty State */}
       {(!teachers || teachers.length === 0) && (
-        <Card className="border-0 bg-white/5 backdrop-blur-xl">
+        <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl">
           <CardContent className="p-8 text-center">
-            <UserCheck className="h-12 w-12 text-blue-200/40 mx-auto mb-4" />
-            <p className="text-white">No teachers added yet.</p>
-            <p className="text-sm text-blue-200/60 mt-1">Add your first teacher to get started.</p>
+            <UserCheck className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <p className="text-slate-700">No teachers added yet.</p>
+            <p className="text-sm text-slate-500 mt-1">Add your first teacher to get started.</p>
           </CardContent>
         </Card>
       )}

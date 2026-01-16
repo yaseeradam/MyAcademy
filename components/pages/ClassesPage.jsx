@@ -27,8 +27,8 @@ export default function ClassesPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">{readOnly ? 'My Classes' : 'Classes Management'}</h2>
-          <p className="text-blue-200/60 text-sm mt-1">Manage classes and student capacity</p>
+          <h2 className="text-2xl font-bold text-slate-900">{readOnly ? 'My Classes' : 'Classes Management'}</h2>
+          <p className="text-slate-500 text-sm mt-1">Manage classes and student capacity</p>
         </div>
         {!readOnly && (
           <Dialog open={showClassModal} onOpenChange={setShowClassModal}>
@@ -38,45 +38,45 @@ export default function ClassesPage({
                 Add Class
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl bg-[#0f1d32] border-white/10 text-white">
+            <DialogContent className="max-w-2xl bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
               <DialogHeader>
-                <DialogTitle className="text-white">{classForm.id ? 'Edit Class' : 'Create New Class'}</DialogTitle>
-                <DialogDescription className="text-blue-200/60">
+                <DialogTitle className="text-slate-900">{classForm.id ? 'Edit Class' : 'Create New Class'}</DialogTitle>
+                <DialogDescription className="text-slate-500">
                   Set up a new class with capacity and academic year information.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateClass}>
                 <div className="grid gap-4 py-4">
                   <div className="space-y-4">
-                    <h3 className="font-medium text-white">Class Information</h3>
+                    <h3 className="font-medium text-slate-800">Class Information</h3>
 
                     <div className="space-y-2">
-                      <Label htmlFor="className" className="text-blue-200/80">Class Name</Label>
+                      <Label htmlFor="className" className="text-slate-600">Class Name</Label>
                       <Input
                         id="className"
                         value={classForm.name}
                         onChange={(e) => setClassForm(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="e.g., Grade 1A, JSS 2, Year 10"
                         required
-                        className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                        className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="classDescription" className="text-blue-200/80">Description</Label>
+                      <Label htmlFor="classDescription" className="text-slate-600">Description</Label>
                       <Textarea
                         id="classDescription"
                         value={classForm.description}
                         onChange={(e) => setClassForm(prev => ({ ...prev, description: e.target.value }))}
                         placeholder="Brief description of the class"
                         rows={2}
-                        className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                        className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="classCapacity" className="text-blue-200/80">Capacity</Label>
+                        <Label htmlFor="classCapacity" className="text-slate-600">Capacity</Label>
                         <Input
                           id="classCapacity"
                           type="number"
@@ -85,25 +85,25 @@ export default function ClassesPage({
                           placeholder="Maximum number of students"
                           min="1"
                           required
-                          className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                          className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="academicYear" className="text-blue-200/80">Academic Year</Label>
+                        <Label htmlFor="academicYear" className="text-slate-600">Academic Year</Label>
                         <Input
                           id="academicYear"
                           value={classForm.academicYear}
                           onChange={(e) => setClassForm(prev => ({ ...prev, academicYear: e.target.value }))}
                           placeholder="e.g., 2024"
                           required
-                          className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                          className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                         />
                       </div>
                     </div>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setShowClassModal(false)} className="bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10">
+                  <Button type="button" variant="outline" onClick={() => setShowClassModal(false)} className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100">
                     Cancel
                   </Button>
                   <Button type="submit" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">
@@ -117,18 +117,18 @@ export default function ClassesPage({
       </div>
 
       {/* Data Table */}
-      <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+      <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#0f1d32] border-b border-white/10 hover:bg-[#0f1d32]">
-                <TableHead className="text-white font-semibold">Class Name</TableHead>
-                <TableHead className="text-white font-semibold">Description</TableHead>
-                <TableHead className="text-white font-semibold">Capacity</TableHead>
-                <TableHead className="text-white font-semibold">Academic Year</TableHead>
-                <TableHead className="text-white font-semibold">Students</TableHead>
-                <TableHead className="text-white font-semibold">Status</TableHead>
-                <TableHead className="text-white font-semibold">Actions</TableHead>
+              <TableRow className="bg-slate-50/80 border-b border-slate-200/80 hover:bg-slate-50/80">
+                <TableHead className="text-slate-700 font-semibold">Class Name</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Description</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Capacity</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Academic Year</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Students</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Status</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -137,27 +137,27 @@ export default function ClassesPage({
                 const isFull = enrolledStudents >= parseInt(cls.capacity)
 
                 return (
-                  <TableRow key={cls.id} className="border-white/5 hover:bg-white/5">
-                    <TableCell className="font-medium text-white">{cls.name}</TableCell>
-                    <TableCell className="max-w-xs truncate text-blue-200/70">{cls.description || 'No description'}</TableCell>
+                  <TableRow key={cls.id} className="border-slate-200/80 hover:bg-slate-50">
+                    <TableCell className="font-medium text-slate-900">{cls.name}</TableCell>
+                    <TableCell className="max-w-xs truncate text-slate-600">{cls.description || 'No description'}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <span className="text-white">{enrolledStudents}/{cls.capacity}</span>
+                        <span className="text-slate-700">{enrolledStudents}/{cls.capacity}</span>
                         {isFull && (
-                          <Badge className="text-xs bg-red-500/20 text-red-300 border-red-400/30">Full</Badge>
+                          <Badge className="text-xs bg-rose-100 text-rose-700 border-rose-200">Full</Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-blue-200/70">{cls.academicYear}</TableCell>
+                    <TableCell className="text-slate-600">{cls.academicYear}</TableCell>
                     <TableCell>
-                      <Badge className="bg-blue-500/20 text-blue-300 border-blue-400/30">
+                      <Badge className="bg-sky-100 text-sky-700 border-sky-200">
                         {enrolledStudents} students
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge className={cls.active
-                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30"
-                        : "bg-red-500/20 text-red-300 border-red-400/30"
+                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                        : "bg-rose-100 text-rose-700 border-rose-200"
                       }>
                         {cls.active ? 'Active' : 'Inactive'}
                       </Badge>
@@ -167,7 +167,7 @@ export default function ClassesPage({
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                          className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -179,7 +179,7 @@ export default function ClassesPage({
                               setClassForm(cls)
                               setShowClassModal(true)
                             }}
-                            className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                            className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -187,7 +187,7 @@ export default function ClassesPage({
                             size="sm"
                             variant="outline"
                             onClick={() => { if (window.confirm('Are you sure you want to delete this class?')) handleDeleteClass(cls.id) }}
-                            className="bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -204,11 +204,11 @@ export default function ClassesPage({
 
       {/* Empty State */}
       {(!classes || classes.length === 0) && (
-        <Card className="border-0 bg-white/5 backdrop-blur-xl">
+        <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl">
           <CardContent className="p-8 text-center">
-            <School className="h-12 w-12 text-blue-200/40 mx-auto mb-4" />
-            <p className="text-white">No classes created yet.</p>
-            <p className="text-sm text-blue-200/60 mt-1">Add your first class to get started.</p>
+            <School className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <p className="text-slate-700">No classes created yet.</p>
+            <p className="text-sm text-slate-500 mt-1">Add your first class to get started.</p>
           </CardContent>
         </Card>
       )}

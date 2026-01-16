@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
 async function connect() {
   const client = new MongoClient(MONGO_URL)
@@ -17,8 +18,7 @@ function verify(request) {
     const auth = request.headers.get('authorization')
     if (!auth || !auth.startsWith('Bearer ')) return null
     const token = auth.slice(7)
-    const secret = process.env.JWT_SECRET
-    return jwt.verify(token, secret)
+    return jwt.verify(token, JWT_SECRET)
   } catch {
     return null
   }
@@ -33,6 +33,14 @@ export async function GET(request) {
       schoolId: user.schoolId,
       participants: user.id
     }).sort({ lastMessageAt: -1 }).toArray()
+    const latestMessages = await Promise.all(conversations.map(async (conv) => {
+      if (conv.lastMessage) return { id: conv.id, lastMessage: conv.lastMessage }
+      const [latest] = await db.collection('chat_messages').find({
+        conversationId: conv.id,
+        schoolId: user.schoolId
+      }).sort({ createdAt: -1 }).limit(1).toArray()
+      return { id: conv.id, lastMessage: latest || null }
+    }))
     const unreadCounts = await Promise.all(conversations.map(async (c) => {
       const count = await db.collection('chat_messages').countDocuments({
         conversationId: c.id,
@@ -43,7 +51,12 @@ export async function GET(request) {
       return { id: c.id, count }
     }))
     const byId = new Map(unreadCounts.map(x => [x.id, x.count]))
-    const result = conversations.map(c => ({ ...c, unreadCount: byId.get(c.id) || 0 }))
+    const byLastMessage = new Map(latestMessages.map(x => [x.id, x.lastMessage]))
+    const result = conversations.map(c => ({
+      ...c,
+      lastMessage: byLastMessage.get(c.id) || null,
+      unreadCount: byId.get(c.id) || 0
+    }))
     return NextResponse.json(result)
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -150,14 +150,25 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
         'Authorization': `Bearer ${token}`
       }
       let users = []
+      const normalizeName = (record) => {
+        if (!record) return ''
+        if (record.name && record.name.trim()) return record.name.trim()
+        const first = record.firstName || ''
+        const last = record.lastName || ''
+        return `${first} ${last}`.trim()
+      }
+
+      console.log('Loading available users for role:', currentUser.role)
 
       if (currentUser.role === 'parent') {
         const teachersResponse = await fetch('/api/teachers', { headers })
+        console.log('Teachers API status:', teachersResponse.status)
         if (teachersResponse.ok) {
           const teachers = await teachersResponse.json()
-          users = teachers.filter(t => t.id && t.firstName && t.lastName).map(teacher => ({
+          console.log('Teachers fetched:', teachers.length, teachers)
+          users = teachers.filter(t => t.id && normalizeName(t)).map(teacher => ({
             id: teacher.id,
-            name: `${teacher.firstName} ${teacher.lastName}`,
+            name: normalizeName(teacher) || teacher.email || 'Teacher',
             role: 'teacher',
             email: teacher.email
           }))
@@ -178,10 +189,10 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
 
           // Filter parents to only those who have children in teacher's classes
           users = parents
-            .filter(p => p.id && p.name && teacherParentIds.has(p.id))
+            .filter(p => p.id && normalizeName(p) && teacherParentIds.has(p.id))
             .map(parent => ({
               id: parent.id,
-              name: parent.name,
+              name: normalizeName(parent),
               role: 'parent',
               email: parent.email
             }))
@@ -194,9 +205,10 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
 
         if (teachersRes.ok) {
           const teachers = await teachersRes.json()
-          users.push(...teachers.filter(t => t.id && t.firstName && t.lastName).map(teacher => ({
+          console.log('Teachers fetched:', teachers.length, teachers)
+          users.push(...teachers.filter(t => t.id && normalizeName(t)).map(teacher => ({
             id: teacher.id,
-            name: `${teacher.firstName} ${teacher.lastName}`,
+            name: normalizeName(teacher) || teacher.email || 'Teacher',
             role: 'teacher',
             email: teacher.email
           })))
@@ -204,9 +216,10 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
 
         if (parentsRes.ok) {
           const parents = await parentsRes.json()
-          users.push(...parents.filter(p => p.id && p.name).map(parent => ({
+          console.log('Parents fetched:', parents.length, parents)
+          users.push(...parents.filter(p => p.id && normalizeName(p)).map(parent => ({
             id: parent.id,
-            name: parent.name,
+            name: normalizeName(parent) || parent.email || 'Parent',
             role: 'parent',
             email: parent.email
           })))
@@ -224,7 +237,7 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
 
       const filteredUsers = users.filter(u => u.id && !existingUserIds.has(u.id))
       setAvailableUsers(filteredUsers)
-      console.log('Available users loaded:', filteredUsers.length)
+      console.log('Available users after filtering:', filteredUsers.length, filteredUsers)
     } catch (error) {
       console.error('Error loading available users:', error)
     }
@@ -353,8 +366,7 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
         return profile.name
       }
 
-      // If profile not loaded yet, show loading state
-      return 'Loading...'
+      return 'User'
     }
   }
 
@@ -407,7 +419,13 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
 
           <div className="flex gap-1">
             {currentUser.role !== 'developer' && (
-              <Dialog open={showNewChatDialog} onOpenChange={setShowNewChatDialog}>
+              <Dialog
+                open={showNewChatDialog}
+                onOpenChange={(open) => {
+                  setShowNewChatDialog(open)
+                  if (open) loadAvailableUsers()
+                }}
+              >
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full">
                     <Plus className="h-5 w-5" />
@@ -463,7 +481,13 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
             )}
 
             {currentUser.role === 'school_admin' && (
-              <Dialog open={showNewGroupDialog} onOpenChange={setShowNewGroupDialog}>
+              <Dialog
+                open={showNewGroupDialog}
+                onOpenChange={(open) => {
+                  setShowNewGroupDialog(open)
+                  if (open) loadAvailableUsers()
+                }}
+              >
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full">
                     <Users className="h-5 w-5" />
@@ -530,8 +554,8 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
                 key={conversation.id}
                 onClick={() => onSelectConversation(conversation)}
                 className={`w-full p-3 rounded-xl text-left transition-all duration-200 relative group border border-transparent ${selectedConversationId === conversation.id
-                    ? 'bg-white/90 border-slate-200/80 shadow-md shadow-slate-200/70'
-                    : 'hover:bg-white/70 hover:border-slate-200/70'
+                  ? 'bg-white/90 border-slate-200/80 shadow-md shadow-slate-200/70'
+                  : 'hover:bg-white/70 hover:border-slate-200/70'
                   }`}
               >
                 <div className="flex items-center space-x-3">

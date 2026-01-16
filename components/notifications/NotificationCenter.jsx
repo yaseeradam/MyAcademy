@@ -236,11 +236,11 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high':
-        return 'text-red-600 border-red-200'
+        return 'text-rose-600 border-rose-200 bg-rose-50'
       case 'medium':
-        return 'text-yellow-600 border-yellow-200'
+        return 'text-amber-600 border-amber-200 bg-amber-50'
       default:
-        return 'text-gray-600 border-gray-200'
+        return 'text-slate-600 border-slate-200 bg-slate-50'
     }
   }
 
@@ -296,14 +296,14 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onToggle}>
-      <DialogContent className="max-w-2xl max-h-[80vh]">
+      <DialogContent className="max-w-2xl max-h-[80vh] bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center space-x-2">
               <Bell className="h-5 w-5" />
               <span>Notifications</span>
               {unreadCount > 0 && (
-                <Badge variant="destructive" className="text-xs">
+                <Badge className="text-xs bg-rose-500 text-white border-none">
                   {unreadCount} unread
                 </Badge>
               )}
@@ -313,19 +313,20 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSoundEnabled(!soundEnabled)}
+                className="text-slate-500 hover:text-slate-900 hover:bg-slate-100"
               >
                 {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
               </Button>
               <Dialog open={showSettings} onOpenChange={setShowSettings}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100">
                     <Settings className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
                   <DialogHeader>
                     <DialogTitle>Notification Preferences</DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="text-slate-500">
                       Choose how you want to receive notifications.
                     </DialogDescription>
                   </DialogHeader>
@@ -409,7 +410,7 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
 
         <div className="flex justify-between items-center mb-4">
           <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-100">
               <TabsTrigger value="all">All ({notifications.length})</TabsTrigger>
               <TabsTrigger value="unread">Unread ({unreadCount})</TabsTrigger>
               <TabsTrigger value="read">Read ({notifications.length - unreadCount})</TabsTrigger>
@@ -447,7 +448,7 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
           </Tabs>
 
           {unreadCount > 0 && (
-            <Button variant="outline" size="sm" onClick={markAllAsRead}>
+            <Button variant="outline" size="sm" onClick={markAllAsRead} className="border-slate-200 text-slate-600 hover:bg-slate-100">
               Mark All Read
             </Button>
           )}
@@ -460,10 +461,10 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
 function NotificationList({ notifications, onMarkAsRead, getNotificationIcon, getPriorityColor, formatTime }) {
   if (notifications.length === 0) {
     return (
-      <Card>
+      <Card className="border-slate-200/80 bg-white/80">
         <CardContent className="p-8 text-center">
-          <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">No notifications</p>
+          <Bell className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+          <p className="text-slate-500">No notifications</p>
         </CardContent>
       </Card>
     )
@@ -475,36 +476,37 @@ function NotificationList({ notifications, onMarkAsRead, getNotificationIcon, ge
         {notifications.map((notification) => (
           <Card
             key={notification.id}
-            className={`cursor-pointer transition-colors hover:bg-gray-50 ${
-              !notification.read ? 'border-l-4 border-l-blue-500 bg-blue-50/30' : ''
+            className={`cursor-pointer transition-colors border-slate-200/80 bg-white/80 hover:bg-white ${
+              !notification.read ? 'border-l-4 border-l-sky-400 bg-sky-50/60' : ''
             }`}
             onClick={() => !notification.read && onMarkAsRead(notification.id)}
           >
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
-                <div className={`p-2 rounded-full ${getPriorityColor(notification.priority)}`}>
+                <div className={`p-2 rounded-full border ${getPriorityColor(notification.priority)}`}>
                   {getNotificationIcon(notification.type)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <h4 className="font-medium text-gray-900 truncate">
+                    <h4 className="font-medium text-slate-900 truncate">
                       {notification.title}
                     </h4>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-slate-500">
                       {formatTime(notification.createdAt)}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-slate-600 mb-2">
                     {notification.message}
                   </p>
                   <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-xs capitalize">
+                    <Badge variant="outline" className="text-xs capitalize border-slate-200 text-slate-600">
                       {notification.type.replace('_', ' ')}
                     </Badge>
                     {!notification.read && (
                       <Button
                         size="sm"
                         variant="ghost"
+                        className="text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                         onClick={(e) => {
                           e.stopPropagation()
                           onMarkAsRead(notification.id)

@@ -34,17 +34,17 @@ export function NotificationPopup({
   }
 
   const colors = {
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800'
+    success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+    error: 'bg-rose-50 border-rose-200 text-rose-800',
+    warning: 'bg-amber-50 border-amber-200 text-amber-800',
+    info: 'bg-sky-50 border-sky-200 text-sky-800'
   }
 
   const iconColors = {
-    success: 'text-green-500',
-    error: 'text-red-500',
-    warning: 'text-yellow-500',
-    info: 'text-blue-500'
+    success: 'text-emerald-500',
+    error: 'text-rose-500',
+    warning: 'text-amber-500',
+    info: 'text-sky-500'
   }
 
   const Icon = icons[type]
@@ -53,7 +53,7 @@ export function NotificationPopup({
 
   return (
     <div className="fixed top-4 right-4 z-50 max-w-sm w-full">
-      <div className={`rounded-lg border p-4 shadow-lg ${colors[type]} transform transition-all duration-300 ${show ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
+      <div className={`rounded-lg border p-4 shadow-lg shadow-slate-200/70 ${colors[type]} transform transition-all duration-300 ${show ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
         <div className="flex items-start">
           <Icon className={`h-5 w-5 mt-0.5 ${iconColors[type]}`} />
           <div className="ml-3 flex-1">
@@ -65,7 +65,7 @@ export function NotificationPopup({
               setShow(false)
               onClose?.()
             }}
-            className="ml-4 inline-flex text-gray-400 hover:text-gray-600"
+            className="ml-4 inline-flex text-slate-400 hover:text-slate-600"
           >
             <X className="h-4 w-4" />
           </button>

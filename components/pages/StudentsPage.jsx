@@ -76,14 +76,14 @@ export default function StudentsPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">{readOnly ? 'My Students' : 'Students Management'}</h2>
-          <p className="text-blue-200/60 text-sm mt-1">Manage student records and enrollment</p>
+          <h2 className="text-2xl font-bold text-slate-900">{readOnly ? 'My Students' : 'Students Management'}</h2>
+          <p className="text-slate-500 text-sm mt-1">Manage student records and enrollment</p>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
             onClick={() => exportStudentsToCSV(students, classes, parents, school?.name)}
-            className="bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white"
+            className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
           >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
@@ -103,67 +103,67 @@ export default function StudentsPage({
       {/* Search and Filters */}
       <div className="space-y-4">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             type="text"
             placeholder="Search students by name, admission number..."
             value={studentSearch}
             onChange={(e) => setStudentSearch(e.target.value)}
-            className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 focus:border-amber-500/50"
+            className="pl-11 bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-300"
           />
         </div>
 
         <div className="flex flex-wrap gap-3">
           <Select value={studentFilters.class} onValueChange={(value) => setStudentFilters(prev => ({ ...prev, class: value }))}>
-            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
+            <SelectTrigger className="w-48 bg-white border-slate-200 text-slate-800">
               <SelectValue placeholder="Filter by class" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0f1d32] border-white/10">
-              <SelectItem value="all_classes" className="text-white hover:bg-white/10">All Classes</SelectItem>
+            <SelectContent className="bg-white border-slate-200">
+              <SelectItem value="all_classes" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">All Classes</SelectItem>
               {classes.map((cls) => (
-                <SelectItem key={cls.id} value={cls.id} className="text-white hover:bg-white/10">{cls.name}</SelectItem>
+                <SelectItem key={cls.id} value={cls.id} className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">{cls.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Select value={studentFilters.gender} onValueChange={(value) => setStudentFilters(prev => ({ ...prev, gender: value }))}>
-            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
+            <SelectTrigger className="w-48 bg-white border-slate-200 text-slate-800">
               <SelectValue placeholder="Filter by gender" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0f1d32] border-white/10">
-              <SelectItem value="all_genders" className="text-white hover:bg-white/10">All Genders</SelectItem>
-              <SelectItem value="male" className="text-white hover:bg-white/10">Male</SelectItem>
-              <SelectItem value="female" className="text-white hover:bg-white/10">Female</SelectItem>
+            <SelectContent className="bg-white border-slate-200">
+              <SelectItem value="all_genders" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">All Genders</SelectItem>
+              <SelectItem value="male" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Male</SelectItem>
+              <SelectItem value="female" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Female</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={studentFilters.status} onValueChange={(value) => setStudentFilters(prev => ({ ...prev, status: value }))}>
-            <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
+            <SelectTrigger className="w-48 bg-white border-slate-200 text-slate-800">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0f1d32] border-white/10">
-              <SelectItem value="all_status" className="text-white hover:bg-white/10">All Status</SelectItem>
-              <SelectItem value="active" className="text-white hover:bg-white/10">Active</SelectItem>
-              <SelectItem value="inactive" className="text-white hover:bg-white/10">Inactive</SelectItem>
+            <SelectContent className="bg-white border-slate-200">
+              <SelectItem value="all_status" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">All Status</SelectItem>
+              <SelectItem value="active" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Active</SelectItem>
+              <SelectItem value="inactive" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       {/* Data Table */}
-      <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
+      <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#0f1d32] border-b border-white/10 hover:bg-[#0f1d32]">
-                <TableHead className="text-white font-semibold">Name</TableHead>
-                <TableHead className="text-white font-semibold">Admission #</TableHead>
-                <TableHead className="text-white font-semibold">Class</TableHead>
-                <TableHead className="text-white font-semibold">Parent</TableHead>
-                <TableHead className="text-white font-semibold">Phone</TableHead>
-                <TableHead className="text-white font-semibold">Gender</TableHead>
-                <TableHead className="text-white font-semibold">Status</TableHead>
-                <TableHead className="text-white font-semibold">Actions</TableHead>
+              <TableRow className="bg-slate-50/80 border-b border-slate-200/80 hover:bg-slate-50/80">
+                <TableHead className="text-slate-700 font-semibold">Name</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Admission #</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Class</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Parent</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Phone</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Gender</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Status</TableHead>
+                <TableHead className="text-slate-700 font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -171,19 +171,19 @@ export default function StudentsPage({
                 const studentClass = classes.find(c => c.id === student.classId)
                 const studentParent = parents.find(p => p.id === student.parentId)
                 return (
-                  <TableRow key={student.id} className="border-white/5 hover:bg-white/5">
-                    <TableCell className="font-medium text-white">
+                  <TableRow key={student.id} className="border-slate-200/80 hover:bg-slate-50">
+                    <TableCell className="font-medium text-slate-900">
                       {student.firstName} {student.lastName}
                     </TableCell>
-                    <TableCell className="font-mono text-sm text-blue-200/70">{student.admissionNumber}</TableCell>
-                    <TableCell className="text-blue-200/70">{studentClass?.name || 'Not assigned'}</TableCell>
-                    <TableCell className="max-w-xs truncate text-blue-200/70">{studentParent?.name || 'Not assigned'}</TableCell>
-                    <TableCell className="text-blue-200/70">{student.phoneNumber || 'N/A'}</TableCell>
-                    <TableCell className="capitalize text-blue-200/70">{student.gender || 'N/A'}</TableCell>
+                    <TableCell className="font-mono text-sm text-slate-600">{student.admissionNumber}</TableCell>
+                    <TableCell className="text-slate-600">{studentClass?.name || 'Not assigned'}</TableCell>
+                    <TableCell className="max-w-xs truncate text-slate-600">{studentParent?.name || 'Not assigned'}</TableCell>
+                    <TableCell className="text-slate-600">{student.phoneNumber || 'N/A'}</TableCell>
+                    <TableCell className="capitalize text-slate-600">{student.gender || 'N/A'}</TableCell>
                     <TableCell>
                       <Badge className={student.active
-                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30"
-                        : "bg-red-500/20 text-red-300 border-red-400/30"
+                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                        : "bg-rose-100 text-rose-700 border-rose-200"
                       }>
                         {student.active ? 'Active' : 'Inactive'}
                       </Badge>
@@ -194,7 +194,7 @@ export default function StudentsPage({
                           size="sm"
                           variant="outline"
                           onClick={() => handleView(student)}
-                          className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                          className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -203,7 +203,7 @@ export default function StudentsPage({
                             size="sm"
                             variant="outline"
                             onClick={() => { setViewStudent(student); onEdit(student); }}
-                            className="bg-transparent border-white/10 text-blue-200/70 hover:bg-white/10 hover:text-white"
+                            className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -211,7 +211,7 @@ export default function StudentsPage({
                             size="sm"
                             variant="outline"
                             onClick={() => { if (window.confirm('Are you sure?')) onDelete(student.id) }}
-                            className="bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -228,11 +228,11 @@ export default function StudentsPage({
 
       {/* Empty State */}
       {(!students || students.length === 0) && (
-        <Card className="border-0 bg-white/5 backdrop-blur-xl">
+        <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl">
           <CardContent className="p-8 text-center">
-            <Users className="h-12 w-12 text-blue-200/40 mx-auto mb-4" />
-            <p className="text-white">No students enrolled yet.</p>
-            <p className="text-sm text-blue-200/60 mt-1">Add your first student to get started.</p>
+            <Users className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <p className="text-slate-700">No students enrolled yet.</p>
+            <p className="text-sm text-slate-500 mt-1">Add your first student to get started.</p>
           </CardContent>
         </Card>
       )}

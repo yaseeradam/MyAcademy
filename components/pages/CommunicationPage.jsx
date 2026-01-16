@@ -13,8 +13,8 @@ import { MessageSquare, Mail, Bell, Users, Send, Phone, AlertCircle, CheckCircle
 // Simple loading component
 const Loader = ({ message }) => (
   <div className="flex flex-col items-center justify-center p-12">
-    <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-4"></div>
-    <p className="text-blue-200/60">{message}</p>
+    <div className="w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin mb-4"></div>
+    <p className="text-slate-500">{message}</p>
   </div>
 )
 
@@ -22,15 +22,15 @@ const Loader = ({ message }) => (
 const NotificationPopup = ({ show, type, message, onClose }) => {
   if (!show) return null
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
-      <div className="bg-[#0f1d32] border border-white/10 rounded-xl p-6 max-w-md w-full shadow-2xl relative">
-        <div className={`text-center ${type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+    <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
+      <div className="bg-white border border-slate-200/80 rounded-xl p-6 max-w-md w-full shadow-2xl shadow-slate-200/70 relative">
+        <div className={`text-center ${type === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>
           <div className="mb-4 flex justify-center">
             {type === 'success' ? <CheckCircle className="h-12 w-12" /> : <AlertCircle className="h-12 w-12" />}
           </div>
-          <h3 className="text-lg font-bold text-white mb-2">{type === 'success' ? 'Success' : 'Error'}</h3>
-          <p className="text-blue-200/80 mb-6">{message}</p>
-          <Button onClick={onClose} variant="outline" className="w-full border-white/10 text-white hover:bg-white/10">Close</Button>
+          <h3 className="text-lg font-bold text-slate-900 mb-2">{type === 'success' ? 'Success' : 'Error'}</h3>
+          <p className="text-slate-500 mb-6">{message}</p>
+          <Button onClick={onClose} variant="outline" className="w-full border-slate-200 text-slate-700 hover:bg-slate-100">Close</Button>
         </div>
       </div>
     </div>
@@ -155,20 +155,20 @@ export default function CommunicationPage() {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'info': return 'bg-blue-500/20 text-blue-300 border-blue-500/30'
-      case 'warning': return 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-      case 'error': return 'bg-red-500/20 text-red-300 border-red-500/30'
-      case 'success': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30'
+      case 'info': return 'bg-sky-100 text-sky-700 border-sky-200'
+      case 'warning': return 'bg-amber-100 text-amber-700 border-amber-200'
+      case 'error': return 'bg-rose-100 text-rose-700 border-rose-200'
+      case 'success': return 'bg-emerald-100 text-emerald-700 border-emerald-200'
+      default: return 'bg-slate-100 text-slate-600 border-slate-200'
     }
   }
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'high': return 'bg-red-500/20 text-red-300 border-red-500/30'
-      case 'medium': return 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-      case 'low': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30'
+      case 'high': return 'bg-rose-100 text-rose-700 border-rose-200'
+      case 'medium': return 'bg-amber-100 text-amber-700 border-amber-200'
+      case 'low': return 'bg-emerald-100 text-emerald-700 border-emerald-200'
+      default: return 'bg-slate-100 text-slate-600 border-slate-200'
     }
   }
 
@@ -181,27 +181,27 @@ export default function CommunicationPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Communication Center</h1>
-          <p className="text-blue-200/60 text-sm mt-1">Manage announcements, messages, and support tickets</p>
+          <h1 className="text-2xl font-bold text-slate-900">Communication Center</h1>
+          <p className="text-slate-500 text-sm mt-1">Manage announcements, messages, and support tickets</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => setShowNotificationModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white border-none shadow-lg shadow-blue-500/20"
+            className="bg-sky-500 hover:bg-sky-600 text-white border-none shadow-lg shadow-sky-200/70"
           >
             <Bell className="h-4 w-4 mr-2" />
             Send Notice
           </Button>
           <Button
             onClick={() => setShowMessageModal(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white border-none shadow-lg shadow-emerald-500/20"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-lg shadow-emerald-200/70"
           >
             <Mail className="h-4 w-4 mr-2" />
             Message
           </Button>
           <Button
             onClick={() => setShowTicketModal(true)}
-            className="bg-purple-600 hover:bg-purple-700 text-white border-none shadow-lg shadow-purple-500/20"
+            className="bg-amber-500 hover:bg-amber-600 text-white border-none shadow-lg shadow-amber-200/70"
           >
             <Ticket className="h-4 w-4 mr-2" />
             Support
@@ -211,59 +211,59 @@ export default function CommunicationPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="border-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-xl border-t border-white/5">
+        <Card className="border-0 bg-white/80 backdrop-blur-xl border border-slate-200/80">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-500/20 rounded-xl">
-                <Bell className="h-6 w-6 text-blue-400" />
+              <div className="p-3 bg-sky-100 rounded-xl">
+                <Bell className="h-6 w-6 text-sky-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">{notifications.length}</div>
-                <p className="text-xs text-blue-200/60 font-medium">Notifications</p>
+                <div className="text-2xl font-bold text-slate-900">{notifications.length}</div>
+                <p className="text-xs text-slate-500 font-medium">Notifications</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 backdrop-blur-xl border-t border-white/5">
+        <Card className="border-0 bg-white/80 backdrop-blur-xl border border-slate-200/80">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-emerald-500/20 rounded-xl">
-                <Send className="h-6 w-6 text-emerald-400" />
+              <div className="p-3 bg-emerald-100 rounded-xl">
+                <Send className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">{messages.length}</div>
-                <p className="text-xs text-blue-200/60 font-medium">Messages Sent</p>
+                <div className="text-2xl font-bold text-slate-900">{messages.length}</div>
+                <p className="text-xs text-slate-500 font-medium">Messages Sent</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-xl border-t border-white/5">
+        <Card className="border-0 bg-white/80 backdrop-blur-xl border border-slate-200/80">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-500/20 rounded-xl">
-                <Ticket className="h-6 w-6 text-purple-400" />
+              <div className="p-3 bg-amber-100 rounded-xl">
+                <Ticket className="h-6 w-6 text-amber-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">{supportTickets.length}</div>
-                <p className="text-xs text-blue-200/60 font-medium">Total Tickets</p>
+                <div className="text-2xl font-bold text-slate-900">{supportTickets.length}</div>
+                <p className="text-xs text-slate-500 font-medium">Total Tickets</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-amber-500/10 to-amber-600/5 backdrop-blur-xl border-t border-white/5">
+        <Card className="border-0 bg-white/80 backdrop-blur-xl border border-slate-200/80">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-amber-500/20 rounded-xl">
-                <AlertCircle className="h-6 w-6 text-amber-400" />
+              <div className="p-3 bg-rose-100 rounded-xl">
+                <AlertCircle className="h-6 w-6 text-rose-500" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-slate-900">
                   {supportTickets.filter(t => t.status === 'open').length}
                 </div>
-                <p className="text-xs text-blue-200/60 font-medium">Open Tickets</p>
+                <p className="text-xs text-slate-500 font-medium">Open Tickets</p>
               </div>
             </div>
           </CardContent>
@@ -271,7 +271,7 @@ export default function CommunicationPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 bg-white/5 p-1 rounded-xl w-fit">
+      <div className="flex space-x-1 bg-white/80 p-1 rounded-xl w-fit border border-slate-200/80">
         {[
           { id: 'notifications', label: 'Notifications', icon: Bell },
           { id: 'messages', label: 'Messages', icon: Mail },
@@ -281,8 +281,8 @@ export default function CommunicationPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium ${activeTab === tab.id
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                : 'text-blue-200/60 hover:text-white hover:bg-white/5'
+                ? 'bg-sky-500 text-white shadow-lg shadow-sky-200/70'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
               }`}
           >
             <tab.icon className="h-4 w-4" />
@@ -292,23 +292,23 @@ export default function CommunicationPage() {
       </div>
 
       {/* Search and Filter */}
-      <Card className="border-0 bg-white/5 backdrop-blur-xl">
+      <Card className="border-0 bg-white/80 backdrop-blur-xl border border-slate-200/80">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-black/20 border border-white/10 rounded-lg text-white placeholder:text-blue-200/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-200"
               />
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="w-full sm:w-48 px-4 py-2 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
+              className="w-full sm:w-48 px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-200 appearance-none cursor-pointer"
             >
               <option value="">All Types</option>
               {activeTab === 'notifications' && <>
@@ -328,9 +328,9 @@ export default function CommunicationPage() {
       </Card>
 
       {/* Content based on active tab */}
-      <Card className="border-0 bg-white/5 backdrop-blur-xl min-h-[400px]">
+      <Card className="border-0 bg-white/80 backdrop-blur-xl min-h-[400px] border border-slate-200/80">
         <CardHeader>
-          <CardTitle className="text-white">
+          <CardTitle className="text-slate-900">
             {activeTab === 'notifications' && 'System Notifications'}
             {activeTab === 'messages' && 'Message History'}
             {activeTab === 'tickets' && 'Support Tickets'}
@@ -339,40 +339,40 @@ export default function CommunicationPage() {
         <CardContent>
           <div className="space-y-4">
             {activeTab === 'notifications' && notifications.map(notification => (
-              <div key={notification.id} className="group flex items-start gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+              <div key={notification.id} className="group flex items-start gap-4 p-4 rounded-xl border border-slate-200/80 bg-white/70 hover:bg-white transition-all">
                 <div className={`p-2.5 rounded-lg border ${getTypeColor(notification.type)}`}>
                   <Bell className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
-                    <h3 className="font-semibold text-white truncate">{notification.title}</h3>
-                    <span className="text-xs text-blue-200/40 whitespace-nowrap">{new Date(notification.createdAt).toLocaleString()}</span>
+                    <h3 className="font-semibold text-slate-900 truncate">{notification.title}</h3>
+                    <span className="text-xs text-slate-400 whitespace-nowrap">{new Date(notification.createdAt).toLocaleString()}</span>
                   </div>
-                  <p className="text-sm text-blue-200/70">{notification.message}</p>
+                  <p className="text-sm text-slate-600">{notification.message}</p>
                 </div>
               </div>
             ))}
 
             {activeTab === 'messages' && messages.map(message => (
-              <div key={message.id} className="group flex items-start gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
-                <div className="p-2.5 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20">
+              <div key={message.id} className="group flex items-start gap-4 p-4 rounded-xl border border-slate-200/80 bg-white/70 hover:bg-white transition-all">
+                <div className="p-2.5 bg-sky-100 text-sky-600 rounded-lg border border-sky-200">
                   <Mail className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                    <h3 className="font-semibold text-white truncate">{message.subject}</h3>
+                    <h3 className="font-semibold text-slate-900 truncate">{message.subject}</h3>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 text-xs rounded border ${message.status === 'sent' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
-                          message.status === 'delivered' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' :
-                            'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                      <span className={`px-2 py-0.5 text-xs rounded border ${message.status === 'sent' ? 'bg-sky-100 text-sky-700 border-sky-200' :
+                          message.status === 'delivered' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                            'bg-slate-100 text-slate-600 border-slate-200'
                         }`}>
                         {message.status}
                       </span>
-                      <span className="text-xs text-blue-200/40 whitespace-nowrap">{new Date(message.sentAt).toLocaleDateString()}</span>
+                      <span className="text-xs text-slate-400 whitespace-nowrap">{new Date(message.sentAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <p className="text-sm text-blue-200/70 mb-2">{message.content}</p>
-                  <div className="flex items-center gap-2 text-xs text-blue-200/40">
+                  <p className="text-sm text-slate-600 mb-2">{message.content}</p>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
                     <Users className="h-3 w-3" />
                     <span>To: {Array.isArray(message.recipients) ? message.recipients.join(', ') : message.recipients}</span>
                   </div>
@@ -381,24 +381,24 @@ export default function CommunicationPage() {
             ))}
 
             {activeTab === 'tickets' && supportTickets.map(ticket => (
-              <div key={ticket.id} className="group flex items-start gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+              <div key={ticket.id} className="group flex items-start gap-4 p-4 rounded-xl border border-slate-200/80 bg-white/70 hover:bg-white transition-all">
                 <div className={`p-2.5 rounded-lg border ${getPriorityColor(ticket.priority)}`}>
                   <Ticket className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-white truncate">{ticket.subject}</h3>
+                    <h3 className="font-semibold text-slate-900 truncate">{ticket.subject}</h3>
                     <div className="flex gap-2">
                       <span className={`px-2 py-0.5 text-xs rounded border ${getPriorityColor(ticket.priority)}`}>
                         {ticket.priority}
                       </span>
-                      <span className="px-2 py-0.5 text-xs bg-white/10 text-white rounded border border-white/10 uppercase tracking-wider">
+                      <span className="px-2 py-0.5 text-xs bg-slate-100 text-slate-700 rounded border border-slate-200 uppercase tracking-wider">
                         {ticket.category}
                       </span>
                     </div>
                   </div>
-                  <p className="text-sm text-blue-200/70 mb-2">{ticket.description}</p>
-                  <div className="flex items-center justify-between text-xs text-blue-200/40">
+                  <p className="text-sm text-slate-600 mb-2">{ticket.description}</p>
+                  <div className="flex items-center justify-between text-xs text-slate-400">
                     <div className="flex items-center gap-2">
                       <Clock className="h-3 w-3" />
                       <span>{ticket.status.replace('_', ' ')}</span>
@@ -413,10 +413,10 @@ export default function CommunicationPage() {
               (activeTab === 'messages' && messages.length === 0) ||
               (activeTab === 'tickets' && supportTickets.length === 0)) && (
                 <div className="text-center py-12">
-                  <div className="bg-white/5 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Inbox className="h-8 w-8 text-blue-200/20" />
+                  <div className="bg-white/80 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-200/80">
+                    <Inbox className="h-8 w-8 text-slate-400" />
                   </div>
-                  <p className="text-blue-200/40">No items found</p>
+                  <p className="text-slate-500">No items found</p>
                 </div>
               )}
           </div>
@@ -425,10 +425,10 @@ export default function CommunicationPage() {
 
       {/* Modals - Dark Theme */}
       <Dialog open={showNotificationModal} onOpenChange={setShowNotificationModal}>
-        <DialogContent className="bg-[#0f1d32] border-white/10 text-white sm:max-w-md">
+        <DialogContent className="bg-white border-slate-200 text-slate-800 sm:max-w-md shadow-xl shadow-slate-200/70">
           <DialogHeader>
             <DialogTitle>Send Notification</DialogTitle>
-            <DialogDescription className="text-blue-200/60">Broadcast a message to users</DialogDescription>
+            <DialogDescription className="text-slate-500">Broadcast a message to users</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSendNotification} className="space-y-4">
             <div className="space-y-2">
@@ -437,7 +437,7 @@ export default function CommunicationPage() {
                 placeholder="Notification title"
                 value={notificationForm.title}
                 onChange={(e) => setNotificationForm(prev => ({ ...prev, title: e.target.value }))}
-                className="bg-black/20 border-white/10 text-white placeholder:text-blue-200/30"
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                 required
               />
             </div>
@@ -447,7 +447,7 @@ export default function CommunicationPage() {
                 placeholder="Notification message"
                 value={notificationForm.message}
                 onChange={(e) => setNotificationForm(prev => ({ ...prev, message: e.target.value }))}
-                className="bg-black/20 border-white/10 text-white placeholder:text-blue-200/30 min-h-[100px]"
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 min-h-[100px]"
                 required
               />
             </div>
@@ -457,10 +457,10 @@ export default function CommunicationPage() {
                 value={notificationForm.type}
                 onValueChange={(val) => setNotificationForm(prev => ({ ...prev, type: val }))}
               >
-                <SelectTrigger className="bg-black/20 border-white/10 text-white">
+                <SelectTrigger className="bg-white border-slate-200 text-slate-800">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#0f1d32] border-white/10 text-white">
+                <SelectContent className="bg-white border-slate-200 text-slate-800">
                   <SelectItem value="info">Info</SelectItem>
                   <SelectItem value="warning">Warning</SelectItem>
                   <SelectItem value="error">Error</SelectItem>
@@ -469,18 +469,18 @@ export default function CommunicationPage() {
               </Select>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" className="border-white/10 text-blue-200 hover:bg-white/10 hover:text-white" onClick={() => setShowNotificationModal(false)}>Cancel</Button>
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Send Notification</Button>
+              <Button type="button" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={() => setShowNotificationModal(false)}>Cancel</Button>
+              <Button type="submit" className="bg-sky-500 hover:bg-sky-600 text-white">Send Notification</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
       <Dialog open={showMessageModal} onOpenChange={setShowMessageModal}>
-        <DialogContent className="bg-[#0f1d32] border-white/10 text-white sm:max-w-md">
+        <DialogContent className="bg-white border-slate-200 text-slate-800 sm:max-w-md shadow-xl shadow-slate-200/70">
           <DialogHeader>
             <DialogTitle>Send Message</DialogTitle>
-            <DialogDescription className="text-blue-200/60">Send a direct message</DialogDescription>
+            <DialogDescription className="text-slate-500">Send a direct message</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSendMessage} className="space-y-4">
             <div className="space-y-2">
@@ -489,7 +489,7 @@ export default function CommunicationPage() {
                 placeholder="Message subject"
                 value={messageForm.subject}
                 onChange={(e) => setMessageForm(prev => ({ ...prev, subject: e.target.value }))}
-                className="bg-black/20 border-white/10 text-white placeholder:text-blue-200/30"
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                 required
               />
             </div>
@@ -499,23 +499,23 @@ export default function CommunicationPage() {
                 placeholder="Type your message here..."
                 value={messageForm.content}
                 onChange={(e) => setMessageForm(prev => ({ ...prev, content: e.target.value }))}
-                className="bg-black/20 border-white/10 text-white placeholder:text-blue-200/30 min-h-[120px]"
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 min-h-[120px]"
                 required
               />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" className="border-white/10 text-blue-200 hover:bg-white/10 hover:text-white" onClick={() => setShowMessageModal(false)}>Cancel</Button>
-              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">Send Message</Button>
+              <Button type="button" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={() => setShowMessageModal(false)}>Cancel</Button>
+              <Button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white">Send Message</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
       <Dialog open={showTicketModal} onOpenChange={setShowTicketModal}>
-        <DialogContent className="bg-[#0f1d32] border-white/10 text-white sm:max-w-md">
+        <DialogContent className="bg-white border-slate-200 text-slate-800 sm:max-w-md shadow-xl shadow-slate-200/70">
           <DialogHeader>
             <DialogTitle>Create Support Ticket</DialogTitle>
-            <DialogDescription className="text-blue-200/60">Report an issue or request help</DialogDescription>
+            <DialogDescription className="text-slate-500">Report an issue or request help</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateTicket} className="space-y-4">
             <div className="space-y-2">
@@ -524,7 +524,7 @@ export default function CommunicationPage() {
                 placeholder="Issue summary"
                 value={ticketForm.subject}
                 onChange={(e) => setTicketForm(prev => ({ ...prev, subject: e.target.value }))}
-                className="bg-black/20 border-white/10 text-white placeholder:text-blue-200/30"
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                 required
               />
             </div>
@@ -534,7 +534,7 @@ export default function CommunicationPage() {
                 placeholder="Describe the issue in detail..."
                 value={ticketForm.description}
                 onChange={(e) => setTicketForm(prev => ({ ...prev, description: e.target.value }))}
-                className="bg-black/20 border-white/10 text-white placeholder:text-blue-200/30 min-h-[100px]"
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 min-h-[100px]"
                 required
               />
             </div>
@@ -545,10 +545,10 @@ export default function CommunicationPage() {
                   value={ticketForm.priority}
                   onValueChange={(val) => setTicketForm(prev => ({ ...prev, priority: val }))}
                 >
-                  <SelectTrigger className="bg-black/20 border-white/10 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-800">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0f1d32] border-white/10 text-white">
+                  <SelectContent className="bg-white border-slate-200 text-slate-800">
                     <SelectItem value="low">Low</SelectItem>
                     <SelectItem value="medium">Medium</SelectItem>
                     <SelectItem value="high">High</SelectItem>
@@ -561,10 +561,10 @@ export default function CommunicationPage() {
                   value={ticketForm.category}
                   onValueChange={(val) => setTicketForm(prev => ({ ...prev, category: val }))}
                 >
-                  <SelectTrigger className="bg-black/20 border-white/10 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-800">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0f1d32] border-white/10 text-white">
+                  <SelectContent className="bg-white border-slate-200 text-slate-800">
                     <SelectItem value="general">General</SelectItem>
                     <SelectItem value="technical">Technical</SelectItem>
                     <SelectItem value="feature">Feature Request</SelectItem>
@@ -574,8 +574,8 @@ export default function CommunicationPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" className="border-white/10 text-blue-200 hover:bg-white/10 hover:text-white" onClick={() => setShowTicketModal(false)}>Cancel</Button>
-              <Button type="submit" className="bg-purple-600 hover:bg-purple-700">Submit Ticket</Button>
+              <Button type="button" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={() => setShowTicketModal(false)}>Cancel</Button>
+              <Button type="submit" className="bg-amber-500 hover:bg-amber-600 text-white">Submit Ticket</Button>
             </DialogFooter>
           </form>
         </DialogContent>
