@@ -403,50 +403,75 @@ function App() {
       setShowFormView('parent')
       setActiveTab('parents')
     } else if (actionId === 'mark-attendance') {
-      const today = new Date().toISOString().split('T')[0]
+      // Navigate to the appropriate attendance page
       if (user.role === 'school_admin') {
-        teacherAttendanceHandlers.setAttendanceDate(today)
-        teacherAttendanceHandlers.setAttendanceList([])
-        teacherAttendanceHandlers.setShowAttendanceModal(true)
+        setActiveTab('teacher-attendance')
       } else if (user.role === 'teacher') {
-        studentAttendanceHandlers.setAttendanceDate(today)
-        studentAttendanceHandlers.setSelectedClass('')
-        studentAttendanceHandlers.setAttendanceList([])
-        studentAttendanceHandlers.setShowAttendanceModal(true)
+        setActiveTab('student-attendance')
       }
+    } else if (actionId === 'send-notice') {
+      // For school admin, navigate to messages page to send broadcast
+      setActiveTab('messages')
     } else if (actionId === 'generate-report') {
       setShowReportDialog(true)
     }
   }
 
+
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a1628]">
+    <div className="min-h-screen flex items-center justify-center theme-soft">
       <div className="text-center">
-        <div className="relative mb-6">
-          {/* Glowing backdrop */}
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl blur-xl opacity-30 animate-pulse" />
-          {/* Logo */}
+        <div className="relative mb-5">
+          <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-emerald-300 rounded-3xl blur-xl opacity-30 animate-pulse" />
           <img
             src="/logo.png"
             alt="My Academy"
             className="relative w-20 h-20 rounded-2xl mx-auto shadow-2xl"
           />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">My Academy</h2>
-        <p className="text-blue-200/60 animate-pulse mb-6">Loading your dashboard...</p>
-        {/* Loading bar */}
-        <div className="w-64 bg-white/10 rounded-full h-1.5 mx-auto overflow-hidden">
-          <div className="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full animate-loading-bar" />
+        <div className="mx-auto mb-6 h-16 w-16 relative loader-orbit">
+          <span className="loader-core" />
         </div>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">My Academy</h2>
+        <p className="text-slate-500 tracking-widest text-xs uppercase">Preparing your dashboard</p>
       </div>
       <style jsx global>{`
-        @keyframes loading-bar {
-          0% { width: 0%; }
-          50% { width: 70%; }
-          100% { width: 100%; }
+        .loader-orbit::before,
+        .loader-orbit::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 999px;
+          border: 2px solid transparent;
+          border-top-color: #38bdf8;
+          border-right-color: #34d399;
+          animation: orbit-spin 1.1s linear infinite;
         }
-        .animate-loading-bar {
-          animation: loading-bar 1.5s ease-in-out infinite;
+        .loader-orbit::after {
+          inset: 8px;
+          border-top-color: #34d399;
+          border-right-color: #38bdf8;
+          animation-duration: 0.8s;
+          animation-direction: reverse;
+        }
+        .loader-core {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          transform: translate(-50%, -50%);
+          background: #38bdf8;
+          box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+          animation: core-pulse 1.2s ease-in-out infinite;
+        }
+        @keyframes orbit-spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes core-pulse {
+          0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+          50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
         }
       `}</style>
     </div>
@@ -511,7 +536,7 @@ function App() {
       {activeTab === 'assignments' && user.role === 'school_admin' && <AssignmentsPage assignments={assignments} teachers={teachers} classes={classes} subjects={subjects} showAssignmentModal={showAssignmentModal} setShowAssignmentModal={setShowAssignmentModal} assignmentForm={formHandlers.assignmentForm} setAssignmentForm={formHandlers.setAssignmentForm} handleCreateAssignment={async (e) => { const success = await formHandlers.handleCreateAssignment(e, subjects, classes); if (success) setShowAssignmentModal(false); }} handleDeleteAssignment={formHandlers.handleDeleteAssignment} />}
       {activeTab === 'teacher-attendance' && user.role === 'school_admin' && <TeacherAttendancePage user={user} attendance={attendance.filter(a => a.teacherId)} teachers={teachers} {...teacherAttendanceHandlers} />}
       {activeTab === 'student-attendance' && (user.role === 'school_admin' || user.role === 'teacher') && <StudentAttendancePage user={user} attendance={attendance.filter(a => a.studentId)} students={filteredStudents} classes={filteredClasses} {...studentAttendanceHandlers} loadAttendanceByDate={loadAttendanceByDate} />}
-      {activeTab === 'schools' && user.role === 'developer' && <SchoolsPage schools={schools} showMasterSchoolModal={showMasterSchoolModal} setShowMasterSchoolModal={setShowMasterSchoolModal} masterSchoolForm={formHandlers.masterSchoolForm} setMasterSchoolForm={formHandlers.setMasterSchoolForm} handleCreateSchool={formHandlers.handleCreateSchool} onToggleSchoolStatus={handleToggleSchoolStatus} apiCall={apiCall} onEdit={(school) => { formHandlers.setMasterSchoolForm({ schoolName: school.name, adminName: '', adminEmail: '', adminPassword: '', id: school.id }); setShowMasterSchoolModal(true); }} onDelete={formHandlers.handleDeleteSchool} />}
+      {activeTab === 'schools' && user.role === 'developer' && <SchoolsPage schools={schools} showMasterSchoolModal={showMasterSchoolModal} setShowMasterSchoolModal={setShowMasterSchoolModal} masterSchoolForm={formHandlers.masterSchoolForm} setMasterSchoolForm={formHandlers.setMasterSchoolForm} handleCreateSchool={async (e) => { const success = await formHandlers.handleCreateSchool(e); if (success) setShowMasterSchoolModal(false); }} onToggleSchoolStatus={handleToggleSchoolStatus} apiCall={apiCall} onEdit={(school) => { formHandlers.setMasterSchoolForm({ schoolName: school.name, adminName: '', adminEmail: '', adminPassword: '', id: school.id }); setShowMasterSchoolModal(true); }} onDelete={formHandlers.handleDeleteSchool} onAddAdmin={formHandlers.handleAddAdmin} />}
       {activeTab === 'school-settings' && user.role === 'school_admin' && <SchoolSettingsPage schoolSettings={schoolSettings} setSchoolSettings={setSchoolSettings} handleLogoUpload={handleLogoUpload} handleSaveSettings={handleSaveSettings} />}
       {activeTab === 'school-settings' && user.role === 'school_admin' && <SchoolSettingsPage schoolSettings={schoolSettings} setSchoolSettings={setSchoolSettings} handleLogoUpload={handleLogoUpload} handleSaveSettings={handleSaveSettings} />}
       {activeTab === 'master-settings' && user.role === 'developer' && <MasterSettingsPage masterSettings={masterSettings} setMasterSettings={setMasterSettings} handleSaveMasterSettings={handleSaveMasterSettings} stats={stats} />}

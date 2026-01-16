@@ -1,14 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: hsl(var(--background));
+    background-image:
+        radial-gradient(circle at 12% 8%, rgba(56, 189, 248, 0.15), transparent 45%),
+        radial-gradient(circle at 88% 12%, rgba(251, 191, 36, 0.18), transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.12), transparent 45%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.96));
+    color: hsl(var(--foreground));
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
 }
 
 code {
@@ -59,52 +74,61 @@ code {
 
 @layer base {
   :root {
-        /* Defaulting to Dark Mode values */
-        --background: 222.2 84% 4.9%;
-        --foreground: 210 40% 98%;
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
-        --primary: 210 40% 98%;
-        --primary-foreground: 222.2 47.4% 11.2%;
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
-        --destructive: 0 62.8% 30.6%;
+        --font-sans: "Manrope", "Segoe UI", sans-serif;
+        --font-display: "Fraunces", "Times New Roman", serif;
+
+        --background: 34 48% 97%;
+        --foreground: 222 28% 16%;
+        --card: 0 0% 100%;
+        --card-foreground: 222 28% 16%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 28% 16%;
+        --primary: 199 84% 45%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 30 42% 93%;
+        --secondary-foreground: 222 20% 25%;
+        --muted: 30 28% 92%;
+        --muted-foreground: 222 14% 45%;
+        --accent: 38 82% 88%;
+        --accent-foreground: 222 22% 24%;
+        --destructive: 0 72% 46%;
         --destructive-foreground: 210 40% 98%;
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 212.7 26.8% 83.9%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
+        --border: 220 16% 88%;
+        --input: 220 16% 90%;
+        --ring: 199 84% 50%;
+        --chart-1: 199 84% 45%;
+        --chart-2: 160 60% 42%;
         --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
-        --sidebar-background: 240 5.9% 10%;
-        --sidebar-foreground: 240 4.8% 95.9%;
-        --sidebar-primary: 224.3 76.3% 48%;
+        --chart-4: 90 55% 48%;
+        --chart-5: 12 70% 55%;
+        --sidebar-background: 30 44% 96%;
+        --sidebar-foreground: 222 24% 20%;
+        --sidebar-primary: 199 84% 45%;
         --sidebar-primary-foreground: 0 0% 100%;
-        --sidebar-accent: 240 3.7% 15.9%;
-        --sidebar-accent-foreground: 240 4.8% 95.9%;
-        --sidebar-border: 240 3.7% 15.9%;
-        --sidebar-ring: 217.2 91.2% 59.8%;
-        --radius: 0.5rem;
+        --sidebar-accent: 35 60% 92%;
+        --sidebar-accent-foreground: 222 22% 24%;
+        --sidebar-border: 220 16% 86%;
+        --sidebar-ring: 199 84% 50%;
+        --radius: 1rem;
+
+        --soft-ink: 222 28% 16%;
+        --soft-muted: 222 14% 45%;
+        --soft-accent: 199 70% 38%;
+        --soft-accent-2: 160 45% 36%;
+        --soft-warm: 35 70% 45%;
+        --soft-danger: 0 65% 45%;
         
         /* Theme colors - can be overridden by school settings */
-        --theme-primary: #3B82F6;
-        --theme-light-50: #EFF6FF;
-        --theme-light-100: #DBEAFE;
-        --theme-light-200: #BFDBFE;
-        --theme-medium-300: #93C5FD;
-        --theme-medium-400: #60A5FA;
-        --theme-medium-500: #3B82F6;
-        --theme-dark-600: #2563EB;
-        --theme-dark-700: #1D4ED8;
-        --theme-dark-800: #1E40AF;
+        --theme-primary: #0ea5e9;
+        --theme-light-50: #f0f9ff;
+        --theme-light-100: #e0f2fe;
+        --theme-light-200: #bae6fd;
+        --theme-medium-300: #7dd3fc;
+        --theme-medium-400: #38bdf8;
+        --theme-medium-500: #0ea5e9;
+        --theme-dark-600: #0284c7;
+        --theme-dark-700: #0369a1;
+        --theme-dark-800: #0c4a6e;
     }
   .dark {
         --background: 222.2 84% 4.9%;
@@ -151,4 +175,164 @@ code {
   body {
     @apply bg-background text-foreground;
     }
+}
+
+@layer components {
+    .soft-surface {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(18px);
+    }
+
+    .soft-ring {
+        box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.2),
+            0 12px 30px rgba(14, 165, 233, 0.15);
+    }
+}
+
+@layer utilities {
+    .animate-soft-fade {
+        animation: soft-fade-up 0.7s ease forwards;
+    }
+
+    .animate-float-slow {
+        animation: float-slow 8s ease-in-out infinite;
+    }
+}
+
+@keyframes soft-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float-slow {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+@keyframes shimmer-sheen {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(120%);
+    }
+}
+
+.theme-soft .bg-white\/5 {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.theme-soft .bg-white\/10 {
+    background-color: rgba(255, 255, 255, 0.92);
+}
+
+.theme-soft .bg-white\/\[0\.02\] {
+    background-color: rgba(255, 255, 255, 0.65);
+}
+
+.theme-soft .border-white\/5,
+.theme-soft .border-white\/10 {
+    border-color: rgba(15, 23, 42, 0.08);
+}
+
+.theme-soft .text-blue-200\/30,
+.theme-soft .text-blue-200\/40,
+.theme-soft .text-blue-200\/50,
+.theme-soft .text-blue-200\/60,
+.theme-soft .text-blue-200\/70,
+.theme-soft .text-blue-300\/40 {
+    color: hsl(var(--muted-foreground));
+}
+
+.theme-soft .text-white {
+    color: hsl(var(--foreground));
+}
+
+.theme-soft .bg-\[\#0a1628\],
+.theme-soft .bg-\[\#0f1d32\],
+.theme-soft .bg-\[\#0f1a2e\] {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-soft .text-on-accent {
+    color: #ffffff;
+}
+
+.theme-soft .text-black,
+.theme-soft .text-gray-900,
+.theme-soft .text-gray-800,
+.theme-soft .text-gray-700,
+.theme-soft .text-slate-900,
+.theme-soft .text-slate-800,
+.theme-soft .text-slate-700,
+.theme-soft .text-zinc-900,
+.theme-soft .text-neutral-900 {
+    color: hsl(var(--soft-ink));
+}
+
+.theme-soft .text-gray-600,
+.theme-soft .text-gray-500,
+.theme-soft .text-gray-400,
+.theme-soft .text-slate-600,
+.theme-soft .text-slate-500,
+.theme-soft .text-slate-400,
+.theme-soft .text-zinc-600,
+.theme-soft .text-neutral-600 {
+    color: hsl(var(--soft-muted));
+}
+
+.theme-soft .text-blue-900,
+.theme-soft .text-blue-800,
+.theme-soft .text-blue-700,
+.theme-soft .text-blue-600,
+.theme-soft .text-blue-500,
+.theme-soft .text-sky-700,
+.theme-soft .text-sky-600,
+.theme-soft .text-cyan-600,
+.theme-soft .text-indigo-600 {
+    color: hsl(var(--soft-accent));
+}
+
+.theme-soft .text-emerald-900,
+.theme-soft .text-emerald-700,
+.theme-soft .text-emerald-600,
+.theme-soft .text-green-700,
+.theme-soft .text-teal-600 {
+    color: hsl(var(--soft-accent-2));
+}
+
+.theme-soft .text-amber-900,
+.theme-soft .text-amber-700,
+.theme-soft .text-orange-700,
+.theme-soft .text-yellow-700 {
+    color: hsl(var(--soft-warm));
+}
+
+.theme-soft .text-rose-600,
+.theme-soft .text-rose-500,
+.theme-soft .text-red-600,
+.theme-soft .text-red-500 {
+    color: hsl(var(--soft-danger));
+}
+
+.theme-soft .bg-slate-900,
+.theme-soft .bg-slate-800,
+.theme-soft .bg-gray-900,
+.theme-soft .bg-gray-800,
+.theme-soft .bg-blue-900,
+.theme-soft .bg-indigo-900 {
+    background-color: rgba(255, 255, 255, 0.88);
 }

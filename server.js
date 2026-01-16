@@ -1,6 +1,7 @@
 const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
+const { initializeSocketServer } = require('./lib/socket-server')
 
 const dev = process.env.NODE_ENV !== 'production'
 const hostname = 'localhost'
@@ -39,6 +40,9 @@ app.prepare().then(() => {
       console.log('Process terminated')
     })
   })
+
+  // Start socket server on same HTTP server
+  initializeSocketServer(server)
 
   // Start server
   server.listen(port, hostname, (err) => {

@@ -82,27 +82,48 @@ export default function AttendancePage({
               Mark {user.role === 'school_admin' ? 'Teacher' : 'Student'} Attendance
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[95vw] max-w-5xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden bg-[#0f1d32] border-white/10 text-white p-0 flex flex-col">
-            <div className="p-6 border-b border-white/10 flex-shrink-0">
-              <DialogHeader>
-                <DialogTitle className="text-xl sm:text-2xl text-white flex items-center gap-3">
-                  <div className="p-2 bg-emerald-500/20 rounded-lg">
-                    <CheckCircle className="h-6 w-6 text-emerald-400" />
+
+          {/* Mobile-First Full Screen Modal */}
+          <DialogContent className="w-full h-[100dvh] max-w-none max-h-none sm:w-[95vw] sm:max-w-2xl sm:h-auto sm:max-h-[85vh] m-0 sm:m-auto rounded-none sm:rounded-xl bg-[#0f1629] border-0 sm:border sm:border-white/10 text-white p-0 flex flex-col fixed inset-0 sm:inset-auto overflow-hidden">
+
+            {/* Header - Compact */}
+            <div className="flex-shrink-0 px-4 py-3 border-b border-white/10 bg-[#0f1629]">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowAttendanceModal(false)}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 active:bg-white/10"
+                >
+                  <XCircle className="h-5 w-5 text-white/60" />
+                </button>
+                <div className="flex-1">
+                  <h2 className="text-base font-semibold text-white">
+                    {user.role === 'school_admin' ? 'Teacher' : 'Student'} Attendance
+                  </h2>
+                  <p className="text-xs text-white/40">
+                    {attendanceDate ? new Date(attendanceDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : 'Select date'}
+                  </p>
+                </div>
+                {attendanceList.length > 0 && (
+                  <div className="flex gap-1.5">
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-500/20 text-emerald-400">
+                      {attendanceList.filter(i => i.status === 'present').length}
+                    </span>
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-red-500/20 text-red-400">
+                      {attendanceList.filter(i => i.status === 'absent').length}
+                    </span>
                   </div>
-                  Mark {user.role === 'school_admin' ? 'Teacher' : 'Student'} Attendance
-                </DialogTitle>
-                <DialogDescription className="text-blue-200/60 mt-1">
-                  {user.role === 'school_admin' ? 'Select date to mark attendance for all teachers.' : 'Select class and date to mark attendance for students.'}
-                </DialogDescription>
-              </DialogHeader>
+                )}
+              </div>
             </div>
 
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <div className="p-6 space-y-6 overflow-y-auto flex-1">
-                <div className={user.role === 'school_admin' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 sm:grid-cols-2 gap-6'}>
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              <div className="p-3 space-y-3">
+
+                {/* Date & Class Selectors - Compact Row */}
+                <div className="flex gap-2">
                   {user.role === 'teacher' && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-blue-200/80">Select Class</Label>
+                    <div className="flex-1">
                       <Select
                         value={selectedClass}
                         onValueChange={(value) => {
@@ -110,12 +131,12 @@ export default function AttendancePage({
                           setAttendanceList([])
                         }}
                       >
-                        <SelectTrigger className="h-11 bg-white/5 border-white/10 text-white hover:bg-white/10 transition-colors">
-                          <SelectValue placeholder="Choose a class" />
+                        <SelectTrigger className="h-12 bg-white/5 border-white/10 text-white rounded-lg text-sm">
+                          <SelectValue placeholder="Select class" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0f1d32] border-white/10">
+                        <SelectContent className="bg-[#1a2744] border-white/10">
                           {classes.map((cls) => (
-                            <SelectItem key={cls.id} value={cls.id} className="text-white hover:bg-white/10 focus:bg-white/10 py-3 cursor-pointer">
+                            <SelectItem key={cls.id} value={cls.id} className="text-white hover:bg-white/10 focus:bg-white/10 py-3">
                               {cls.name}
                             </SelectItem>
                           ))}
@@ -123,184 +144,130 @@ export default function AttendancePage({
                       </Select>
                     </div>
                   )}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-blue-200/80">Date</Label>
+                  <div className={user.role === 'teacher' ? 'flex-1' : 'w-full'}>
                     <Input
                       type="date"
-                      className="h-11 bg-white/5 border-white/10 text-white hover:bg-white/10 transition-colors"
+                      className="h-12 bg-white/5 border-white/10 text-white rounded-lg text-sm"
                       value={attendanceDate}
                       max={new Date().toISOString().split('T')[0]}
-                      onChange={(e) => {
-                        setAttendanceDate(e.target.value)
-                      }}
+                      onChange={(e) => setAttendanceDate(e.target.value)}
                     />
                   </div>
                 </div>
 
+
+
+                {/* Student/Teacher List */}
                 {((user.role === 'school_admin' && attendanceDate) || (user.role === 'teacher' && selectedClass && attendanceDate)) && (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="space-y-2">
                     {attendanceList.length === 0 ? (
-                      <div className="text-center py-12 bg-white/5 rounded-xl border border-white/5 border-dashed">
-                        <div className="animate-pulse">
-                          <Users className="h-12 w-12 sm:h-16 sm:w-16 text-blue-200/20 mx-auto mb-4" />
-                          <p className="text-blue-200/60 text-base font-medium">Loading {user.role === 'school_admin' ? 'teachers' : 'students'}...</p>
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/5 flex items-center justify-center animate-pulse">
+                          <Users className="h-8 w-8 text-white/20" />
                         </div>
+                        <p className="text-white/40 text-sm">Loading...</p>
                       </div>
                     ) : (
-                      <>
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-emerald-500/5 p-4 rounded-xl gap-4 border border-emerald-500/10">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-emerald-500/20 p-2 rounded-lg">
-                              <Users className="h-5 w-5 text-emerald-400" />
+                      attendanceList.map((item, index) => (
+                        <div
+                          key={item.teacherId || item.studentId}
+                          className="rounded-xl border border-white/10 p-3"
+                        >
+                          {/* Person Row */}
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                              {(item.teacherName || item.studentName).split(' ').map(n => n[0]).join('').slice(0, 2)}
                             </div>
-                            <h3 className="font-semibold text-lg text-white">
-                              {user.role === 'school_admin' ? `${attendanceList.length} Teachers` : `${attendanceList.length} Students`}
-                            </h3>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-white text-sm truncate">{item.teacherName || item.studentName}</p>
+                              <p className="text-[11px] text-white/30">ID: {item.teacherId || item.studentId}</p>
+                            </div>
                           </div>
-                          <div className="flex gap-3">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="flex-1 sm:flex-none text-xs sm:text-sm bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300"
+
+                          {/* Status Buttons - 4 Column Grid */}
+                          <div className="grid grid-cols-4 gap-1.5">
+                            <button
                               onClick={() => {
-                                const newList = attendanceList.map(item => ({ ...item, status: 'present' }))
-                                setAttendanceList(newList)
+                                const newList = [...attendanceList];
+                                newList[index].status = 'present';
+                                setAttendanceList(newList);
                               }}
+                              className={`py-2 rounded-lg text-xs font-semibold transition-all active:scale-95 ${item.status === 'present'
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-white/5 text-white/40'
+                                }`}
                             >
-                              <CheckCircle className="h-3.5 w-3.5 mr-2" />
-                              Mark All Present
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="flex-1 sm:flex-none text-xs sm:text-sm bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20 hover:text-red-300"
+                              Present
+                            </button>
+                            <button
                               onClick={() => {
-                                const newList = attendanceList.map(item => ({ ...item, status: 'absent' }))
-                                setAttendanceList(newList)
+                                const newList = [...attendanceList];
+                                newList[index].status = 'absent';
+                                setAttendanceList(newList);
                               }}
+                              className={`py-2 rounded-lg text-xs font-semibold transition-all active:scale-95 ${item.status === 'absent'
+                                ? 'bg-red-500 text-white'
+                                : 'bg-white/5 text-white/40'
+                                }`}
                             >
-                              <XCircle className="h-3.5 w-3.5 mr-2" />
-                              Mark All Absent
-                            </Button>
+                              Absent
+                            </button>
+                            <button
+                              onClick={() => {
+                                const newList = [...attendanceList];
+                                newList[index].status = 'late';
+                                setAttendanceList(newList);
+                              }}
+                              className={`py-2 rounded-lg text-xs font-semibold transition-all active:scale-95 ${item.status === 'late'
+                                ? 'bg-amber-500 text-white'
+                                : 'bg-white/5 text-white/40'
+                                }`}
+                            >
+                              Late
+                            </button>
+                            <button
+                              onClick={() => {
+                                const newList = [...attendanceList];
+                                newList[index].status = 'sick';
+                                setAttendanceList(newList);
+                              }}
+                              className={`py-2 rounded-lg text-xs font-semibold transition-all active:scale-95 ${item.status === 'sick'
+                                ? 'bg-purple-500 text-white'
+                                : 'bg-white/5 text-white/40'
+                                }`}
+                            >
+                              Sick
+                            </button>
                           </div>
                         </div>
-
-                        <div className="grid grid-cols-1 gap-3">
-                          {attendanceList.map((item, index) => (
-                            <div key={item.teacherId || item.studentId} className="p-4 border border-white/5 rounded-xl hover:bg-white/[0.02] transition-colors bg-white/[0.01] group">
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                                <div className="flex items-center gap-4 min-w-0 flex-1">
-                                  <Avatar className="h-10 w-10 sm:h-12 sm:w-12 shrink-0 ring-2 ring-white/10 group-hover:ring-blue-500/50 transition-all">
-                                    <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold text-sm sm:text-base">
-                                      {(item.teacherName || item.studentName).split(' ').map(n => n[0]).join('')}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="min-w-0">
-                                    <span className="font-semibold text-base sm:text-lg block truncate text-white">{item.teacherName || item.studentName}</span>
-                                    <span className="text-xs text-blue-200/40 font-mono">ID: {item.teacherId || item.studentId}</span>
-                                  </div>
-                                </div>
-
-                                {/* Status Selector */}
-                                <div className="flex bg-white/5 p-1 rounded-lg gap-1 overflow-x-auto">
-                                  {['present', 'absent', 'late', 'sick'].map((status) => {
-                                    const isActive = item.status === status;
-                                    let activeClass = '';
-                                    let icon = null;
-                                    let label = '';
-
-                                    switch (status) {
-                                      case 'present':
-                                        activeClass = 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20';
-                                        icon = <CheckCircle className="h-4 w-4" />;
-                                        label = 'Present';
-                                        break;
-                                      case 'absent':
-                                        activeClass = 'bg-red-500 text-white shadow-lg shadow-red-500/20';
-                                        icon = <XCircle className="h-4 w-4" />;
-                                        label = 'Absent';
-                                        break;
-                                      case 'late':
-                                        activeClass = 'bg-amber-500 text-white shadow-lg shadow-amber-500/20';
-                                        icon = <Clock className="h-4 w-4" />;
-                                        label = 'Late';
-                                        break;
-                                      case 'sick':
-                                        activeClass = 'bg-purple-500 text-white shadow-lg shadow-purple-500/20';
-                                        icon = <Activity className="h-4 w-4" />;
-                                        label = 'Sick';
-                                        break;
-                                    }
-
-                                    return (
-                                      <button
-                                        key={status}
-                                        type="button"
-                                        onClick={() => {
-                                          const newList = [...attendanceList];
-                                          newList[index].status = status;
-                                          setAttendanceList(newList);
-                                        }}
-                                        className={`
-                                          flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap flex-1 justify-center
-                                          ${isActive ? activeClass : 'text-blue-200/40 hover:bg-white/5 hover:text-blue-200/80'}
-                                        `}
-                                      >
-                                        {icon}
-                                        <span className="hidden sm:inline">{label}</span>
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </>
+                      ))
                     )}
                   </div>
                 )}
 
+                {/* Empty State */}
                 {user.role === 'teacher' && !selectedClass && (
-                  <div className="text-center py-20 flex flex-col items-center justify-center opacity-50">
-                    <div className="bg-white/5 p-6 rounded-full mb-4">
-                      <School className="h-12 w-12 text-blue-200/60" />
-                    </div>
-                    <h3 className="text-xl font-medium text-white mb-2">No Class Selected</h3>
-                    <p className="text-blue-200/60">Please select a class above to start marking attendance</p>
+                  <div className="text-center py-12">
+                    <School className="h-12 w-12 text-white/20 mx-auto mb-3" />
+                    <h3 className="text-base font-medium text-white mb-1">Select a Class</h3>
+                    <p className="text-white/40 text-sm">Choose a class to mark attendance</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Footer Summary */}
-            <div className="p-6 border-t border-white/10 bg-white/[0.02]">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="flex gap-4 text-sm w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <span className="text-emerald-400 font-medium">{attendanceList.filter(i => i.status === 'present').length} Present</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20">
-                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                    <span className="text-red-400 font-medium">{attendanceList.filter(i => i.status === 'absent').length} Absent</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-                    <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                    <span className="text-amber-400 font-medium">{attendanceList.filter(i => i.status === 'late').length} Late</span>
-                  </div>
-                </div>
-
-                <div className="flex w-full sm:w-auto gap-3">
-                  <Button variant="outline" className="flex-1 sm:flex-none border-white/10 text-white hover:bg-white/10 hover:text-white" onClick={() => setShowAttendanceModal(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleMarkAttendance} className="flex-1 sm:flex-none bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-8 shadow-lg shadow-emerald-500/20">
-                    Save Attendance
-                  </Button>
-                </div>
+            {/* Footer - Save Button */}
+            {attendanceList.length > 0 && (
+              <div className="flex-shrink-0 p-3 border-t border-white/10 bg-[#0f1629]">
+                <Button
+                  onClick={handleMarkAttendance}
+                  className="w-full h-12 text-base font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg active:scale-[0.98] transition-all"
+                >
+                  <Check className="h-5 w-5 mr-2" />
+                  Save Attendance
+                </Button>
               </div>
-            </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>

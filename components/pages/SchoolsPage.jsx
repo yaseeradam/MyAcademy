@@ -102,6 +102,7 @@ export default function SchoolsPage({
     }
 
     setIsResetting(true);
+    toast.loading("Resetting password...");
     try {
       await apiCall("master/schools/reset-password", {
         method: "POST",
@@ -111,12 +112,14 @@ export default function SchoolsPage({
           newPassword: resetPassword,
         }),
       });
+      toast.dismiss();
       toast.success("✅ Password reset successfully!");
       setShowResetPasswordModal(false);
       setResetPassword("");
       setResetEmail("");
       setSelectedSchool(null);
     } catch (error) {
+      toast.dismiss();
       toast.error("❌ Failed to reset password: " + error.message);
     } finally {
       setIsResetting(false);

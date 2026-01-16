@@ -52,11 +52,11 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     modal?.showLoading(isUpdate ? 'Updating teacher...' : 'Creating teacher...')
     try {
       if (isUpdate) {
-         await apiCall(`teachers?id=${teacherForm.teacherData.id || teacherForm.teacherData._id}`, { method: 'PUT', body: JSON.stringify(teacherForm.teacherData) })
-         modal?.showSuccess('Teacher Updated', 'Teacher updated successfully!')
+        await apiCall(`teachers?id=${teacherForm.teacherData.id || teacherForm.teacherData._id}`, { method: 'PUT', body: JSON.stringify(teacherForm.teacherData) })
+        modal?.showSuccess('Teacher Updated', 'Teacher updated successfully!')
       } else {
-         const result = await apiCall('teachers', { method: 'POST', body: JSON.stringify(teacherForm) })
-         modal?.showSuccess('Teacher Created', `Login: ${result.credentials.email} / ${result.credentials.tempPassword}`)
+        const result = await apiCall('teachers', { method: 'POST', body: JSON.stringify(teacherForm) })
+        modal?.showSuccess('Teacher Created', `Login: ${result.credentials.email} / ${result.credentials.tempPassword}`)
       }
       setTeacherForm({ teacherData: { firstName: '', lastName: '', email: '', phoneNumber: '', address: '', qualification: '', experience: '', specialization: '', dateOfJoining: '', photo: '' }, credentials: { email: '', password: '' } })
       setTeacherPhotoPreview('')
@@ -93,18 +93,18 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     const isUpdate = !!(parentForm.parentData.id || parentForm.parentData._id)
 
     if (!isUpdate) {
-        // Email Uniqueness Check
-        if (parents && parents.some(p => p.email === email)) {
-            modal?.showError('Email Taken', 'This email is already registered to another parent.')
-            setIsSubmitting(false)
-            return false
-        }
-        // Password Length Check
-        if (password.length < 8) {
-            modal?.showError('Invalid Password', 'Password must be at least 8 characters long.')
-            setIsSubmitting(false)
-            return false
-        }
+      // Email Uniqueness Check
+      if (parents && parents.some(p => p.email === email)) {
+        modal?.showError('Email Taken', 'This email is already registered to another parent.')
+        setIsSubmitting(false)
+        return false
+      }
+      // Password Length Check
+      if (password.length < 8) {
+        modal?.showError('Invalid Password', 'Password must be at least 8 characters long.')
+        setIsSubmitting(false)
+        return false
+      }
     }
 
     modal?.showLoading(isUpdate ? 'Updating parent...' : 'Creating parent account...')
@@ -257,21 +257,21 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       const selectedSubject = subjects.find(s => s.id === assignmentForm.subjectId)
       const selectedClass = classes.find(c => c.id === assignmentForm.classId)
-      
+
       if (assignmentForm.id || assignmentForm._id) {
-         await apiCall(`teacher-assignments?id=${assignmentForm.id || assignmentForm._id}`, { 
-           method: 'PUT', 
-           body: JSON.stringify({ ...assignmentForm, subjectName: selectedSubject?.name || '', className: selectedClass?.name || '' }) 
-         })
-         modal?.showSuccess('Assignment Updated', 'Teacher assignment updated successfully!')
+        await apiCall(`teacher-assignments?id=${assignmentForm.id || assignmentForm._id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ ...assignmentForm, subjectName: selectedSubject?.name || '', className: selectedClass?.name || '' })
+        })
+        modal?.showSuccess('Assignment Updated', 'Teacher assignment updated successfully!')
       } else {
-         await apiCall('teacher-assignments', { 
-           method: 'POST', 
-           body: JSON.stringify({ ...assignmentForm, subjectName: selectedSubject?.name || '', className: selectedClass?.name || '' }) 
-         })
-         modal?.showSuccess('Assignment Created', 'Teacher assigned successfully!')
+        await apiCall('teacher-assignments', {
+          method: 'POST',
+          body: JSON.stringify({ ...assignmentForm, subjectName: selectedSubject?.name || '', className: selectedClass?.name || '' })
+        })
+        modal?.showSuccess('Assignment Created', 'Teacher assigned successfully!')
       }
-      
+
       setAssignmentForm({ teacherId: '', classId: '', subjectId: '', subjectName: '', className: '' })
       loadDashboardData()
       return true
@@ -280,18 +280,18 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
       return false
     }
   }
-  
+
   const handleDeleteAssignment = async (assignmentId) => {
-      modal?.showLoading('Deleting assignment...')
-      try {
-          await apiCall(`teacher-assignments?id=${assignmentId}`, { method: 'DELETE' })
-          modal?.showSuccess('Assignment Deleted', 'Teacher assignment deleted successfully!')
-          loadDashboardData()
-          return true
-      } catch (error) {
-          modal?.showError('Delete Failed', error.message || 'Failed to delete assignment')
-          return false
-      }
+    modal?.showLoading('Deleting assignment...')
+    try {
+      await apiCall(`teacher-assignments?id=${assignmentId}`, { method: 'DELETE' })
+      modal?.showSuccess('Assignment Deleted', 'Teacher assignment deleted successfully!')
+      loadDashboardData()
+      return true
+    } catch (error) {
+      modal?.showError('Delete Failed', error.message || 'Failed to delete assignment')
+      return false
+    }
   }
 
   const handleCreateSchool = async (e) => {
@@ -302,8 +302,39 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
       modal?.showSuccess('School Created', 'School created successfully!')
       setMasterSchoolForm({ schoolName: '', adminName: '', adminEmail: '', adminPassword: '' })
       loadDashboardData()
+      return true
     } catch (error) {
       modal?.showError('Creation Failed', error.message || 'Failed to create school')
+      return false
+    }
+  }
+
+  const handleDeleteSchool = async (id) => {
+    modal?.showLoading('Deleting school...')
+    try {
+      await apiCall(`master/schools?id=${id}`, { method: 'DELETE' })
+      modal?.showSuccess('School Deleted', 'School deleted and account deactivated successfully')
+      loadDashboardData()
+      return true
+    } catch (error) {
+      modal?.showError('Delete Failed', error.message)
+      return false
+    }
+  }
+
+  const handleAddAdmin = async (schoolId, adminForm) => {
+    modal?.showLoading('Adding admin...')
+    try {
+      const response = await apiCall('school/admins', {
+        method: 'POST',
+        body: JSON.stringify({ ...adminForm, schoolId })
+      })
+      modal?.showSuccess('Admin Added', 'School administrator added successfully!')
+      loadDashboardData()
+      return response
+    } catch (error) {
+      modal?.showError('Action Failed', error.message || 'Failed to add admin')
+      throw error
     }
   }
 
@@ -312,13 +343,13 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     classForm, setClassForm, subjectForm, setSubjectForm, assignmentForm, setAssignmentForm,
     masterSchoolForm, setMasterSchoolForm, teacherPhotoPreview, parentPhotoPreview, studentPhotoPreview,
     setTeacherPhotoPreview, setParentPhotoPreview, setStudentPhotoPreview,
-    isSubmitting, handlePhotoUpload, 
+    isSubmitting, handlePhotoUpload,
     handleCreateTeacher, handleDeleteTeacher,
     handleCreateParent, handleDeleteParent,
     handleCreateStudent, handleDeleteStudent,
     handleCreateClass, handleDeleteClass,
     handleCreateSubject, handleDeleteSubject,
-    handleCreateAssignment, handleDeleteAssignment, 
-    handleCreateSchool
+    handleCreateAssignment, handleDeleteAssignment,
+    handleCreateSchool, handleDeleteSchool, handleAddAdmin
   }
 }

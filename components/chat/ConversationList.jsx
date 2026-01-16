@@ -395,44 +395,44 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#0f1d32]/30">
-      <div className="p-4 border-b border-white/5 space-y-4">
+    <div className="flex flex-col h-full bg-white/60">
+      <div className="p-4 border-b border-slate-200/80 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-900/20">
-              <MessageCircle className="h-4 w-4 text-white" />
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-sky-400 to-emerald-300 flex items-center justify-center shadow-lg shadow-sky-200/60">
+              <MessageCircle className="h-4 w-4 text-slate-900" />
             </div>
-            <span className="font-semibold text-white">Chats</span>
+            <span className="font-semibold text-slate-800">Chats</span>
           </div>
 
           <div className="flex gap-1">
             {currentUser.role !== 'developer' && (
               <Dialog open={showNewChatDialog} onOpenChange={setShowNewChatDialog}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-200/60 hover:text-white hover:bg-white/5 rounded-full">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full">
                     <Plus className="h-5 w-5" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-[#0f1d32] border-white/10 text-white">
+                <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
                   <DialogHeader>
-                    <DialogTitle className="text-white">Start New Chat</DialogTitle>
-                    <DialogDescription className="text-blue-200/60">
+                    <DialogTitle className="text-slate-900">Start New Chat</DialogTitle>
+                    <DialogDescription className="text-slate-500">
                       Start a private conversation with a teacher or parent.
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleStartNewChat} className="space-y-4 pt-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-blue-200">Select Person</label>
+                      <label className="text-sm font-medium text-slate-600">Select Person</label>
                       <Select
                         value={newChatForm.targetUserId}
                         onValueChange={(value) => setNewChatForm(prev => ({ ...prev, targetUserId: value }))}
                       >
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white focus:ring-amber-500/50">
+                        <SelectTrigger className="bg-white/80 border-slate-200 text-slate-800 focus:ring-sky-200">
                           <SelectValue placeholder="Choose who to chat with" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0f1d32] border-white/10 text-white">
+                        <SelectContent className="bg-white border-slate-200 text-slate-800">
                           {availableUsers.map((user) => (
-                            <SelectItem key={user.id} value={user.id} className="focus:bg-white/10 focus:text-white cursor-pointer">
+                            <SelectItem key={user.id} value={user.id} className="focus:bg-slate-100 focus:text-slate-900 cursor-pointer">
                               {user.name} ({user.role})
                             </SelectItem>
                           ))}
@@ -440,20 +440,20 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-blue-200">Initial Message (Optional)</label>
+                      <label className="text-sm font-medium text-slate-600">Initial Message (Optional)</label>
                       <Textarea
                         value={newChatForm.initialMessage}
                         onChange={(e) => setNewChatForm(prev => ({ ...prev, initialMessage: e.target.value }))}
                         placeholder="Type your first message..."
                         rows={3}
-                        className="bg-white/5 border-white/10 text-white focus:ring-amber-500/50 placeholder:text-blue-200/40"
+                        className="bg-white/80 border-slate-200 text-slate-800 focus:ring-sky-200 placeholder:text-slate-400"
                       />
                     </div>
                     <div className="flex justify-end space-x-2 pt-2">
-                      <Button type="button" variant="ghost" className="text-blue-200 hover:text-white hover:bg-white/10" onClick={() => setShowNewChatDialog(false)}>
+                      <Button type="button" variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100" onClick={() => setShowNewChatDialog(false)}>
                         Cancel
                       </Button>
-                      <Button type="submit" disabled={!newChatForm.targetUserId} className="bg-amber-500 hover:bg-amber-600 text-white border-none">
+                      <Button type="submit" disabled={!newChatForm.targetUserId} className="bg-sky-500 hover:bg-sky-600 text-white border-none">
                         Start Chat
                       </Button>
                     </div>
@@ -465,34 +465,34 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
             {currentUser.role === 'school_admin' && (
               <Dialog open={showNewGroupDialog} onOpenChange={setShowNewGroupDialog}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-200/60 hover:text-white hover:bg-white/5 rounded-full">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full">
                     <Users className="h-5 w-5" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-[#0f1d32] border-white/10 text-white">
+                <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
                   <DialogHeader>
-                    <DialogTitle className="text-white">Create Group Chat</DialogTitle>
-                    <DialogDescription className="text-blue-200/60">
+                    <DialogTitle className="text-slate-900">Create Group Chat</DialogTitle>
+                    <DialogDescription className="text-slate-500">
                       Create a group for multiple people.
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleCreateGroupChat} className="space-y-4 pt-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-blue-200">Group Name</label>
+                      <label className="text-sm font-medium text-slate-600">Group Name</label>
                       <Input
                         value={newGroupForm.name}
                         onChange={(e) => setNewGroupForm(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="Enter group name"
                         required
-                        className="bg-white/5 border-white/10 text-white focus:ring-amber-500/50 placeholder:text-blue-200/40"
+                        className="bg-white/80 border-slate-200 text-slate-800 focus:ring-sky-200 placeholder:text-slate-400"
                       />
                     </div>
                     {/* Simplified for brevity in this example, full implementation needs consistent dark theme Select/Badges */}
                     <div className="flex justify-end space-x-2 pt-2">
-                      <Button type="button" variant="ghost" className="text-blue-200 hover:text-white hover:bg-white/10" onClick={() => setShowNewGroupDialog(false)}>
+                      <Button type="button" variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100" onClick={() => setShowNewGroupDialog(false)}>
                         Cancel
                       </Button>
-                      <Button type="submit" className="bg-amber-500 hover:bg-amber-600 text-white border-none">
+                      <Button type="submit" className="bg-sky-500 hover:bg-sky-600 text-white border-none">
                         Create Group
                       </Button>
                     </div>
@@ -504,12 +504,12 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
         </div>
 
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40 group-focus-within:text-amber-400 transition-colors" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
           <Input
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 h-9 rounded-xl bg-black/20 border-white/5 text-sm text-blue-100 placeholder:text-blue-200/40 focus:bg-black/40 focus:border-amber-500/30 transition-all shadow-inner"
+            className="pl-9 h-9 rounded-xl bg-white/80 border-slate-200 text-sm text-slate-700 placeholder:text-slate-400 focus:bg-white focus:border-sky-300 transition-all shadow-inner"
           />
         </div>
       </div>
@@ -518,11 +518,11 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
         <div className="space-y-1 p-2">
           {filteredConversations.length === 0 ? (
             <div className="text-center py-12 px-4 flex flex-col items-center">
-              <div className="h-16 w-16 mb-4 rounded-full bg-white/5 flex items-center justify-center border border-white/10 border-dashed">
-                <MessageSquare className="h-6 w-6 text-blue-200/40" />
+              <div className="h-16 w-16 mb-4 rounded-full bg-white/70 flex items-center justify-center border border-slate-200/80 border-dashed">
+                <MessageSquare className="h-6 w-6 text-slate-400" />
               </div>
-              <p className="font-medium text-white">No active chats</p>
-              <p className="text-xs text-blue-200/60 mt-1 max-w-[150px]">Start a conversation to see it here</p>
+              <p className="font-medium text-slate-800">No active chats</p>
+              <p className="text-xs text-slate-500 mt-1 max-w-[150px]">Start a conversation to see it here</p>
             </div>
           ) : (
             filteredConversations.map((conversation) => (
@@ -530,42 +530,42 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
                 key={conversation.id}
                 onClick={() => onSelectConversation(conversation)}
                 className={`w-full p-3 rounded-xl text-left transition-all duration-200 relative group border border-transparent ${selectedConversationId === conversation.id
-                    ? 'bg-white/10 border-white/5 shadow-md shadow-black/20'
-                    : 'hover:bg-white/5 hover:border-white/5'
+                    ? 'bg-white/90 border-slate-200/80 shadow-md shadow-slate-200/70'
+                    : 'hover:bg-white/70 hover:border-slate-200/70'
                   }`}
               >
                 <div className="flex items-center space-x-3">
                   <div className="relative flex-shrink-0">
-                    <Avatar className="h-10 w-10 ring-2 ring-white/10 shadow-lg">
-                      <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-800 text-white font-semibold text-xs">
+                    <Avatar className="h-10 w-10 ring-2 ring-slate-200/80 shadow-lg">
+                      <AvatarFallback className="bg-gradient-to-br from-sky-400 to-emerald-300 text-slate-900 font-semibold text-xs">
                         {getConversationAvatar(conversation)}
                       </AvatarFallback>
                     </Avatar>
                     {conversation.type === 'private' && getUserOnlineStatus(conversation) && (
-                      <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-green-500 border-2 border-[#0f1d32] rounded-full shadow-sm">
+                      <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm">
                         <span className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></span>
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <h3 className={`text-sm font-medium truncate flex-1 ${conversation.unreadCount > 0 ? 'text-white font-semibold' : 'text-blue-100'
+                      <h3 className={`text-sm font-medium truncate flex-1 ${conversation.unreadCount > 0 ? 'text-slate-900 font-semibold' : 'text-slate-700'
                         }`}>
                         {getConversationDisplayName(conversation)}
                       </h3>
-                      <span className={`text-[10px] flex-shrink-0 ${conversation.unreadCount > 0 ? 'text-amber-400 font-bold' : 'text-blue-200/40'
+                      <span className={`text-[10px] flex-shrink-0 ${conversation.unreadCount > 0 ? 'text-amber-500 font-bold' : 'text-slate-400'
                         }`}>
                         {conversation.lastMessageAt ? formatLastMessageTime(conversation.lastMessageAt) : ''}
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <p className={`text-xs truncate flex-1 ${conversation.unreadCount > 0 ? 'text-blue-100 font-medium' : 'text-blue-200/60'
+                      <p className={`text-xs truncate flex-1 ${conversation.unreadCount > 0 ? 'text-slate-700 font-medium' : 'text-slate-500'
                         }`}>
                         {/* Prefix with 'You:' logic handled in helper but we can style here if needed */}
                         {getLastMessage(conversation)}
                       </p>
                       {conversation.unreadCount > 0 && (
-                        <Badge className="flex-shrink-0 bg-amber-500 text-white text-[10px] h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center border-none shadow-sm shadow-amber-900/30">
+                        <Badge className="flex-shrink-0 bg-amber-500 text-white text-[10px] h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center border-none shadow-sm shadow-amber-200/70">
                           {conversation.unreadCount}
                         </Badge>
                       )}

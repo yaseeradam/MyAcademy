@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body
-        className="antialiased"
+        className="antialiased theme-soft"
       >
         <ThemeProvider
           attribute="class"

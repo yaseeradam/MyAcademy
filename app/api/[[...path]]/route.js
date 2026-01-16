@@ -664,13 +664,24 @@ export async function POST(request, { params }) {
           { upsert: true }
         )
 
-        // Also update school name in schools collection
+        // Build update object for schools collection
+        const schoolUpdateFields = { updatedAt: new Date().toISOString() }
+
+        // Sync school name if provided
         if (body.schoolName) {
-          await db.collection('schools').updateOne(
-            { id: settingsUserData.schoolId },
-            { $set: { name: body.schoolName, updatedAt: new Date().toISOString() } }
-          )
+          schoolUpdateFields.name = body.schoolName
         }
+
+        // Sync logo if provided - this ensures each school has their own isolated logo
+        if (body.logo !== undefined) {
+          schoolUpdateFields.logo = body.logo
+        }
+
+        // Update the schools collection with the synced fields
+        await db.collection('schools').updateOne(
+          { id: settingsUserData.schoolId },
+          { $set: schoolUpdateFields }
+        )
 
         return NextResponse.json(settings)
 

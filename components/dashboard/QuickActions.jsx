@@ -75,7 +75,7 @@ export default function QuickActions({ onAction, userRole }) {
 
   return (
     <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden relative">
-      <div className="absolute top-0 right-0 p-4 opacity-5">
+      <div className="absolute top-0 right-0 p-4 opacity-10">
         <Sparkles className="h-24 w-24 text-white" />
       </div>
       <CardHeader className="pb-4">
@@ -98,16 +98,23 @@ export default function QuickActions({ onAction, userRole }) {
                 className={`
                   group relative flex flex-col items-center justify-center gap-3 h-auto py-6
                   bg-gradient-to-br ${action.gradient} border-0
-                  hover:scale-[1.02] transition-all duration-300
-                  shadow-lg ${action.shadow}
+                  rounded-2xl overflow-hidden
+                  shadow-xl ${action.shadow}
+                  hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/20
+                  text-white
+                  transition-all duration-300
                 `}
               >
-                <div className="p-2 bg-white/20 rounded-full group-hover:scale-110 transition-transform duration-300">
-                  <Icon className="h-6 w-6 text-white" />
-                </div>
-                <div className="flex flex-col items-center gap-1">
-                  <span className="font-semibold text-white tracking-wide">{action.label}</span>
-                  <span className="text-[10px] text-white/80 font-normal hidden sm:inline-block">{action.description}</span>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/10" />
+                <div className="absolute -top-8 -right-8 h-20 w-20 rounded-full bg-white/20 blur-2xl" />
+                <div className="relative z-10 flex flex-col items-center gap-3">
+                  <div className="p-2.5 bg-white/20 rounded-full ring-1 ring-white/30 group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="font-semibold text-white tracking-wide">{action.label}</span>
+                    <span className="text-[10px] text-white/80 font-normal hidden sm:inline-block">{action.description}</span>
+                  </div>
                 </div>
               </Button>
             )
