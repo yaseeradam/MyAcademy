@@ -46,7 +46,7 @@ export function useTeacherAttendance(user, apiCall, teachers, loadTodayAttendanc
       })
       modal?.showSuccess('Attendance Marked', 'Teacher attendance marked successfully!')
       setShowAttendanceModal(false)
-      loadTodayAttendance()
+      loadTodayAttendance(true)
     } catch (error) {
       modal?.showError('Marking Failed', error.message || 'Failed to mark teacher attendance')
     }

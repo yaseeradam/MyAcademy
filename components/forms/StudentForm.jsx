@@ -98,39 +98,39 @@ export default function StudentForm({
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-blue-200/80">First Name *</Label>
-                <Input value={studentForm.firstName} onChange={(e) => setStudentForm(prev => ({ ...prev, firstName: e.target.value }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter first name" required />
+                <Label className="text-slate-700">First Name *</Label>
+                <Input value={studentForm.firstName} onChange={(e) => setStudentForm(prev => ({ ...prev, firstName: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter first name" required />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Last Name *</Label>
-                <Input value={studentForm.lastName} onChange={(e) => setStudentForm(prev => ({ ...prev, lastName: e.target.value }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter last name" required />
+                <Label className="text-slate-700">Last Name *</Label>
+                <Input value={studentForm.lastName} onChange={(e) => setStudentForm(prev => ({ ...prev, lastName: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter last name" required />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Date of Birth *</Label>
-                <Input type="date" value={studentForm.dateOfBirth} onChange={(e) => setStudentForm(prev => ({ ...prev, dateOfBirth: e.target.value }))} className="bg-white/5 border-white/10 text-white" required />
+                <Label className="text-slate-700">Date of Birth *</Label>
+                <Input type="date" value={studentForm.dateOfBirth} onChange={(e) => setStudentForm(prev => ({ ...prev, dateOfBirth: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900" required />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Gender *</Label>
+                <Label className="text-slate-700">Gender *</Label>
                 <Select value={studentForm.gender} onValueChange={(value) => setStudentForm(prev => ({ ...prev, gender: value }))}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue placeholder="Select gender" /></SelectTrigger>
-                  <SelectContent className="bg-[#0f1d32] border-white/10">
-                    <SelectItem value="male" className="text-white hover:bg-white/10">Male</SelectItem>
-                    <SelectItem value="female" className="text-white hover:bg-white/10">Female</SelectItem>
+                  <SelectTrigger className="bg-white/5 border-white/10 text-slate-900"><SelectValue placeholder="Select gender" /></SelectTrigger>
+                  <SelectContent className="bg-white border-slate-200">
+                    <SelectItem value="male" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Male</SelectItem>
+                    <SelectItem value="female" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Female</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Phone Number</Label>
-                <Input value={studentForm.phoneNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, phoneNumber: e.target.value }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter phone" />
+                <Label className="text-slate-700">Phone Number</Label>
+                <Input value={studentForm.phoneNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, phoneNumber: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter phone" />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Email (Optional)</Label>
-                <Input type="email" value={studentForm.email} onChange={(e) => setStudentForm(prev => ({ ...prev, email: e.target.value }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter email" />
+                <Label className="text-slate-700">Email (Optional)</Label>
+                <Input type="email" value={studentForm.email} onChange={(e) => setStudentForm(prev => ({ ...prev, email: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter email" />
               </div>
             </div>
             <div className="mt-4 space-y-2">
-              <Label className="text-blue-200/80">Address</Label>
-              <Textarea value={studentForm.address} onChange={(e) => setStudentForm(prev => ({ ...prev, address: e.target.value }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 min-h-[80px]" placeholder="Enter full address" />
+              <Label className="text-slate-700">Address</Label>
+              <Textarea value={studentForm.address} onChange={(e) => setStudentForm(prev => ({ ...prev, address: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500 min-h-[80px]" placeholder="Enter full address" />
             </div>
           </div>
 
@@ -142,28 +142,28 @@ export default function StudentForm({
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Admission Number *</Label>
-                <Input value={studentForm.admissionNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, admissionNumber: e.target.value }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter admission number" required />
+                <Label className="text-slate-700">Admission Number *</Label>
+                <Input value={studentForm.admissionNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, admissionNumber: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter admission number" required />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Emergency Contact</Label>
-                <Input value={studentForm.emergencyContact} onChange={(e) => setStudentForm(prev => ({ ...prev, emergencyContact: e.target.value }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter emergency contact" />
+                <Label className="text-slate-700">Emergency Contact</Label>
+                <Input value={studentForm.emergencyContact} onChange={(e) => setStudentForm(prev => ({ ...prev, emergencyContact: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter emergency contact" />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Parent *</Label>
+                <Label className="text-slate-700">Parent *</Label>
                 <Select value={studentForm.parentId} onValueChange={(value) => setStudentForm(prev => ({ ...prev, parentId: value }))}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue placeholder="Select parent" /></SelectTrigger>
-                  <SelectContent className="bg-[#0f1d32] border-white/10">
-                    {parents.map((parent) => (<SelectItem key={parent.id} value={parent.id} className="text-white hover:bg-white/10">{parent.name} - {parent.email}</SelectItem>))}
+                  <SelectTrigger className="bg-white/5 border-white/10 text-slate-900"><SelectValue placeholder="Select parent" /></SelectTrigger>
+                  <SelectContent className="bg-white border-slate-200">
+                    {parents.map((parent) => (<SelectItem key={parent.id} value={parent.id} className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">{parent.name} - {parent.email}</SelectItem>))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Class *</Label>
+                <Label className="text-slate-700">Class *</Label>
                 <Select value={studentForm.classId} onValueChange={(value) => setStudentForm(prev => ({ ...prev, classId: value }))}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white"><SelectValue placeholder="Select class" /></SelectTrigger>
-                  <SelectContent className="bg-[#0f1d32] border-white/10">
-                    {classes.map((cls) => (<SelectItem key={cls.id} value={cls.id} className="text-white hover:bg-white/10">{cls.name}</SelectItem>))}
+                  <SelectTrigger className="bg-white/5 border-white/10 text-slate-900"><SelectValue placeholder="Select class" /></SelectTrigger>
+                  <SelectContent className="bg-white border-slate-200">
+                    {classes.map((cls) => (<SelectItem key={cls.id} value={cls.id} className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">{cls.name}</SelectItem>))}
                   </SelectContent>
                 </Select>
               </div>

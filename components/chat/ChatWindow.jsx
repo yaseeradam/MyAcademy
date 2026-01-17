@@ -44,6 +44,7 @@ function ChatWindow({ conversation, onClose, currentUser }) {
   const fileInputRef = useRef(null)
   const imageInputRef = useRef(null)
   const isMountedRef = useRef(true)
+  const createTempId = () => `temp-${Date.now()}-${Math.random().toString(16).slice(2)}`
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -64,7 +65,12 @@ function ChatWindow({ conversation, onClose, currentUser }) {
       const handleNewMessage = (message) => {
         if (message.conversationId === conversation.id && isMountedRef.current) {
           setMessages(prev => {
-            const updated = [...prev, message]
+            let next = prev
+            if (message.clientTempId) {
+              next = next.filter(item => item.id !== message.clientTempId)
+            }
+            if (next.some(item => item.id === message.id)) return next
+            const updated = [...next, message]
             // Keep only last MAX_MESSAGES to prevent memory leak
             return updated.length > MAX_MESSAGES ? updated.slice(-MAX_MESSAGES) : updated
           })
@@ -129,7 +135,7 @@ function ChatWindow({ conversation, onClose, currentUser }) {
   const loadMessages = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`/api/chat/messages?conversationId=${conversation.id}&limit=${MAX_MESSAGES}`, {
+      const response = await fetch(`/api/chat/messages?conversationId=${conversation.id}&limit=${MAX_MESSAGES}&nocache=1`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       if (response.ok && isMountedRef.current) {
@@ -184,33 +190,62 @@ function ChatWindow({ conversation, onClose, currentUser }) {
     e.preventDefault()
     if (!newMessage.trim() && !replyingTo) return
 
+    let tempId = null
+    const canUseSocket = socketManager.socket?.connected
     try {
       const token = localStorage.getItem('token')
+      tempId = createTempId()
+      const optimisticMessage = {
+        id: tempId,
+        conversationId: conversation.id,
+        messageType: 'text',
+        content: newMessage.trim(),
+        senderId: currentUser.id,
+        senderName: currentUser.name,
+        createdAt: new Date().toISOString(),
+        clientTempId: tempId
+      }
+
+      setMessages(prev => {
+        const updated = [...prev, optimisticMessage]
+        return updated.length > MAX_MESSAGES ? updated.slice(-MAX_MESSAGES) : updated
+      })
+
       const messageData = {
         conversationId: conversation.id,
         messageType: 'text',
         content: newMessage.trim(),
         senderId: currentUser.id,
         senderName: currentUser.name,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        clientTempId: tempId
       }
 
       if (replyingTo) {
         messageData.replyTo = replyingTo.id
       }
 
-      const response = await fetch('/api/chat/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(messageData)
-      })
+      if (canUseSocket) {
+        socketManager.sendMessage(messageData)
+      } else {
+        const response = await fetch('/api/chat/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(messageData)
+        })
 
-      if (response.ok) {
-        const message = await response.json()
-        setMessages(prev => [...prev, message])
+        if (response.ok) {
+          const message = await response.json()
+          setMessages(prev => {
+            const withoutTemp = prev.filter(item => item.id !== tempId)
+            if (withoutTemp.some(item => item.id === message.id)) return withoutTemp
+            const updated = [...withoutTemp, message]
+            return updated.length > MAX_MESSAGES ? updated.slice(-MAX_MESSAGES) : updated
+          })
+        }
       }
 
       setNewMessage('')
@@ -218,6 +253,9 @@ function ChatWindow({ conversation, onClose, currentUser }) {
       stopTyping()
     } catch (error) {
       console.error('Error sending message:', error)
+      if (tempId) {
+        setMessages(prev => prev.filter(item => item.id !== tempId))
+      }
     }
   }
 

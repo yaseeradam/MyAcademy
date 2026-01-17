@@ -367,7 +367,7 @@ function App() {
       modal.showLoading('Updating student...')
       const { id, ...studentData } = updatedStudent
       await apiCall('students', { method: 'PUT', body: JSON.stringify({ id, ...studentData }) })
-      await loadDashboardData()
+      await loadDashboardData(true)
       modal.showSuccess('Student Updated', 'Student information updated successfully!')
     } catch (error) {
       modal.showError('Update Failed', error.message || 'Failed to update student')
@@ -381,7 +381,7 @@ function App() {
         method: 'POST',
         body: JSON.stringify({ schoolId, active })
       })
-      await loadDashboardData()
+      await loadDashboardData(true)
       modal.showSuccess(
         active ? 'School Activated' : 'School Deactivated',
         `School has been ${active ? 'activated' : 'deactivated'} successfully!`
@@ -395,7 +395,7 @@ function App() {
     const baseItems = [{ id: 'dashboard', label: 'Dashboard', icon: Home }, { id: 'messages', label: 'Messages', icon: MessageCircle }]
     if (user?.role === 'developer') return [...baseItems, { id: 'schools', label: 'Schools', icon: Building2 }, { id: 'master-settings', label: 'Master Settings', icon: SettingsIcon }]
     if (user?.role === 'school_admin') return [...baseItems, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'students', label: 'Students', icon: Users }, { id: 'teachers', label: 'Teachers', icon: UserCheck }, { id: 'classes', label: 'Classes', icon: SchoolIcon }, { id: 'subjects', label: 'Subjects', icon: BookOpen }, { id: 'assignments', label: 'Assignments', icon: GraduationCap }, { id: 'teacher-attendance', label: 'Teacher Attendance', icon: Calendar }, { id: 'student-attendance', label: 'Student Attendance', icon: Clock }, { id: 'more-features', label: 'More Features', icon: Grid3x3 }, { id: 'billing', label: 'Billing', icon: CreditCard }, { id: 'school-settings', label: 'School Settings', icon: SettingsIcon }]
-    if (user?.role === 'teacher') return [...baseItems, { id: 'gradebook', label: 'Gradebook', icon: BookOpen }, { id: 'my-classes', label: 'My Classes', icon: SchoolIcon }, { id: 'my-subjects', label: 'My Subjects', icon: BookOpen }, { id: 'students', label: 'My Students', icon: Users }, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'student-attendance', label: 'Mark Attendance', icon: Calendar }]
+    if (user?.role === 'teacher') return [...baseItems, { id: 'gradebook', label: 'Gradebook', icon: BookOpen }, { id: 'my-classes', label: 'My Classes', icon: SchoolIcon }, { id: 'my-subjects', label: 'My Subjects', icon: BookOpen }, { id: 'students', label: 'My Students', icon: Users }, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'student-attendance', label: 'Mark Attendance', icon: Calendar }, { id: 'homework', label: 'Homework', icon: FileText }]
     if (user?.role === 'parent') return [...baseItems, { id: 'my-children', label: 'My Children', icon: Users }, { id: 'school-fees', label: 'School Fees', icon: CreditCard }, { id: 'attendance', label: 'Attendance Records', icon: Calendar }, { id: 'results', label: 'Results', icon: BarChart3 }]
     return baseItems
   }
@@ -422,6 +422,8 @@ function App() {
       setActiveTab('messages')
     } else if (actionId === 'generate-report') {
       setShowReportDialog(true)
+    } else if (actionId === 'homework') {
+      setActiveTab('homework')
     }
   }
 
@@ -556,6 +558,7 @@ function App() {
       {activeTab === 'certificates' && user.role === 'school_admin' && <CertificatesPage school={school} schoolSettings={schoolSettings} students={students} classes={classes} modal={modal} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'fees' && user.role === 'school_admin' && <FeesPage fees={newFeatures.fees} students={students} classes={classes} showModal={showFeeModal} setShowModal={setShowFeeModal} showPaymentModal={showPaymentModal} setShowPaymentModal={setShowPaymentModal} form={feeForm} setForm={setFeeForm} paymentForm={paymentForm} setPaymentForm={setPaymentForm} handleSubmit={(e) => newFeatures.handleFeeSubmit(e, feeForm, setShowFeeModal)} handlePayment={(e) => newFeatures.handlePayment(e, paymentForm, setShowPaymentModal)} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'homework' && user.role === 'school_admin' && <HomeworkPage homework={newFeatures.homework} classes={classes} subjects={subjects} students={students} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => { }} handleDelete={newFeatures.handleDeleteHomework} onBack={() => setActiveTab('more-features')} />}
+      {activeTab === 'homework' && user.role === 'teacher' && <HomeworkPage homework={newFeatures.homework.filter(hw => filteredClasses.some(c => c._id === hw.classId))} classes={filteredClasses} subjects={filteredSubjects} students={filteredStudents} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => { }} handleDelete={newFeatures.handleDeleteHomework} onBack={() => setActiveTab('dashboard')} />}
       {activeTab === 'library' && user.role === 'school_admin' && <LibraryPage books={newFeatures.books} students={students} showModal={showBookModal} setShowModal={setShowBookModal} showIssueModal={showIssueModal} setShowIssueModal={setShowIssueModal} form={bookForm} setForm={setBookForm} issueForm={issueForm} setIssueForm={setIssueForm} handleSubmit={(e) => newFeatures.handleBookSubmit(e, bookForm, setShowBookModal)} handleIssue={(e) => newFeatures.handleIssueBook(e, issueForm, setShowIssueModal)} handleReturn={newFeatures.handleReturnBook} handleDelete={newFeatures.handleDeleteBook} searchTerm={bookSearch} setSearchTerm={setBookSearch} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'backup-tools' && user.role === 'school_admin' && <BackupToolsPage apiCall={apiCall} token={token} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'billing' && user.role === 'school_admin' && <BillingDashboard currentUser={user} school={school} />}

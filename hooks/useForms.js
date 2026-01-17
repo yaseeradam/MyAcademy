@@ -60,7 +60,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
       }
       setTeacherForm({ teacherData: { firstName: '', lastName: '', email: '', phoneNumber: '', address: '', qualification: '', experience: '', specialization: '', dateOfJoining: '', photo: '' }, credentials: { email: '', password: '' } })
       setTeacherPhotoPreview('')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError(isUpdate ? 'Update Failed' : 'Creation Failed', error.message || 'Failed to process teacher')
@@ -75,7 +75,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       await apiCall(`teachers?id=${id}`, { method: 'DELETE' })
       modal?.showSuccess('Teacher Deleted', 'Teacher deleted successfully')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Delete Failed', error.message)
@@ -120,7 +120,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
       }
       setParentForm({ parentData: { name: '', phoneNumber: '', address: '', photo: '' }, parentCredentials: { email: '', password: '' } })
       setParentPhotoPreview('')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError(isUpdate ? 'Update Failed' : 'Creation Failed', error.message || 'Failed to process parent')
@@ -135,7 +135,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       await apiCall(`parents?id=${id}`, { method: 'DELETE' })
       modal?.showSuccess('Parent Deleted', 'Parent deleted successfully')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Delete Failed', error.message)
@@ -160,7 +160,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
       }
       setStudentForm({ firstName: '', lastName: '', email: '', dateOfBirth: '', gender: '', address: '', phoneNumber: '', parentId: '', classId: '', admissionNumber: '', emergencyContact: '', photo: '' })
       setStudentPhotoPreview('')
-      loadDashboardData()
+      loadDashboardData(true)
       return createdStudent
     } catch (error) {
       modal?.showError(isUpdate ? 'Update Failed' : 'Creation Failed', error.message || 'Failed to process student')
@@ -175,7 +175,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       await apiCall(`students?id=${id}`, { method: 'DELETE' })
       modal?.showSuccess('Student Deleted', 'Student deleted successfully')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Delete Failed', error.message)
@@ -196,7 +196,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
         modal?.showSuccess('Class Created', 'Class created successfully!')
       }
       setClassForm({ name: '', description: '', capacity: '', academicYear: new Date().getFullYear().toString() })
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError(isUpdate ? 'Update Failed' : 'Creation Failed', error.message || 'Failed to process class')
@@ -209,7 +209,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       await apiCall(`classes?id=${id}`, { method: 'DELETE' })
       modal?.showSuccess('Class Deleted', 'Class deleted successfully')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Delete Failed', error.message)
@@ -230,7 +230,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
         modal?.showSuccess('Subject Created', 'Subject created successfully!')
       }
       setSubjectForm({ name: '', code: '', description: '', credits: '' })
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError(isUpdate ? 'Update Failed' : 'Creation Failed', error.message || 'Failed to process subject')
@@ -243,7 +243,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       await apiCall(`subjects?id=${id}`, { method: 'DELETE' })
       modal?.showSuccess('Subject Deleted', 'Subject deleted successfully')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Delete Failed', error.message)
@@ -273,7 +273,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
       }
 
       setAssignmentForm({ teacherId: '', classId: '', subjectId: '', subjectName: '', className: '' })
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Assignment Failed', error.message || 'Failed to assign teacher')
@@ -286,7 +286,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       await apiCall(`teacher-assignments?id=${assignmentId}`, { method: 'DELETE' })
       modal?.showSuccess('Assignment Deleted', 'Teacher assignment deleted successfully!')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Delete Failed', error.message || 'Failed to delete assignment')
@@ -301,7 +301,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
       await apiCall('master/schools', { method: 'POST', body: JSON.stringify(masterSchoolForm) })
       modal?.showSuccess('School Created', 'School created successfully!')
       setMasterSchoolForm({ schoolName: '', adminName: '', adminEmail: '', adminPassword: '' })
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Creation Failed', error.message || 'Failed to create school')
@@ -314,7 +314,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     try {
       await apiCall(`master/schools?id=${id}`, { method: 'DELETE' })
       modal?.showSuccess('School Deleted', 'School deleted and account deactivated successfully')
-      loadDashboardData()
+      loadDashboardData(true)
       return true
     } catch (error) {
       modal?.showError('Delete Failed', error.message)
@@ -330,7 +330,7 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
         body: JSON.stringify({ ...adminForm, schoolId })
       })
       modal?.showSuccess('Admin Added', 'School administrator added successfully!')
-      loadDashboardData()
+      loadDashboardData(true)
       return response
     } catch (error) {
       modal?.showError('Action Failed', error.message || 'Failed to add admin')

@@ -17,7 +17,7 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
           <Button variant="outline" size="sm" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" /> Back</Button>
           <h2 className="text-2xl font-bold text-slate-900">Homework Management</h2>
         </div>
-        {userRole === 'school_admin' && (
+        {(userRole === 'school_admin' || userRole === 'teacher') && (
           <Button onClick={() => { setForm({ classId: '', subjectId: '', title: '', description: '', dueDate: '', attachments: [] }); setShowModal(true) }} className="bg-sky-500 hover:bg-sky-600 text-white">
             <Plus className="h-4 w-4 mr-2" /> Assign Homework
           </Button>
@@ -44,12 +44,12 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
                     <span className={`px-3 py-1 rounded ${new Date(hw.dueDate) > new Date() ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
                       {new Date(hw.dueDate) > new Date() ? 'Active' : 'Overdue'}
                     </span>
-                    {userRole === 'school_admin' && (
+                    {(userRole === 'school_admin' || userRole === 'teacher') && (
                       <div className="flex gap-2">
                         <Button size="sm" variant="ghost" onClick={() => { setForm(hw); setShowModal(true) }}>
                           <Edit className="h-4 w-4 text-sky-600" />
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => { if(confirm('Delete this homework?')) handleDelete(hw.id || hw._id) }}>
+                        <Button size="sm" variant="ghost" onClick={() => { if (confirm('Delete this homework?')) handleDelete(hw.id || hw._id) }}>
                           <Trash2 className="h-4 w-4 text-rose-600" />
                         </Button>
                       </div>
@@ -63,7 +63,7 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
                     <div><span className="text-slate-500">Class:</span> <span className="font-semibold text-slate-800">{cls?.name}</span></div>
                     <div><span className="text-slate-500">Subject:</span> <span className="font-semibold text-slate-800">{subject?.name}</span></div>
                     <div><span className="text-slate-500">Submissions:</span> <span className="font-semibold text-slate-800">{submittedCount}/{totalStudents}</span></div>
-                    <div><span className="text-slate-500">Completion:</span> <span className="font-semibold text-slate-800">{totalStudents > 0 ? Math.round((submittedCount/totalStudents)*100) : 0}%</span></div>
+                    <div><span className="text-slate-500">Completion:</span> <span className="font-semibold text-slate-800">{totalStudents > 0 ? Math.round((submittedCount / totalStudents) * 100) : 0}%</span></div>
                   </div>
                   <div>
                     <p className="text-slate-600">{hw.description}</p>
@@ -85,7 +85,7 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
                               </div>
                               <div className="flex items-center gap-2">
                                 {sub.graded && <span className="px-2 py-1 bg-sky-100 text-sky-700 rounded">{sub.marks}/{hw.totalMarks}</span>}
-                                {!sub.graded && userRole === 'school_admin' && (
+                                {!sub.graded && (userRole === 'school_admin' || userRole === 'teacher') && (
                                   <Button size="sm" className="bg-sky-500 hover:bg-sky-600 text-white" onClick={() => handleGrade(hw._id, sub.studentId)}>Grade</Button>
                                 )}
                               </div>
@@ -108,19 +108,19 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label>Title</Label>
-              <Input className="bg-white border-slate-200 text-slate-800" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} required />
+              <Input className="bg-white border-slate-200 text-slate-800" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Class</Label>
-                <Select value={form.classId} onValueChange={(v) => setForm({...form, classId: v})}>
+                <Select value={form.classId} onValueChange={(v) => setForm({ ...form, classId: v })}>
                   <SelectTrigger className="bg-white border-slate-200 text-slate-800"><SelectValue placeholder="Select class" /></SelectTrigger>
                   <SelectContent className="bg-white border-slate-200 text-slate-800">{classes.map(c => <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div>
                 <Label>Subject</Label>
-                <Select value={form.subjectId} onValueChange={(v) => setForm({...form, subjectId: v})}>
+                <Select value={form.subjectId} onValueChange={(v) => setForm({ ...form, subjectId: v })}>
                   <SelectTrigger className="bg-white border-slate-200 text-slate-800"><SelectValue placeholder="Select subject" /></SelectTrigger>
                   <SelectContent className="bg-white border-slate-200 text-slate-800">{subjects.map(s => <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>)}</SelectContent>
                 </Select>
@@ -128,16 +128,16 @@ export default function HomeworkPage({ homework, classes, subjects, students, us
             </div>
             <div>
               <Label>Description</Label>
-              <Textarea className="bg-white border-slate-200 text-slate-800" value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} rows={4} required />
+              <Textarea className="bg-white border-slate-200 text-slate-800" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} required />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Due Date</Label>
-                <Input className="bg-white border-slate-200 text-slate-800" type="date" value={form.dueDate} onChange={(e) => setForm({...form, dueDate: e.target.value})} required />
+                <Input className="bg-white border-slate-200 text-slate-800" type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} required />
               </div>
               <div>
                 <Label>Total Marks</Label>
-                <Input className="bg-white border-slate-200 text-slate-800" type="number" value={form.totalMarks} onChange={(e) => setForm({...form, totalMarks: e.target.value})} required />
+                <Input className="bg-white border-slate-200 text-slate-800" type="number" value={form.totalMarks} onChange={(e) => setForm({ ...form, totalMarks: e.target.value })} required />
               </div>
             </div>
             <Button type="submit" className="w-full bg-sky-500 hover:bg-sky-600 text-white">{form.id || form._id ? 'Update Homework' : 'Assign Homework'}</Button>

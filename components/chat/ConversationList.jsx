@@ -41,10 +41,31 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
         const index = prev.findIndex(c => c.id === conversation.id)
         if (index >= 0) {
           const updated = [...prev]
-          updated[index] = conversation
+          const merged = { ...updated[index], ...conversation }
+          const isSameLastMessage = updated[index].lastMessage?.id && merged.lastMessage?.id
+            ? updated[index].lastMessage.id === merged.lastMessage.id
+            : false
+          if (merged.unreadCount == null && !isSameLastMessage) {
+            const isOwnMessage = merged.lastMessage?.senderId === currentUser.id
+            if (selectedConversationId === merged.id) {
+              merged.unreadCount = 0
+            } else if (!isOwnMessage) {
+              merged.unreadCount = (updated[index].unreadCount || 0) + 1
+            } else {
+              merged.unreadCount = updated[index].unreadCount || 0
+            }
+          } else if (merged.unreadCount == null && isSameLastMessage) {
+            merged.unreadCount = updated[index].unreadCount || 0
+          }
+          updated[index] = merged
           return updated.sort((a, b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt))
         }
-        return [conversation, ...prev]
+        const isOwnMessage = conversation.lastMessage?.senderId === currentUser.id
+        const nextConversation = { ...conversation }
+        if (nextConversation.unreadCount == null) {
+          nextConversation.unreadCount = selectedConversationId === conversation.id ? 0 : (isOwnMessage ? 0 : 1)
+        }
+        return [nextConversation, ...prev]
       })
     }
 
@@ -61,12 +82,28 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
 
     socketManager.on('conversation_updated', handleConversationUpdate)
     socketManager.on('new_conversation', handleNewConversation)
+    const handleMessagesRead = (payload) => {
+      if (!payload?.conversationId) return
+      if (payload.readBy !== currentUser.id) return
+      setConversations(prev => prev.map(c => (
+        c.id === payload.conversationId ? { ...c, unreadCount: 0 } : c
+      )))
+    }
+    socketManager.on('messages_read', handleMessagesRead)
 
     return () => {
       socketManager.off('conversation_updated', handleConversationUpdate)
       socketManager.off('new_conversation', handleNewConversation)
+      socketManager.off('messages_read', handleMessagesRead)
     }
-  }, [currentUser.id])
+  }, [currentUser.id, selectedConversationId])
+
+  useEffect(() => {
+    if (!selectedConversationId) return
+    setConversations(prev => prev.map(c => (
+      c.id === selectedConversationId ? { ...c, unreadCount: 0 } : c
+    )))
+  }, [selectedConversationId])
 
   useEffect(() => {
     if (conversations.length > 0) {
@@ -129,7 +166,7 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
   const loadConversations = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('/api/chat/conversations', {
+      const response = await fetch('/api/chat/conversations?nocache=1', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

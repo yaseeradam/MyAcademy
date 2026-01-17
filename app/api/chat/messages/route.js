@@ -57,7 +57,7 @@ export async function POST(request) {
     const user = verify(request)
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
-    const { conversationId, messageType, content, fileUrl, fileName, fileSize, replyTo } = body
+    const { conversationId, messageType, content, fileUrl, fileName, fileSize, replyTo, clientTempId } = body
     if (!conversationId || (!content && !fileUrl)) return NextResponse.json({ error: 'Invalid message data' }, { status: 400 })
     const db = await connect()
     const conv = await db.collection('chat_conversations').findOne({ id: conversationId, schoolId: user.schoolId, participants: user.id })
@@ -75,12 +75,23 @@ export async function POST(request) {
       fileSize,
       replyTo,
       readBy: [user.id],
+      clientTempId,
       createdAt: new Date().toISOString()
     }
     await db.collection('chat_messages').insertOne(message)
-    await db.collection('chat_conversations').updateOne({ id: conversationId }, { $set: { lastMessageAt: new Date().toISOString(), lastMessage: message } })
-    const { emitToConversation } = require('@/lib/socket-server')
+    const lastMessageAt = new Date().toISOString()
+    await db.collection('chat_conversations').updateOne(
+      { id: conversationId },
+      { $set: { lastMessageAt, lastMessage: message } }
+    )
+    const updatedConversation = { ...conv, lastMessageAt, lastMessage: message }
+    const { emitToConversation, emitToUser } = require('@/lib/socket-server')
     emitToConversation(conversationId, 'new_message', message)
+    if (Array.isArray(conv.participants)) {
+      for (const participantId of conv.participants) {
+        emitToUser(participantId, 'conversation_updated', updatedConversation)
+      }
+    }
     return NextResponse.json(message)
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

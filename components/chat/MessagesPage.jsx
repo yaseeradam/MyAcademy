@@ -13,28 +13,28 @@ export default function MessagesPage({ currentUser, onBack }) {
   useEffect(() => {
     let mounted = true
 
-    if (currentUser && !socketManager.socket) {
+    if (currentUser) {
       const token = localStorage.getItem('token')
       if (token) {
         socketManager.connect(token)
+      }
 
-        const handleConnected = () => mounted && setIsConnected(true)
-        const handleDisconnected = () => mounted && setIsConnected(false)
-        const handleError = (error) => {
-          console.error('Socket error:', error)
-          if (mounted) setIsConnected(false)
-        }
+      const handleConnected = () => mounted && setIsConnected(true)
+      const handleDisconnected = () => mounted && setIsConnected(false)
+      const handleError = (error) => {
+        console.error('Socket error:', error)
+        if (mounted) setIsConnected(false)
+      }
 
-        socketManager.on('connected', handleConnected)
-        socketManager.on('disconnected', handleDisconnected)
-        socketManager.on('error', handleError)
+      socketManager.on('connected', handleConnected)
+      socketManager.on('disconnected', handleDisconnected)
+      socketManager.on('error', handleError)
 
-        return () => {
-          mounted = false
-          socketManager.off('connected', handleConnected)
-          socketManager.off('disconnected', handleDisconnected)
-          socketManager.off('error', handleError)
-        }
+      return () => {
+        mounted = false
+        socketManager.off('connected', handleConnected)
+        socketManager.off('disconnected', handleDisconnected)
+        socketManager.off('error', handleError)
       }
     }
 

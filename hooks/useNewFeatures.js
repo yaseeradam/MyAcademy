@@ -339,7 +339,7 @@ export function useNewFeatures(user, token, apiCall, loadDashboardData, modal) {
     modal?.showLoading('Assigning route...')
     modal?.showSuccess('Route Assigned', 'Student assigned to route!')
     setShowAssignModal(false)
-    loadDashboardData()
+    loadDashboardData(true)
   }
 
   const handleHealthSubmit = async (e, form, setShowModal) => {

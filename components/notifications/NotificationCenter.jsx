@@ -211,7 +211,14 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
 
   const loadNotifications = async () => {
     try {
-      const response = await fetch('/api/notifications')
+      const token = localStorage.getItem('token')
+      if (!token) return
+      
+      const response = await fetch('/api/notifications', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       if (response.ok) {
         const data = await response.json()
         setNotifications(data)

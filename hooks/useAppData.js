@@ -16,6 +16,12 @@ export function useAppData(user, token) {
   const isMountedRef = useRef(true)
   const dataLoadedRef = useRef(false)
 
+  const withNoCache = (endpoint, forceReload) => {
+    if (!forceReload) return endpoint
+    const separator = endpoint.includes('?') ? '&' : '?'
+    return `${endpoint}${separator}nocache=1`
+  }
+
   const apiCall = useCallback(async (endpoint, options = {}) => {
     try {
       const response = await fetch(`/api/${endpoint}`, {
@@ -65,8 +71,8 @@ export function useAppData(user, token) {
       // Load all data in parallel based on role
       if (user.role === 'developer') {
         const [statsData, schoolsData] = await Promise.all([
-          apiCall('dashboard/stats'),
-          apiCall('master/schools')
+          apiCall(withNoCache('dashboard/stats', forceReload)),
+          apiCall(withNoCache('master/schools', forceReload))
         ])
         if (isMountedRef.current) {
           setStats(statsData)
@@ -74,13 +80,13 @@ export function useAppData(user, token) {
         }
       } else if (user.role === 'school_admin') {
         const [statsData, classesData, subjectsData, studentsData, teachersData, parentsData, assignmentsData] = await Promise.all([
-          apiCall('dashboard/stats'),
-          apiCall('classes'),
-          apiCall('subjects'),
-          apiCall('students'),
-          apiCall('teachers'),
-          apiCall('parents'),
-          apiCall('teacher-assignments')
+          apiCall(withNoCache('dashboard/stats', forceReload)),
+          apiCall(withNoCache('classes', forceReload)),
+          apiCall(withNoCache('subjects', forceReload)),
+          apiCall(withNoCache('students', forceReload)),
+          apiCall(withNoCache('teachers', forceReload)),
+          apiCall(withNoCache('parents', forceReload)),
+          apiCall(withNoCache('teacher-assignments', forceReload))
         ])
         if (isMountedRef.current) {
           setStats(statsData)
@@ -93,12 +99,12 @@ export function useAppData(user, token) {
         }
       } else if (user.role === 'teacher') {
         const [statsData, classesData, subjectsData, assignmentsData, studentsData, parentsData] = await Promise.all([
-          apiCall('dashboard/stats'),
-          apiCall('classes'),
-          apiCall('subjects'),
-          apiCall('teacher-assignments'),
-          apiCall('students'),
-          apiCall('parents')
+          apiCall(withNoCache('dashboard/stats', forceReload)),
+          apiCall(withNoCache('classes', forceReload)),
+          apiCall(withNoCache('subjects', forceReload)),
+          apiCall(withNoCache('teacher-assignments', forceReload)),
+          apiCall(withNoCache('students', forceReload)),
+          apiCall(withNoCache('parents', forceReload))
         ])
         if (isMountedRef.current) {
           setStats(statsData)
@@ -110,11 +116,11 @@ export function useAppData(user, token) {
         }
       } else if (user.role === 'parent') {
         const [statsData, childrenData, classesData, feesData, attendanceData] = await Promise.all([
-          apiCall('dashboard/stats'),
-          apiCall('parent/students'),
-          apiCall('classes'),
-          apiCall('parent/fees'),
-          apiCall('attendance')
+          apiCall(withNoCache('dashboard/stats', forceReload)),
+          apiCall(withNoCache('parent/students', forceReload)),
+          apiCall(withNoCache('classes', forceReload)),
+          apiCall(withNoCache('parent/fees', forceReload)),
+          apiCall(withNoCache('attendance', forceReload))
         ])
         if (isMountedRef.current) {
           setStats(statsData)
@@ -129,31 +135,31 @@ export function useAppData(user, token) {
     }
   }, [user?.role, apiCall])
 
-  const loadNotifications = useCallback(async () => {
+  const loadNotifications = useCallback(async (forceReload = false) => {
     if (!isMountedRef.current) return
     try {
-      const notificationsData = await apiCall('notifications')
+      const notificationsData = await apiCall(withNoCache('notifications', forceReload))
       if (isMountedRef.current) setNotifications(notificationsData)
     } catch (error) {
       // Error already handled
     }
   }, [apiCall])
 
-  const loadTodayAttendance = useCallback(async () => {
+  const loadTodayAttendance = useCallback(async (forceReload = false) => {
     if (!isMountedRef.current) return
     try {
       const today = new Date().toISOString().split('T')[0]
-      const records = await apiCall(`attendance?date=${today}`)
+      const records = await apiCall(withNoCache(`attendance?date=${today}`, forceReload))
       if (isMountedRef.current) setAttendance(records)
     } catch (error) {
       console.error('Error loading today attendance:', error)
     }
   }, [apiCall])
 
-  const loadAttendanceByDate = useCallback(async (date) => {
+  const loadAttendanceByDate = useCallback(async (date, forceReload = false) => {
     if (!isMountedRef.current) return
     try {
-      const records = await apiCall(`attendance?date=${date}`)
+      const records = await apiCall(withNoCache(`attendance?date=${date}`, forceReload))
       if (isMountedRef.current) setAttendance(records)
     } catch (error) {
       console.error('Error loading attendance:', error)

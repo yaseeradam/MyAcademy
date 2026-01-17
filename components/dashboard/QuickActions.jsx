@@ -3,7 +3,7 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { UserPlus, Users2, Calendar, FileText, Sparkles, Send, GraduationCap } from 'lucide-react'
+import { UserPlus, Users2, Calendar, FileText, Sparkles, Send, GraduationCap, BookOpen } from 'lucide-react'
 
 export default function QuickActions({ onAction, userRole }) {
   const actions = {
@@ -59,12 +59,12 @@ export default function QuickActions({ onAction, userRole }) {
         description: 'Record class attendance'
       },
       {
-        id: 'add-assignment',
-        label: 'Add Assignment',
-        icon: FileText,
-        gradient: 'from-blue-500 to-indigo-600',
-        shadow: 'shadow-blue-500/20',
-        description: 'Create new task'
+        id: 'homework',
+        label: 'Homework',
+        icon: BookOpen,
+        gradient: 'from-purple-500 to-violet-600',
+        shadow: 'shadow-purple-500/20',
+        description: 'Assign homework'
       }
     ]
   }
@@ -101,7 +101,7 @@ export default function QuickActions({ onAction, userRole }) {
                   rounded-2xl overflow-hidden
                   shadow-xl ${action.shadow}
                   hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/20
-                  text-white
+                  !text-white hover:!text-black
                   transition-all duration-300
                 `}
               >
@@ -109,11 +109,11 @@ export default function QuickActions({ onAction, userRole }) {
                 <div className="absolute -top-8 -right-8 h-20 w-20 rounded-full bg-white/20 blur-2xl" />
                 <div className="relative z-10 flex flex-col items-center gap-3">
                   <div className="p-2.5 bg-white/20 rounded-full ring-1 ring-white/30 group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="h-6 w-6 text-white" />
+                    <Icon className="h-6 w-6 !text-white group-hover:!text-black transition-colors duration-300" />
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <span className="font-semibold text-white tracking-wide">{action.label}</span>
-                    <span className="text-[10px] text-white/80 font-normal hidden sm:inline-block">{action.description}</span>
+                    <span className="font-semibold !text-white group-hover:!text-black transition-colors duration-300 tracking-wide">{action.label}</span>
+                    <span className="text-[10px] !text-white/80 group-hover:!text-black/80 transition-colors duration-300 font-normal hidden sm:inline-block">{action.description}</span>
                   </div>
                 </div>
               </Button>
