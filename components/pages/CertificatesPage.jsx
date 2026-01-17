@@ -14,6 +14,7 @@ export default function CertificatesPage({
     schoolSettings,
     students,
     classes,
+    apiCall,
     modal,
     onBack
 }) {
@@ -34,7 +35,7 @@ export default function CertificatesPage({
     const schoolName = school?.name || schoolSettings?.schoolName || 'YOUR SCHOOL NAME'
     const schoolLogo = schoolSettings?.logo || school?.logo || null
 
-    const generateCertificate = (student) => {
+    const generateCertificate = async (student) => {
         modal?.showLoading(`Generating certificate for ${student.firstName}...`)
 
         try {
@@ -133,6 +134,20 @@ export default function CertificatesPage({
             doc.text('SEAL', width / 2, height - 32, { align: 'center' })
 
             doc.save(`Certificate_${student.firstName}_${student.lastName}.pdf`)
+            if (apiCall) {
+                try {
+                    await apiCall('results/certificates', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            studentId: student.id,
+                            type: certificateType,
+                            title: 'Certificate of Achievement'
+                        })
+                    })
+                } catch (error) {
+                    console.error('Error recording certificate:', error)
+                }
+            }
             modal?.showSuccess('Certificate Generated', `Downloaded certificate for ${student.firstName}`)
         } catch (error) {
             console.error('Error generating certificate:', error)

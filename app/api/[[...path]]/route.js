@@ -439,20 +439,54 @@ export async function GET(request, { params }) {
         return NextResponse.json(parentStudents)
 
       // Parent fees
-      case 'parent/fees':
-        const parentFeesData = authenticateToken(request)
-        if (!parentFeesData || parentFeesData.role !== 'parent') {
-          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
-        const childrenIds = await db.collection('students')
-          .find({ parentId: parentFeesData.id, schoolId: parentFeesData.schoolId })
-          .project({ id: 1 })
-          .toArray()
-        const studentIds = childrenIds.map(c => c.id)
-        const feePayments = await db.collection('fee_payments')
-          .find({ studentId: { $in: studentIds }, schoolId: parentFeesData.schoolId })
-          .toArray()
-        return NextResponse.json(feePayments)
+        case 'parent/fees':
+          const parentFeesData = authenticateToken(request)
+          if (!parentFeesData || parentFeesData.role !== 'parent') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+          }
+          const childrenIds = await db.collection('students')
+            .find({ parentId: parentFeesData.id, schoolId: parentFeesData.schoolId })
+            .project({ id: 1 })
+            .toArray()
+          const studentIds = childrenIds.map(c => c.id)
+          const feePayments = await db.collection('fee_payments')
+            .find({ studentId: { $in: studentIds }, schoolId: parentFeesData.schoolId })
+            .toArray()
+          return NextResponse.json(feePayments)
+
+        case 'parent/results':
+          const parentResultsData = authenticateToken(request)
+          if (!parentResultsData || parentResultsData.role !== 'parent') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+          }
+          const parentUser = await db.collection('users').findOne({
+            id: parentResultsData.id,
+            role: 'parent',
+            schoolId: parentResultsData.schoolId
+          })
+          const parentIdCandidates = [parentResultsData.id]
+          if (parentUser?._id) {
+            parentIdCandidates.push(parentUser._id)
+            parentIdCandidates.push(parentUser._id.toString())
+          }
+          const parentStudents = await db.collection('students')
+            .find({ parentId: { $in: parentIdCandidates }, schoolId: parentResultsData.schoolId })
+            .toArray()
+          const parentStudentIds = parentStudents.map(s => s.id)
+          if (parentStudentIds.length === 0) {
+            return NextResponse.json({ students: [], reportCards: [], certificates: [] })
+          }
+          const [reportCards, certificates] = await Promise.all([
+            db.collection('report_cards')
+              .find({ studentId: { $in: parentStudentIds }, schoolId: parentResultsData.schoolId })
+              .sort({ issuedAt: -1 })
+              .toArray(),
+            db.collection('certificates')
+              .find({ studentId: { $in: parentStudentIds }, schoolId: parentResultsData.schoolId })
+              .sort({ issuedAt: -1 })
+              .toArray()
+          ])
+          return NextResponse.json({ students: parentStudents, reportCards, certificates })
 
       // Notifications
       case 'notifications':
@@ -1375,6 +1409,59 @@ export async function POST(request, { params }) {
         )
 
         return NextResponse.json({ success: true })
+
+      case 'results/report-cards': {
+        const resultsData = authenticateToken(request)
+        if (!resultsData || resultsData.role !== 'school_admin') {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const { studentIds, classId, className, term, academicYear } = body
+        if (!studentIds || studentIds.length === 0) {
+          return NextResponse.json({ error: 'Student IDs required' }, { status: 400 })
+        }
+
+        const issuedAt = new Date().toISOString()
+        const records = studentIds.map(studentId => ({
+          id: uuidv4(),
+          studentId,
+          classId: classId || null,
+          className: className || '',
+          term: term || '',
+          academicYear: academicYear || '',
+          issuedAt,
+          schoolId: resultsData.schoolId
+        }))
+
+        await db.collection('report_cards').insertMany(records)
+        return NextResponse.json({ success: true })
+      }
+
+      case 'results/certificates': {
+        const certificateData = authenticateToken(request)
+        if (!certificateData || certificateData.role !== 'school_admin') {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const { studentId, studentIds, type, title } = body
+        const ids = studentIds && studentIds.length ? studentIds : (studentId ? [studentId] : [])
+        if (ids.length === 0) {
+          return NextResponse.json({ error: 'Student ID required' }, { status: 400 })
+        }
+
+        const issuedAt = new Date().toISOString()
+        const records = ids.map(id => ({
+          id: uuidv4(),
+          studentId: id,
+          type: type || '',
+          title: title || '',
+          issuedAt,
+          schoolId: certificateData.schoolId
+        }))
+
+        await db.collection('certificates').insertMany(records)
+        return NextResponse.json({ success: true })
+      }
 
       // Parent pay fees
       case 'parent/pay-fees':

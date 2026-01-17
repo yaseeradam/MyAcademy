@@ -68,6 +68,8 @@ export default function ReportCardsPage({
 
         try {
             const className = classes.find(c => c.id === selectedClass)?.name || 'Class'
+            const term = schoolSettings?.term || schoolSettings?.currentTerm || 'Current Term'
+            const academicYear = schoolSettings?.academicYear || new Date().getFullYear()
 
             // Generate the PDF with school logo
             generateClassReportCards(
@@ -79,6 +81,23 @@ export default function ReportCardsPage({
                 [], // grading scale - can be added later
                 schoolLogo
             )
+
+            if (apiCall) {
+                try {
+                    await apiCall('results/report-cards', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            studentIds: classStudents.map(s => s.id),
+                            classId: selectedClass,
+                            className,
+                            term,
+                            academicYear
+                        })
+                    })
+                } catch (error) {
+                    console.error('Error recording report cards:', error)
+                }
+            }
 
             modal?.showSuccess('Report Cards Generated', `Successfully generated report cards for ${classStudents.length} students`)
         } catch (error) {

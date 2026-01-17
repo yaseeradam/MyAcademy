@@ -19,6 +19,7 @@ import DashboardPage from '@/components/pages/DashboardPage'
 import StudentsPage from '@/components/pages/StudentsPage'
 import TeachersPage from '@/components/pages/TeachersPage'
 import ParentsPage from '@/components/pages/ParentsPage'
+import ParentResultsPage from '@/components/pages/ParentResultsPage'
 import MyChildrenPage from '@/components/pages/MyChildrenPage'
 import ClassesPage from '@/components/pages/ClassesPage'
 import SubjectsPage from '@/components/pages/SubjectsPage'
@@ -397,7 +398,7 @@ function App() {
     if (user?.role === 'developer') return [...baseItems, { id: 'schools', label: 'Schools', icon: Building2 }, { id: 'master-settings', label: 'Master Settings', icon: SettingsIcon }]
     if (user?.role === 'school_admin') return [...baseItems, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'students', label: 'Students', icon: Users }, { id: 'teachers', label: 'Teachers', icon: UserCheck }, { id: 'classes', label: 'Classes', icon: SchoolIcon }, { id: 'subjects', label: 'Subjects', icon: BookOpen }, { id: 'assignments', label: 'Assignments', icon: GraduationCap }, { id: 'teacher-attendance', label: 'Teacher Attendance', icon: Calendar }, { id: 'student-attendance', label: 'Student Attendance', icon: Clock }, { id: 'more-features', label: 'More Features', icon: Grid3x3 }, { id: 'billing', label: 'Billing', icon: CreditCard }, { id: 'school-settings', label: 'School Settings', icon: SettingsIcon }]
     if (user?.role === 'teacher') return [...baseItems, { id: 'gradebook', label: 'Gradebook', icon: BookOpen }, { id: 'my-classes', label: 'My Classes', icon: SchoolIcon }, { id: 'my-subjects', label: 'My Subjects', icon: BookOpen }, { id: 'students', label: 'My Students', icon: Users }, { id: 'parents', label: 'Parents', icon: Users2 }, { id: 'student-attendance', label: 'Mark Attendance', icon: Calendar }, { id: 'homework', label: 'Homework', icon: FileText }]
-    if (user?.role === 'parent') return [...baseItems, { id: 'my-children', label: 'My Children', icon: Users }, { id: 'school-fees', label: 'School Fees', icon: CreditCard }, { id: 'attendance', label: 'Attendance Records', icon: Calendar }, { id: 'results', label: 'Results', icon: BarChart3 }]
+    if (user?.role === 'parent') return [...baseItems, { id: 'my-children', label: 'My Children', icon: Users }, { id: 'school-fees', label: 'School Fees', icon: CreditCard }, { id: 'results', label: 'Results', icon: BarChart3 }]
     return baseItems
   }
 
@@ -556,7 +557,7 @@ function App() {
       {activeTab === 'report-cards' && user.role === 'school_admin' && <ReportCardsPage school={school} schoolSettings={schoolSettings} classes={classes} students={students} subjects={subjects} apiCall={apiCall} modal={modal} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'announcements' && user.role === 'school_admin' && <AnnouncementsPage school={school} schoolSettings={schoolSettings} classes={classes} teachers={teachers} students={students} apiCall={apiCall} modal={modal} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'academic-calendar' && user.role === 'school_admin' && <AcademicCalendarPage school={school} schoolSettings={schoolSettings} apiCall={apiCall} modal={modal} onBack={() => setActiveTab('more-features')} />}
-      {activeTab === 'certificates' && user.role === 'school_admin' && <CertificatesPage school={school} schoolSettings={schoolSettings} students={students} classes={classes} modal={modal} onBack={() => setActiveTab('more-features')} />}
+      {activeTab === 'certificates' && user.role === 'school_admin' && <CertificatesPage school={school} schoolSettings={schoolSettings} students={students} classes={classes} apiCall={apiCall} modal={modal} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'fees' && user.role === 'school_admin' && <FeesPage fees={newFeatures.fees} students={students} classes={classes} showModal={showFeeModal} setShowModal={setShowFeeModal} showPaymentModal={showPaymentModal} setShowPaymentModal={setShowPaymentModal} form={feeForm} setForm={setFeeForm} paymentForm={paymentForm} setPaymentForm={setPaymentForm} handleSubmit={(e) => newFeatures.handleFeeSubmit(e, feeForm, setShowFeeModal)} handlePayment={(e) => newFeatures.handlePayment(e, paymentForm, setShowPaymentModal)} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'homework' && user.role === 'school_admin' && <HomeworkPage homework={newFeatures.homework} classes={classes} subjects={subjects} students={students} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => { }} handleDelete={newFeatures.handleDeleteHomework} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'homework' && user.role === 'teacher' && <HomeworkPage homework={newFeatures.homework.filter(hw => filteredClasses.some(c => c._id === hw.classId))} classes={filteredClasses} subjects={filteredSubjects} students={filteredStudents} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => { }} handleDelete={newFeatures.handleDeleteHomework} onBack={() => setActiveTab('dashboard')} />}
@@ -578,11 +579,12 @@ function App() {
         />
       )}
       {activeTab === 'school-fees' && user.role === 'parent' && <SchoolFeesPage user={user} />}
+      {activeTab === 'results' && user.role === 'parent' && <ParentResultsPage apiCall={apiCall} />}
       {activeTab === 'my-children' && user.role === 'parent' && (
         <MyChildrenPage students={students} classes={classes} attendance={attendance} feePayments={feePayments} />
       )}
 
-      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'report-cards', 'announcements', 'academic-calendar', 'certificates', 'homework', 'fees', 'library', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
+      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'report-cards', 'announcements', 'academic-calendar', 'certificates', 'homework', 'fees', 'library', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook', 'results'].includes(activeTab) && null}
 
       <ReportDialog
         open={showReportDialog}

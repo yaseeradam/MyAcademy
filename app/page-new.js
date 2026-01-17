@@ -15,6 +15,7 @@ import StudentsPage from '@/components/pages/StudentsPage'
 import TeachersPage from '@/components/pages/TeachersPage'
 import ParentsPage from '@/components/pages/ParentsPage'
 import MyChildrenPage from '@/components/pages/MyChildrenPage'
+import ParentResultsPage from '@/components/pages/ParentResultsPage'
 import ClassesPage from '@/components/pages/ClassesPage'
 import SubjectsPage from '@/components/pages/SubjectsPage'
 import AssignmentsPage from '@/components/pages/AssignmentsPage'
@@ -164,6 +165,7 @@ function App() {
       {activeTab === 'my-children' && user.role === 'parent' && (
         <MyChildrenPage students={students} classes={classes} attendance={attendance} feePayments={feePayments} />
       )}
+      {activeTab === 'results' && user.role === 'parent' && <ParentResultsPage apiCall={apiCall} />}
       {activeTab === 'subjects' && user.role === 'school_admin' && <SubjectsPage subjects={subjects} showSubjectModal={showSubjectModal} setShowSubjectModal={setShowSubjectModal} subjectForm={formHandlers.subjectForm} setSubjectForm={formHandlers.setSubjectForm} handleCreateSubject={formHandlers.handleCreateSubject} />}
       {activeTab === 'assignments' && user.role === 'school_admin' && <AssignmentsPage assignments={assignments} teachers={teachers} classes={classes} subjects={subjects} showAssignmentModal={showAssignmentModal} setShowAssignmentModal={setShowAssignmentModal} assignmentForm={formHandlers.assignmentForm} setAssignmentForm={formHandlers.setAssignmentForm} handleCreateAssignment={(e) => formHandlers.handleCreateAssignment(e, subjects, classes)} />}
       {activeTab === 'attendance' && (user.role === 'school_admin' || user.role === 'teacher') && <AttendancePage user={user} attendance={attendance} students={students} teachers={teachers} classes={classes} {...attendanceHandlers} />}
@@ -174,7 +176,7 @@ function App() {
       {activeTab === 'gamification' && <GamificationDashboard currentUser={user} />}
       {activeTab === 'messages' && <MessagesPage currentUser={user} onBack={() => setActiveTab('dashboard')} />}
       
-      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'assignments', 'attendance', 'billing', 'payments', 'gamification', 'messages', 'school-settings', 'master-settings', 'my-children'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
+      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'assignments', 'attendance', 'billing', 'payments', 'gamification', 'messages', 'school-settings', 'master-settings', 'my-children', 'results'].includes(activeTab) && null}
       
       {showCalculator && <CalculatorApp isOpen={showCalculator} onClose={() => setShowCalculator(false)} />}
     </MainLayout>

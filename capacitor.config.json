@@ -6,5 +6,15 @@
   "server": {
     "url": "https://myacademy-ms.vercel.app",
     "cleartext": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "backgroundColor": "#ffffff",
+      "showSpinner": false,
+      "splashFullScreen": false,
+      "splashImmersive": false
+    }
   }
 }

@@ -366,6 +366,13 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
     }
   }
 
+  const handleSelectConversation = (conversation) => {
+    onSelectConversation(conversation)
+    setConversations(prev => prev.map(c => (
+      c.id === conversation.id ? { ...c, unreadCount: 0 } : c
+    )))
+  }
+
   const filteredConversations = conversations.filter(conversation => {
     if (!searchTerm) return true
 
@@ -589,7 +596,7 @@ function ConversationList({ onSelectConversation, selectedConversationId, curren
             filteredConversations.map((conversation) => (
               <button
                 key={conversation.id}
-                onClick={() => onSelectConversation(conversation)}
+                onClick={() => handleSelectConversation(conversation)}
                 className={`w-full p-3 rounded-xl text-left transition-all duration-200 relative group border border-transparent ${selectedConversationId === conversation.id
                   ? 'bg-white/90 border-slate-200/80 shadow-md shadow-slate-200/70'
                   : 'hover:bg-white/70 hover:border-slate-200/70'

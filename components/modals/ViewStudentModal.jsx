@@ -32,9 +32,9 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
     const doc = new jsPDF()
     const pageWidth = doc.internal.pageSize.getWidth()
     const margin = 14
-    const headerHeight = 34
-    const logoSize = 18
-    const contentTop = headerHeight + 18
+    const headerHeight = 32
+    const logoSize = 16
+    const contentTop = headerHeight + 16
 
     doc.setFillColor(248, 250, 252)
     doc.rect(0, 0, pageWidth, headerHeight, 'F')
@@ -44,12 +44,6 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
     const logoData = await loadImageData(schoolLogo)
     if (logoData) {
       doc.addImage(logoData, getImageFormat(logoData), margin, 8, logoSize, logoSize)
-    } else {
-      doc.setFillColor(226, 232, 240)
-      doc.roundedRect(margin, 8, logoSize, logoSize, 2, 2, 'F')
-      doc.setTextColor(100, 116, 139)
-      doc.setFontSize(9)
-      doc.text('LOGO', margin + 4, 19)
     }
 
     doc.setTextColor(15, 23, 42)
@@ -62,16 +56,16 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
 
     doc.setTextColor(15, 23, 42)
     doc.setFontSize(14)
-    doc.text('Student Record', margin, contentTop)
+    doc.text('Student Record Sheet', margin, contentTop)
     doc.setDrawColor(226, 232, 240)
     doc.line(margin, contentTop + 4, pageWidth - margin, contentTop + 4)
 
-    const photoX = pageWidth - margin - 26
+    const photoX = pageWidth - margin - 24
     const photoY = contentTop - 6
     doc.setDrawColor(226, 232, 240)
-    doc.roundedRect(photoX, photoY, 26, 26, 3, 3, 'S')
+    doc.roundedRect(photoX, photoY, 24, 24, 2, 2, 'S')
     if (student.photo && student.photo.startsWith('data:image')) {
-      doc.addImage(student.photo, getImageFormat(student.photo), photoX + 1, photoY + 1, 24, 24)
+      doc.addImage(student.photo, getImageFormat(student.photo), photoX + 1, photoY + 1, 22, 22)
     }
 
     doc.setFontSize(10)
@@ -93,25 +87,32 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
       doc.text(label, x, y)
       doc.setTextColor(15, 23, 42)
       doc.setFontSize(10)
-      doc.text(value || 'N/A', x + 36, y)
+      doc.text(value || 'N/A', x + 40, y)
       y += 7
     }
+
+    const admissionDate = student.admissionDate || student.createdAt || ''
+    const academicYear = classInfo?.academicYear || ''
 
     sectionTitle('Student Information')
     addRow('Full Name:', `${student.firstName} ${student.lastName}`, margin)
     addRow('Admission No:', student.admissionNumber, margin)
+    addRow('Student ID:', student.id || 'N/A', margin)
     addRow('Date of Birth:', student.dateOfBirth || 'N/A', margin)
     addRow('Gender:', student.gender || 'N/A', margin)
     addRow('Status:', student.active ? 'Active' : 'Inactive', margin)
+    if (admissionDate) addRow('Admission Date:', new Date(admissionDate).toLocaleDateString(), margin)
 
     sectionTitle('Academic Information')
     addRow('Class:', classInfo?.name || 'N/A', margin)
-    addRow('Parent:', parent?.name || 'N/A', margin)
+    if (academicYear) addRow('Academic Year:', academicYear, margin)
+    addRow('Parent/Guardian:', parent?.name || 'N/A', margin)
 
     sectionTitle('Contact Information')
     if (student.phoneNumber) addRow('Phone:', student.phoneNumber, margin)
     if (student.email) addRow('Email:', student.email, margin)
     if (parent?.phoneNumber) addRow('Parent Phone:', parent.phoneNumber, margin)
+    if (parent?.email) addRow('Parent Email:', parent.email, margin)
     if (student.emergencyContact) addRow('Emergency:', student.emergencyContact, margin)
     if (student.address) {
       doc.setTextColor(100, 116, 139)
@@ -119,10 +120,14 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
       doc.text('Address:', margin, y)
       doc.setTextColor(15, 23, 42)
       doc.setFontSize(10)
-      const addressLines = doc.splitTextToSize(student.address, pageWidth - margin * 2 - 36)
-      doc.text(addressLines, margin + 36, y)
+      const addressLines = doc.splitTextToSize(student.address, pageWidth - margin * 2 - 40)
+      doc.text(addressLines, margin + 40, y)
       y += 7 * addressLines.length
     }
+
+    sectionTitle('Approvals')
+    addRow('Class Teacher:', '____________________', margin)
+    addRow('Principal:', '____________________', margin)
 
     const footerY = doc.internal.pageSize.getHeight() - 18
     doc.setDrawColor(226, 232, 240)
@@ -130,7 +135,7 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
     doc.setTextColor(100, 116, 139)
     doc.setFontSize(9)
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, footerY + 8)
-    doc.text('Signature: ____________________', pageWidth - margin - 70, footerY + 8)
+    doc.text('Official Document', pageWidth - margin - 35, footerY + 8)
 
     doc.save(`${student.firstName}_${student.lastName}_Record.pdf`)
   }
@@ -144,7 +149,7 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
           <DialogTitle>Student Record</DialogTitle>
         </DialogHeader>
 
-        <div className="rounded-xl border border-slate-200 bg-gradient-to-r from-slate-50 to-white p-4 flex items-center gap-4">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex items-center gap-4">
           {schoolLogo ? (
             <img src={schoolLogo} alt={schoolName} className="h-12 w-12 rounded-lg object-cover ring-1 ring-slate-200" />
           ) : (
@@ -179,12 +184,22 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
                 <p className="text-xs text-slate-500">Admission #{student.admissionNumber}</p>
               </div>
             </div>
-            <div className="mt-4 space-y-2 text-sm text-slate-700">
+            <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-slate-700">
               <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-slate-400" /><span>{student.dateOfBirth || 'N/A'}</span></div>
               <div className="flex items-center gap-2"><Users className="h-4 w-4 text-slate-400" /><span>{classInfo?.name || 'N/A'}</span></div>
               <div className="flex items-center gap-2"><Hash className="h-4 w-4 text-slate-400" /><span className="capitalize">{student.gender || 'N/A'}</span></div>
               {student.phoneNumber && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" /><span>{student.phoneNumber}</span></div>}
               {student.email && <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-400" /><span>{student.email}</span></div>}
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-slate-500">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-2">
+                <p>Status</p>
+                <p className="text-sm font-medium text-slate-700">{student.active ? 'Active' : 'Inactive'}</p>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-2">
+                <p>Admission Date</p>
+                <p className="text-sm font-medium text-slate-700">{student.admissionDate ? new Date(student.admissionDate).toLocaleDateString() : (student.createdAt ? new Date(student.createdAt).toLocaleDateString() : 'N/A')}</p>
+              </div>
             </div>
           </div>
 
@@ -193,6 +208,7 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
             <div className="mt-2 space-y-2 text-sm text-slate-700">
               <div className="flex items-center gap-2"><User className="h-4 w-4 text-slate-400" /><span>{parent?.name || 'N/A'}</span></div>
               {parent?.phoneNumber && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" /><span>{parent.phoneNumber}</span></div>}
+              {parent?.email && <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-400" /><span>{parent.email}</span></div>}
               {student.emergencyContact && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" /><span>{student.emergencyContact}</span></div>}
               {student.address && (
                 <div className="flex items-start gap-2">
@@ -200,16 +216,6 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
                   <span>{student.address}</span>
                 </div>
               )}
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-2">
-                <p>Status</p>
-                <p className="text-sm font-medium text-slate-700">{student.active ? 'Active' : 'Inactive'}</p>
-              </div>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-2">
-                <p>Admission Date</p>
-                <p className="text-sm font-medium text-slate-700">{new Date().toLocaleDateString()}</p>
-              </div>
             </div>
           </div>
         </div>
