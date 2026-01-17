@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -38,6 +39,12 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
+    }
+
     const db = await connectToDatabase()
     
     const payments = await db.collection('parent_payments')
@@ -45,7 +52,11 @@ export async function GET(request) {
       .sort({ createdAt: -1 })
       .toArray()
 
-    return NextResponse.json({ payments })
+    const payload = { payments }
+    if (!bypassCache) {
+      setCache(buildCacheKey(request, user), payload, 15000)
+    }
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching parent payments:', error)
@@ -56,6 +67,7 @@ export async function GET(request) {
 // POST /api/payments/parent - Create parent payment
 export async function POST(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user || user.role !== 'parent') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

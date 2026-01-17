@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -36,6 +37,12 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
+    }
+
     const db = await connectToDatabase()
 
     // Get all active sessions for this user
@@ -63,7 +70,11 @@ export async function GET(request) {
       isCurrentSession: session.id === currentSessionId
     }))
 
-    return NextResponse.json({ sessions: formattedSessions })
+    const payload = { sessions: formattedSessions }
+    if (!bypassCache) {
+      setCache(buildCacheKey(request, user), payload, 15000)
+    }
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching sessions:', error)
@@ -74,6 +85,7 @@ export async function GET(request) {
 // POST /api/auth/sessions - Create new session (login)
 export async function POST(request) {
   try {
+    clearCache()
     const { userId, deviceInfo, ipAddress, location, userAgent } = await request.json()
 
     if (!userId) {
@@ -131,6 +143,7 @@ export async function POST(request) {
 // DELETE /api/auth/sessions - Terminate session(s)
 export async function DELETE(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -210,6 +223,7 @@ export async function DELETE(request) {
 // PATCH /api/auth/sessions - Update session activity
 export async function PATCH(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

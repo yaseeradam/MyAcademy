@@ -27,8 +27,13 @@ export function useTeacherAttendance(user, apiCall, teachers, loadTodayAttendanc
   }
 
   const handleMarkAttendance = async () => {
-    modal?.showLoading('Marking teacher attendance...')
     try {
+      const existing = await apiCall(`attendance?date=${attendanceDate}&type=teacher`)
+      if (existing?.length) {
+        modal?.showError('Already Marked', 'Teacher attendance has already been marked for this date.')
+        return
+      }
+      modal?.showLoading('Marking teacher attendance...')
       const attendanceData = attendanceList.map(item => ({ 
         teacherId: item.teacherId, 
         date: attendanceDate, 

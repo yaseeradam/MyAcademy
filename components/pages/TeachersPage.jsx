@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Download, UserPlus, Edit, UserCheck, Trash2, Search } from 'lucide-react'
 import { exportTeachersToCSV } from '@/lib/csv-export'
@@ -131,69 +130,103 @@ export default function TeachersPage({
         </div>
       </div>
 
-      {/* Data Table */}
-      <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl overflow-hidden">
-        <CardContent className="p-0">
-          <Table className="academic-table">
-            <TableHeader>
-              <TableRow className="border-b border-slate-200/80">
-                <TableHead className="text-slate-700 font-semibold">Name</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Email</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Phone</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Qualification</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Specialization</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Experience</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Status</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filterTeachers(teachers).map((teacher) => (
-                <TableRow key={teacher.id} className="border-slate-200/80 hover:bg-slate-50">
-                  <TableCell className="font-medium text-slate-900">
-                    {teacher.firstName} {teacher.lastName}
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate text-slate-600">{teacher.email}</TableCell>
-                  <TableCell className="text-slate-600">{teacher.phoneNumber || 'N/A'}</TableCell>
-                  <TableCell className="max-w-xs truncate text-slate-600">{teacher.qualification || 'N/A'}</TableCell>
-                  <TableCell className="text-slate-600">{teacher.specialization || 'N/A'}</TableCell>
-                  <TableCell className="text-slate-600">{teacher.experience || 'N/A'}</TableCell>
-                  <TableCell>
-                    <Badge className={teacher.active
-                      ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                      : "bg-rose-100 text-rose-700 border-rose-200"
-                    }>
-                      {teacher.active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {!readOnly && (
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onEdit(teacher)}
-                          className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => { if (window.confirm('Are you sure you want to delete this teacher?')) onDelete(teacher.id) }}
-                          className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+      {/* Grid Cards */}
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {filterTeachers(teachers).map((teacher) => {
+          const initials = `${teacher.firstName?.[0] || ''}${teacher.lastName?.[0] || ''}`.toUpperCase()
+          const avatarUrl = teacher.profilePicture || teacher.avatar || teacher.photo
+          return (
+            <Card key={teacher.id} className="border border-slate-200/80 bg-white/85 backdrop-blur-xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-start gap-4">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={`${teacher.firstName || ''} ${teacher.lastName || ''}`.trim() || 'Teacher avatar'}
+                      className="h-12 w-12 rounded-2xl object-cover border border-slate-200/80 shadow-sm"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-100 to-rose-100 text-slate-700 font-semibold flex items-center justify-center shadow-sm">
+                      {initials || 'TC'}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-lg font-semibold text-slate-900 truncate">
+                          {teacher.firstName} {teacher.lastName}
+                        </p>
+                        <p className="text-sm text-slate-600 truncate">{teacher.email}</p>
                       </div>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                      <Badge className={teacher.active
+                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                        : "bg-rose-100 text-rose-700 border-rose-200"
+                      }>
+                        {teacher.active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-slate-600 truncate mt-2">
+                      Specialization: {teacher.specialization || 'N/A'}
+                    </p>
+                  </div>
+                </div>
+
+              <div className="space-y-2 text-sm text-slate-600">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-slate-500">Phone</span>
+                  <span className="text-slate-700">{teacher.phoneNumber || 'N/A'}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-slate-500">Qualification</span>
+                  <span className="text-slate-700 truncate">{teacher.qualification || 'N/A'}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-slate-500">Specialization</span>
+                  <span className="text-slate-700 truncate">{teacher.specialization || 'N/A'}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-slate-500">Experience</span>
+                  <span className="text-slate-700">{teacher.experience || 'N/A'}</span>
+                </div>
+              </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-200/80">
+                  <Badge className="bg-indigo-100 text-indigo-700 border-indigo-200">
+                    {teacher.qualification || 'No qualification'}
+                  </Badge>
+                  <Badge className="bg-teal-100 text-teal-700 border-teal-200">
+                    {teacher.experience || 'No experience'}
+                  </Badge>
+                  <Badge className="bg-amber-100 text-amber-700 border-amber-200">
+                    {teacher.phoneNumber || 'No phone'}
+                  </Badge>
+                  {!readOnly && (
+                    <div className="ml-auto flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onEdit(teacher)}
+                        className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => { if (window.confirm('Are you sure you want to delete this teacher?')) onDelete(teacher.id) }}
+                        className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
 
       {/* Empty State */}
       {(!teachers || teachers.length === 0) && (

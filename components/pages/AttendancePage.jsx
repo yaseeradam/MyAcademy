@@ -29,6 +29,7 @@ export default function AttendancePage({
   handleMarkAttendance,
   loadAttendanceByDate
 }) {
+  const userId = user?.id || user?._id
   const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0])
   const [filterClass, setFilterClass] = useState('all')
   const [filteredAttendance, setFilteredAttendance] = useState(attendance)
@@ -460,7 +461,10 @@ export default function AttendancePage({
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-blue-200/60">
-                        {record.markedBy === user.id ? 'You' : 'Admin'}
+                        {(() => {
+                          const markedById = record.markedBy?.id || record.markedBy?._id || record.markedBy
+                          return markedById === userId ? 'You' : 'Admin'
+                        })()}
                       </TableCell>
                       <TableCell className="text-sm text-blue-200/60">
                         {new Date(record.createdAt).toLocaleTimeString()}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -8,10 +8,45 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { LogOut, Menu, X, ChevronLeft, ChevronRight, Crown, Calculator, Megaphone, Settings, Search, Bell } from 'lucide-react'
 import BroadcastNotification from '@/components/notifications/BroadcastNotification'
 import { Input } from '@/components/ui/input'
+import NotificationCenter from '@/components/notifications/NotificationCenter'
 
 export default function MainLayout({ user, school, schoolSettings, children, activeTab, setActiveTab, navigationItems, handleLogout, setShowCalculator, unreadMessages = 0 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const roleLabel = {
+    developer: 'MASTER',
+    school_admin: 'SCHOOL ADMIN',
+    teacher: 'TEACHER',
+    parent: 'PARENT',
+    student: 'STUDENT'
+  }[user.role] || 'USER'
+  const roleBadgeClass = {
+    developer: 'border-violet-200 text-violet-700 bg-violet-100/80 shadow-violet-200/40',
+    school_admin: 'border-amber-300/60 text-amber-700 bg-amber-100/80 shadow-amber-200/40',
+    teacher: 'border-sky-200 text-sky-700 bg-sky-100/80 shadow-sky-200/50',
+    parent: 'border-emerald-200 text-emerald-700 bg-emerald-100/80 shadow-emerald-200/40',
+    student: 'border-rose-200 text-rose-700 bg-rose-100/80 shadow-rose-200/40'
+  }[user.role] || 'border-slate-200 text-slate-600 bg-slate-100/80 shadow-slate-200/40'
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('openNotifications') === '1') {
+      setShowNotifications(true)
+      params.delete('openNotifications')
+      const nextQuery = params.toString()
+      const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}`
+      window.history.replaceState({}, document.title, nextUrl)
+    }
+  }, [])
+  const toggleNotifications = (open) => {
+    if (typeof open === 'boolean') {
+      setShowNotifications(open)
+    } else {
+      setShowNotifications(prev => !prev)
+    }
+  }
 
   return (
     <div className="min-h-screen flex text-foreground font-sans theme-soft selection:bg-sky-200/60">
@@ -40,8 +75,8 @@ export default function MainLayout({ user, school, schoolSettings, children, act
                 </div>
                 <div className="min-w-0">
                   <span className="text-sm font-bold text-slate-900 block truncate leading-none mb-1">{school?.name || 'My Academy'}</span>
-                  <Badge variant="outline" className="text-[10px] h-4 border-amber-300/60 text-amber-700 bg-amber-100/80 px-1 py-0 shadow-sm shadow-amber-200/40">
-                    {user.role === 'developer' ? 'MASTER' : 'SCHOOL ADMIN'}
+                  <Badge variant="outline" className={`text-[10px] h-4 px-1 py-0 shadow-sm ${roleBadgeClass}`}>
+                    {roleLabel}
                   </Badge>
                 </div>
               </div>
@@ -140,7 +175,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
               <Calculator className="h-4 w-4" />
             </button>
 
-            <button className="relative rounded-full h-9 w-9 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-900/5 transition-all">
+            <button onClick={toggleNotifications} className="relative rounded-full h-9 w-9 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-900/5 transition-all">
               <Bell className="h-4 w-4" />
               <span className="absolute top-2.5 right-2.5 h-1.5 w-1.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
             </button>
@@ -191,6 +226,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
           </div>
         </div>
       </div>
+      <NotificationCenter currentUser={user} isOpen={showNotifications} onToggle={toggleNotifications} />
     </div>
   )
 }

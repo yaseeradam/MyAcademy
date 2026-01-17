@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -27,9 +28,14 @@ function verifyToken(request) {
 
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     // Checking our OWN school status
@@ -65,14 +71,16 @@ export async function GET(request) {
     // Developer bypass or free tier logic if needed?
     // For now assuming strict logic as requested.
 
-    return NextResponse.json({
+    const payload = {
         status,
         daysRemaining,
         message,
         subscriptionEndDate: school.subscriptionEndDate,
         gracePeriodEndDate: school.gracePeriodEndDate,
         planName: school.subscriptionPlanId // could fetch plan name if needed
-    })
+    }
+    if (!bypassCache) setCache(buildCacheKey(request, user), payload, 15000)
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Subscription check error:', error)

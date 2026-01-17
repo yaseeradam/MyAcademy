@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
+const { buildCacheKey, getCache, setCache, shouldBypassCache } = require('@/lib/api-cache')
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -23,6 +24,12 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
+    }
+
     const settings = {
       systemName: 'My Academy',
       systemEmail: 'admin@myacademy.com',
@@ -34,6 +41,9 @@ export async function GET(request) {
       systemVersion: '1.0.0'
     }
 
+    if (!bypassCache) {
+      setCache(buildCacheKey(request, user), settings, 60000)
+    }
     return NextResponse.json(settings)
   } catch (error) {
     console.error('Error fetching master settings:', error)

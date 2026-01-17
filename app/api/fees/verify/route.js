@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -13,6 +14,11 @@ async function connectToDatabase() {
 
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, null, 'fees-verify'))
+      if (cached) return NextResponse.json(cached)
+    }
     const { searchParams } = new URL(request.url)
     const reference = searchParams.get('reference')
 
@@ -56,7 +62,9 @@ export async function GET(request) {
         }
     )
 
-    return NextResponse.json({ success: true, message: 'Fee payment verified' })
+    const payload = { success: true, message: 'Fee payment verified' }
+    if (!bypassCache) setCache(buildCacheKey(request, null, 'fees-verify'), payload, 60000)
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Fee verification error:', error)

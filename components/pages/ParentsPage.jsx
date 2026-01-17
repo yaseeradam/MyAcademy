@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Download, UserPlus, Edit, Users2, Trash2, Search } from 'lucide-react'
 import { exportParentsToCSV } from '@/lib/csv-export'
@@ -116,69 +115,91 @@ export default function ParentsPage({
         </div>
       </div>
 
-      {/* Data Table */}
-      <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl overflow-hidden">
-        <CardContent className="p-0">
-          <Table className="academic-table">
-            <TableHeader>
-              <TableRow className="border-b border-slate-200/80">
-                <TableHead className="text-slate-700 font-semibold">Name</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Email</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Phone</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Address</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Children</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Status</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filterParents(parents, students).map((parent) => (
-                <TableRow key={parent.id} className="border-slate-200/80 hover:bg-slate-50">
-                  <TableCell className="font-medium text-slate-900">{parent.name}</TableCell>
-                  <TableCell className="max-w-xs truncate text-slate-600">{parent.email}</TableCell>
-                  <TableCell className="text-slate-600">{parent.phoneNumber || 'N/A'}</TableCell>
-                  <TableCell className="max-w-xs truncate text-slate-600">{parent.address || 'N/A'}</TableCell>
-                  <TableCell>
-                    <Badge className="bg-violet-100 text-violet-700 border-violet-200">
-                      {students.filter(s => s.parentId === parent.id).length} children
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={parent.active
-                      ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                      : "bg-rose-100 text-rose-700 border-rose-200"
-                    }>
-                      {parent.active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      {!readOnly && <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onEdit(parent)}
-                          className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => { if (confirm('Are you sure?')) onDelete(parent.id) }}
-                          className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </>}
+      {/* Grid Cards */}
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {filterParents(parents, students).map((parent) => {
+          const childCount = students.filter(s => s.parentId === parent.id).length
+          const initials = `${parent.name?.split(' ')[0]?.[0] || ''}${parent.name?.split(' ')[1]?.[0] || ''}`.toUpperCase()
+          const avatarUrl = parent.profilePicture || parent.avatar || parent.photo
+          return (
+            <Card key={parent.id} className="border border-slate-200/80 bg-white/85 backdrop-blur-xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-start gap-4">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={`${parent.name || ''}`.trim() || 'Parent avatar'}
+                      className="h-12 w-12 rounded-2xl object-cover border border-slate-200/80 shadow-sm"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-100 to-sky-100 text-slate-700 font-semibold flex items-center justify-center shadow-sm">
+                      {initials || 'PR'}
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-lg font-semibold text-slate-900 truncate">{parent.name}</p>
+                        <p className="text-sm text-slate-600 truncate">{parent.email}</p>
+                      </div>
+                      <Badge className={parent.active
+                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                        : "bg-rose-100 text-rose-700 border-rose-200"
+                      }>
+                        {parent.active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-slate-600 truncate mt-2">
+                      Primary contact: {parent.phoneNumber || 'N/A'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-sm text-slate-600">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-500">Phone</span>
+                    <span className="text-slate-700">{parent.phoneNumber || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-500">Address</span>
+                    <span className="text-slate-700 truncate">{parent.address || 'N/A'}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-200/80">
+                  <Badge className="bg-violet-100 text-violet-700 border-violet-200">
+                    {childCount} {childCount === 1 ? 'child' : 'children'}
+                  </Badge>
+                  <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                    {parent.address || 'No address'}
+                  </Badge>
+                  {!readOnly && (
+                    <div className="ml-auto flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onEdit(parent)}
+                        className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => { if (confirm('Are you sure?')) onDelete(parent.id) }}
+                        className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
 
       {/* Empty State */}
       {parents.length === 0 && (

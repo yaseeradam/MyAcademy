@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -26,45 +27,57 @@ function verify(request) {
 
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verify(request)
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
+    }
     const db = await connect()
     const conversations = await db.collection('chat_conversations').find({
       schoolId: user.schoolId,
       participants: user.id
     }).sort({ lastMessageAt: -1 }).toArray()
-    const latestMessages = await Promise.all(conversations.map(async (conv) => {
-      if (conv.lastMessage) return { id: conv.id, lastMessage: conv.lastMessage }
-      const [latest] = await db.collection('chat_messages').find({
-        conversationId: conv.id,
-        schoolId: user.schoolId
-      }).sort({ createdAt: -1 }).limit(1).toArray()
-      return { id: conv.id, lastMessage: latest || null }
-    }))
-    const unreadCounts = await Promise.all(conversations.map(async (c) => {
-      const count = await db.collection('chat_messages').countDocuments({
-        conversationId: c.id,
-        schoolId: user.schoolId,
-        senderId: { $ne: user.id },
-        readBy: { $nin: [user.id] }
-      })
-      return { id: c.id, count }
-    }))
-    const byId = new Map(unreadCounts.map(x => [x.id, x.count]))
-    const byLastMessage = new Map(latestMessages.map(x => [x.id, x.lastMessage]))
+    if (!conversations.length) {
+      if (!bypassCache) setCache(buildCacheKey(request, user), [], 5000)
+      return NextResponse.json([])
+    }
+    const conversationIds = conversations.map(c => c.id)
+    const latestMessages = await db.collection('chat_messages').aggregate([
+      { $match: { schoolId: user.schoolId, conversationId: { $in: conversationIds } } },
+      { $sort: { createdAt: -1 } },
+      { $group: { _id: '$conversationId', lastMessage: { $first: '$$ROOT' } } }
+    ]).toArray()
+    const unreadCounts = await db.collection('chat_messages').aggregate([
+      {
+        $match: {
+          schoolId: user.schoolId,
+          conversationId: { $in: conversationIds },
+          senderId: { $ne: user.id },
+          readBy: { $nin: [user.id] }
+        }
+      },
+      { $group: { _id: '$conversationId', count: { $sum: 1 } } }
+    ]).toArray()
+    const byId = new Map(unreadCounts.map(x => [x._id, x.count]))
+    const byLastMessage = new Map(latestMessages.map(x => [x._id, x.lastMessage]))
     const result = conversations.map(c => ({
       ...c,
       lastMessage: byLastMessage.get(c.id) || null,
       unreadCount: byId.get(c.id) || 0
     }))
+    if (!bypassCache) setCache(buildCacheKey(request, user), result, 5000)
     return NextResponse.json(result)
   } catch (error) {
+    console.error('Chat conversations GET failed:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 export async function POST(request) {
   try {
+    clearCache()
     const user = verify(request)
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()

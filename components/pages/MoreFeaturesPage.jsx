@@ -1,10 +1,34 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Clock, FileText, DollarSign, BookOpen, BookMarked, GraduationCap } from 'lucide-react'
+import { Clock, FileText, DollarSign, BookOpen, BookMarked, GraduationCap, Megaphone, CalendarDays, Award } from 'lucide-react'
 
 export default function MoreFeaturesPage({ setActiveTab }) {
   const features = [
+    {
+      id: 'announcements',
+      label: 'Announcements',
+      icon: Megaphone,
+      gradientOverlay: 'from-rose-100/70 to-white/40',
+      iconContainer: 'from-rose-500 to-pink-400 shadow-rose-200/70',
+      description: 'Send notices to parents and teachers'
+    },
+    {
+      id: 'academic-calendar',
+      label: 'Academic Calendar',
+      icon: CalendarDays,
+      gradientOverlay: 'from-blue-100/70 to-white/40',
+      iconContainer: 'from-blue-500 to-blue-400 shadow-blue-200/70',
+      description: 'Manage term dates and events'
+    },
+    {
+      id: 'certificates',
+      label: 'Certificates',
+      icon: Award,
+      gradientOverlay: 'from-yellow-100/70 to-white/40',
+      iconContainer: 'from-yellow-500 to-amber-400 shadow-yellow-200/70',
+      description: 'Generate student certificates'
+    },
     {
       id: 'timetable',
       label: 'Timetable',

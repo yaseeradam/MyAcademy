@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import jwt from 'jsonwebtoken'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 export async function GET(request) {
   try {
@@ -10,6 +11,11 @@ export async function GET(request) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, decoded))
+      if (cached) return NextResponse.json(cached)
+    }
     const db = await connectDB()
     
     const user = await db.collection('users').findOne(
@@ -21,6 +27,9 @@ export async function GET(request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    if (!bypassCache) {
+      setCache(buildCacheKey(request, decoded), user, 30000)
+    }
     return NextResponse.json(user)
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
@@ -29,6 +38,7 @@ export async function GET(request) {
 
 export async function PUT(request) {
   try {
+    clearCache()
     const token = request.headers.get('authorization')?.replace('Bearer ', '')
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

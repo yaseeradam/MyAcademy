@@ -28,6 +28,17 @@ import {
 } from 'lucide-react'
 import socketManager from '@/lib/socket-client'
 
+const urlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+
 function NotificationCenter({ currentUser, isOpen, onToggle }) {
   const MAX_NOTIFICATIONS = 50 // Limit notifications in memory
   const [notifications, setNotifications] = useState([])
@@ -46,6 +57,7 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
   const audioContextRef = useRef(null)
   const notificationTimeoutsRef = useRef(new Set())
   const isMountedRef = useRef(true)
+  const pushSetupRef = useRef(false)
 
   // Load notifications on mount
   useEffect(() => {
@@ -120,6 +132,82 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
       socketManager.off('notification_preferences', handlePreferences)
     }
   }, [soundEnabled])
+
+  useEffect(() => {
+    if (!preferences.push || pushSetupRef.current) return
+    if (typeof window === 'undefined') return
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+
+    const setupPush = async () => {
+      try {
+        const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+        if (!publicKey) {
+          console.warn('Missing NEXT_PUBLIC_VAPID_PUBLIC_KEY for push notifications.')
+          return
+        }
+
+        const permission = Notification.permission === 'default'
+          ? await Notification.requestPermission()
+          : Notification.permission
+        if (permission !== 'granted') {
+          return
+        }
+
+        const registration = await navigator.serviceWorker.register('/sw.js')
+        let subscription = await registration.pushManager.getSubscription()
+        if (!subscription) {
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(publicKey)
+          })
+        }
+
+        const token = localStorage.getItem('token')
+        if (!token) return
+
+        await fetch('/api/push/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ subscription })
+        })
+
+        pushSetupRef.current = true
+      } catch (error) {
+        console.error('Push setup failed:', error)
+      }
+    }
+
+    setupPush()
+  }, [preferences.push])
+
+  const unsubscribePush = async () => {
+    if (typeof window === 'undefined') return
+    if (!('serviceWorker' in navigator)) return
+    try {
+      const registration = await navigator.serviceWorker.getRegistration('/sw.js')
+      if (!registration) return
+      const subscription = await registration.pushManager.getSubscription()
+      if (!subscription) return
+      const token = localStorage.getItem('token')
+      if (token) {
+        await fetch('/api/push/unsubscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ endpoint: subscription.endpoint })
+        })
+      }
+      await subscription.unsubscribe()
+      pushSetupRef.current = false
+    } catch (error) {
+      console.error('Push unsubscribe failed:', error)
+    }
+  }
 
   const loadNotifications = async () => {
     try {
@@ -214,6 +302,9 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
   const updatePreferences = (newPreferences) => {
     setPreferences(newPreferences)
     socketManager.updateNotificationPreferences(newPreferences)
+    if (!newPreferences.push) {
+      unsubscribePush()
+    }
   }
 
   const getNotificationIcon = (type) => {

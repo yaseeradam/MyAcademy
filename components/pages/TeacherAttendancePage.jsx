@@ -23,6 +23,7 @@ export default function TeacherAttendancePage({
   setAttendanceList,
   handleMarkAttendance
 }) {
+  const userId = user?.id || user?._id
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -316,7 +317,10 @@ export default function TeacherAttendancePage({
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-blue-200/80">
-                        {record.markedBy === user.id ? 'You' : 'Admin'}
+                        {(() => {
+                          const markedById = record.markedBy?.id || record.markedBy?._id || record.markedBy
+                          return markedById === userId ? 'You' : 'Admin'
+                        })()}
                       </TableCell>
                       <TableCell className="text-sm text-blue-200/80">
                         {new Date(record.createdAt).toLocaleTimeString()}

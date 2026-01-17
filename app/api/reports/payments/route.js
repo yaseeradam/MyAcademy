@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,9 +32,14 @@ function verifyToken(request) {
 // GET /api/reports/payments - Get payment analytics
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user || user.role !== 'school_admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     const db = await connectToDatabase()
@@ -62,12 +68,14 @@ export async function GET(request) {
       { status: 'failed', count: allPayments.filter(p => p.status === 'failed').length }
     ]
 
-    return NextResponse.json({
+    const payload = {
       totalRevenue,
       recentTransactions,
       paymentStatusBreakdown,
       monthlyRevenue: []
-    })
+    }
+    if (!bypassCache) setCache(buildCacheKey(request, user), payload, 60000)
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching payment analytics:', error)

@@ -3,6 +3,7 @@ import { MongoClient } from 'mongodb'
 import { initializeApp } from 'firebase/app'
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import { getAuth } from 'firebase/auth'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -48,6 +49,7 @@ function verifyToken(request) {
 // POST /api/storage/upload - Upload file to Firebase Storage
 export async function POST(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -152,6 +154,12 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
+    }
+
     const db = await connectToDatabase()
     const { searchParams } = new URL(request.url)
     const entityId = searchParams.get('entityId')
@@ -168,7 +176,11 @@ export async function GET(request) {
       .sort({ uploadedAt: -1 })
       .toArray()
 
-    return NextResponse.json({ files })
+    const payload = { files }
+    if (!bypassCache) {
+      setCache(buildCacheKey(request, user), payload, 30000)
+    }
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching files:', error)
@@ -179,6 +191,7 @@ export async function GET(request) {
 // DELETE /api/storage/upload - Delete file
 export async function DELETE(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

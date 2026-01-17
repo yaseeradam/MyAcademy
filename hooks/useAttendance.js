@@ -49,14 +49,25 @@ export function useAttendance(user, apiCall, students, teachers, loadTodayAttend
   }
 
   const handleMarkAttendance = async () => {
-    modal?.showLoading('Marking attendance...')
     try {
       if (user.role === 'school_admin') {
+        const existing = await apiCall(`attendance?date=${attendanceDate}&type=teacher`)
+        if (existing?.length) {
+          modal?.showError('Already Marked', 'Teacher attendance has already been marked for this date.')
+          return
+        }
+        modal?.showLoading('Marking attendance...')
         const attendanceData = attendanceList.map(item => ({ teacherId: item.teacherId, date: attendanceDate, status: item.status }))
-        await apiCall('attendance/bulk', { method: 'POST', body: JSON.stringify({ attendanceList: attendanceData }) })
+        await apiCall('attendance/bulk', { method: 'POST', body: JSON.stringify({ attendanceList: attendanceData, type: 'teacher' }) })
       } else {
+        const existing = await apiCall(`attendance?classId=${selectedClass}&date=${attendanceDate}&type=student`)
+        if (existing?.length) {
+          modal?.showError('Already Marked', 'Student attendance has already been marked for this class and date.')
+          return
+        }
+        modal?.showLoading('Marking attendance...')
         const attendanceData = attendanceList.map(item => ({ studentId: item.studentId, classId: selectedClass, date: attendanceDate, status: item.status }))
-        await apiCall('attendance/bulk', { method: 'POST', body: JSON.stringify({ attendanceList: attendanceData }) })
+        await apiCall('attendance/bulk', { method: 'POST', body: JSON.stringify({ attendanceList: attendanceData, type: 'student' }) })
       }
       modal?.showSuccess('Attendance Marked', 'Attendance marked successfully!')
       setShowAttendanceModal(false)

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,6 +32,11 @@ function verifyToken(request) {
 // GET /api/subscription-plans - Get all available subscription plans
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, null, 'subscription-plans'))
+      if (cached) return NextResponse.json(cached)
+    }
     // Return hardcoded plans for now to ensure consistency
     // In production, these could be fetched from DB and synchronized with Paystack
     const plans = [
@@ -75,7 +81,9 @@ export async function GET(request) {
       }
     ]
 
-    return NextResponse.json({ plans })
+    const payload = { plans }
+    if (!bypassCache) setCache(buildCacheKey(request, null, 'subscription-plans'), payload, 300000)
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching subscription plans:', error)
@@ -85,6 +93,7 @@ export async function GET(request) {
 
 // POST /api/subscription-plans - Create new subscription plan (Admin only)
 export async function POST(request) {
-    // Disabled dynamically creating plans for now to favor the hardcoded steady structure
-    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
+  clearCache()
+  // Disabled dynamically creating plans for now to favor the hardcoded steady structure
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
 }

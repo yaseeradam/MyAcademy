@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,9 +32,14 @@ function verifyToken(request) {
 // GET /api/school/subscription - Get school subscription details
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     const db = await connectToDatabase()
@@ -119,7 +125,9 @@ export async function GET(request) {
       totalFeatures: planDetails?.features?.length || 10
     }
 
-    return NextResponse.json({ subscription })
+    const payload = { subscription }
+    if (!bypassCache) setCache(buildCacheKey(request, user), payload, 60000)
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching school subscription:', error)

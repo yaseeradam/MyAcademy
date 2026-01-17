@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,9 +32,14 @@ function verifyToken(request) {
 
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     const { searchParams } = new URL(request.url)
@@ -59,9 +65,14 @@ export async function GET(request) {
         subjectId,
         active: true
       })
-      
       if (!assignment) {
-        return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+        const hasAssignments = await db.collection('teacher_assignments').findOne({
+          teacherId: user.id,
+          schoolId: user.schoolId
+        })
+        if (hasAssignments) {
+          return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+        }
       }
     }
 
@@ -79,7 +90,9 @@ export async function GET(request) {
       .find(query)
       .toArray()
 
-    return NextResponse.json({ scores })
+    const payload = { scores }
+    if (!bypassCache) setCache(buildCacheKey(request, user), payload, 30000)
+    return NextResponse.json(payload)
   } catch (error) {
     console.error('Error fetching scores:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -88,6 +101,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -104,6 +118,10 @@ export async function POST(request) {
     
     // Validate that teacher has access to this class/subject
     if (user.role === 'teacher') {
+      const hasAssignments = await db.collection('teacher_assignments').findOne({
+        teacherId: user.id,
+        schoolId: user.schoolId
+      })
       for (const score of scores) {
         const assignment = await db.collection('teacher_assignments').findOne({
           teacherId: user.id,
@@ -111,8 +129,7 @@ export async function POST(request) {
           subjectId: score.subjectId,
           active: true
         })
-        
-        if (!assignment) {
+        if (!assignment && hasAssignments) {
           return NextResponse.json({ error: 'Access denied for some class/subject combinations' }, { status: 403 })
         }
       }

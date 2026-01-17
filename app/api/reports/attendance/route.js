@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,9 +32,24 @@ function verifyToken(request) {
 // GET /api/reports/attendance - Generate attendance reports
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) {
+        if (cached.type === 'csv') {
+          return new NextResponse(cached.payload, {
+            headers: {
+              'Content-Type': 'text/csv',
+              'Content-Disposition': cached.disposition
+            }
+          })
+        }
+        return NextResponse.json(cached)
+      }
     }
 
     const db = await connectToDatabase()
@@ -78,6 +94,13 @@ export async function GET(request) {
     // Format response based on requested format
     if (format === 'csv') {
       const csvData = convertToCSV(reportData)
+      if (!bypassCache) {
+        setCache(buildCacheKey(request, user), {
+          type: 'csv',
+          payload: csvData,
+          disposition: `attachment; filename="attendance_report_${reportType}_${new Date().toISOString().split('T')[0]}.csv"`
+        }, 60000)
+      }
       return new NextResponse(csvData, {
         headers: {
           'Content-Type': 'text/csv',
@@ -86,12 +109,15 @@ export async function GET(request) {
       })
     } else if (format === 'pdf') {
       // For PDF, we'll return JSON for now - PDF generation would require additional setup
-      return NextResponse.json({
+      const payload = {
         ...reportData,
         note: 'PDF format requires additional PDF generation library setup'
-      })
+      }
+      if (!bypassCache) setCache(buildCacheKey(request, user), payload, 60000)
+      return NextResponse.json(payload)
     }
 
+    if (!bypassCache) setCache(buildCacheKey(request, user), reportData, 60000)
     return NextResponse.json(reportData)
 
   } catch (error) {

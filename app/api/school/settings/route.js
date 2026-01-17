@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -30,9 +31,14 @@ function verifyToken(request) {
 
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user || user.role !== 'school_admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     const db = await connectToDatabase()
@@ -62,6 +68,7 @@ export async function GET(request) {
       await db.collection('school_settings').insertOne(schoolSettings)
     }
 
+    if (!bypassCache) setCache(buildCacheKey(request, user), schoolSettings, 60000)
     return NextResponse.json(schoolSettings)
   } catch (error) {
     console.error('Error fetching school settings:', error)
@@ -71,6 +78,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user || user.role !== 'school_admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

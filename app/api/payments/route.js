@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -37,6 +38,12 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const bypassCache = shouldBypassCache(request)
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
+    }
+
     const db = await connectToDatabase()
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page')) || 1
@@ -71,7 +78,7 @@ export async function GET(request) {
 
     const total = await db.collection('payments').countDocuments(query)
 
-    return NextResponse.json({
+    const payload = {
       payments: enrichedPayments,
       pagination: {
         page,
@@ -79,7 +86,12 @@ export async function GET(request) {
         total,
         pages: Math.ceil(total / limit)
       }
-    })
+    }
+
+    if (!bypassCache) {
+      setCache(buildCacheKey(request, user), payload, 15000)
+    }
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching payments:', error)
@@ -90,6 +102,7 @@ export async function GET(request) {
 // POST /api/payments - Initialize School Subscription Payment
 export async function POST(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user || user.role !== 'school_admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

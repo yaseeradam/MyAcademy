@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,9 +32,14 @@ function verifyToken(request) {
 // GET /api/fees - Get fees based on role
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     const db = await connectToDatabase()
@@ -53,7 +59,9 @@ export async function GET(request) {
       const childrenIds = myChildren.map(c => c.id)
       
       if (childrenIds.length === 0) {
-        return NextResponse.json({ fees: [] })
+        const emptyPayload = { fees: [] }
+        if (!bypassCache) setCache(buildCacheKey(request, user), emptyPayload, 30000)
+        return NextResponse.json(emptyPayload)
       }
 
       query.studentId = { $in: childrenIds }
@@ -82,7 +90,9 @@ export async function GET(request) {
       }
     }))
 
-    return NextResponse.json({ fees: enrichedFees })
+    const payload = { fees: enrichedFees }
+    if (!bypassCache) setCache(buildCacheKey(request, user), payload, 30000)
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error fetching fees:', error)
@@ -93,6 +103,7 @@ export async function GET(request) {
 // POST /api/fees - Create new fee record (Admin only)
 export async function POST(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user || user.role !== 'school_admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

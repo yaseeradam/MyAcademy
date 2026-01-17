@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache, clearCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,9 +32,14 @@ function verifyToken(request) {
 // GET /api/gamification/points - Get user points and achievements
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     const db = await connectToDatabase()
@@ -70,6 +76,7 @@ export async function GET(request) {
       leaderboardPosition
     }
 
+    if (!bypassCache) setCache(buildCacheKey(request, user), result, 30000)
     return NextResponse.json(result)
 
   } catch (error) {
@@ -81,6 +88,7 @@ export async function GET(request) {
 // POST /api/gamification/points - Award points for activities
 export async function POST(request) {
   try {
+    clearCache()
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

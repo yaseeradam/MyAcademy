@@ -193,13 +193,13 @@ function BroadcastNotification({ currentUser, trigger }) {
         )}
       </DialogTrigger>
 
-      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Megaphone className="h-5 w-5" />
             <span>Broadcast Notification</span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-500">
             Send an announcement to multiple users in your school.
           </DialogDescription>
         </DialogHeader>
@@ -209,6 +209,7 @@ function BroadcastNotification({ currentUser, trigger }) {
           <div className="space-y-2">
             <Label htmlFor="title">Notification Title</Label>
             <Input
+              className="bg-white border-slate-200 text-slate-800"
               id="title"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
@@ -221,6 +222,7 @@ function BroadcastNotification({ currentUser, trigger }) {
           <div className="space-y-2">
             <Label htmlFor="message">Message</Label>
             <Textarea
+              className="bg-white border-slate-200 text-slate-800"
               id="message"
               value={formData.message}
               onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
@@ -237,10 +239,10 @@ function BroadcastNotification({ currentUser, trigger }) {
               value={formData.priority}
               onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white border-slate-200 text-slate-800">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-slate-200 text-slate-800">
                 <SelectItem value="low">Low Priority</SelectItem>
                 <SelectItem value="medium">Medium Priority</SelectItem>
                 <SelectItem value="high">High Priority</SelectItem>
@@ -261,7 +263,7 @@ function BroadcastNotification({ currentUser, trigger }) {
                   <Card
                     key={option.value}
                     className={`cursor-pointer transition-all ${
-                      isSelected ? 'border-blue-500 bg-blue-50' : 'hover:border-gray-300'
+                      isSelected ? 'border-sky-300 bg-sky-50' : 'hover:border-slate-300'
                     }`}
                   >
                     <CardContent className="p-3">
@@ -280,7 +282,7 @@ function BroadcastNotification({ currentUser, trigger }) {
                             <span className="font-medium">{option.label}</span>
                             <Badge variant="outline" className="text-xs">{count}</Badge>
                           </div>
-                          <p className="text-sm text-gray-600">{option.description}</p>
+                          <p className="text-sm text-slate-500">{option.description}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -290,7 +292,7 @@ function BroadcastNotification({ currentUser, trigger }) {
             </div>
 
             {formData.targetAudience.length > 0 && (
-              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-sky-50 rounded-lg border border-sky-100">
                 <span className="text-sm font-medium">Total recipients: {selectedCount}</span>
                 <div className="flex flex-wrap gap-1">
                   {formData.targetAudience.map((audience) => (
@@ -305,13 +307,13 @@ function BroadcastNotification({ currentUser, trigger }) {
 
           {/* Result */}
           {result && (
-            <Alert className={result.error ? "border-red-200 bg-red-50" : "border-green-200 bg-green-50"}>
+            <Alert className={result.error ? "border-rose-200 bg-rose-50" : "border-emerald-200 bg-emerald-50"}>
               {result.error ? (
-                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertCircle className="h-4 w-4 text-rose-600" />
               ) : (
-                <CheckCircle className="h-4 w-4 text-green-600" />
+                <CheckCircle className="h-4 w-4 text-emerald-600" />
               )}
-              <AlertDescription className={result.error ? "text-red-800" : "text-green-800"}>
+              <AlertDescription className={result.error ? "text-rose-800" : "text-emerald-800"}>
                 {result.error || `Notification sent successfully to ${result.count} recipients!`}
               </AlertDescription>
             </Alert>
@@ -322,6 +324,7 @@ function BroadcastNotification({ currentUser, trigger }) {
             <Button
               type="button"
               variant="outline"
+              className="border-slate-200 text-slate-600 hover:bg-slate-100"
               onClick={() => setIsOpen(false)}
               disabled={isLoading}
             >
@@ -329,6 +332,7 @@ function BroadcastNotification({ currentUser, trigger }) {
             </Button>
             <Button
               type="submit"
+              className="bg-sky-500 hover:bg-sky-600 text-white"
               disabled={
                 isLoading ||
                 !formData.title.trim() ||

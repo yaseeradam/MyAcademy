@@ -7,6 +7,54 @@ import { checkSubscriptionAccess } from '@/lib/subscription-middleware'
 
 const client = new MongoClient(process.env.MONGO_URL)
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
+const CACHE_TTL_DEFAULT_MS = 30000
+const CACHE_TTL_BY_PATH = new Map([
+  ['dashboard/stats', 60000],
+  ['master/stats', 60000],
+  ['master/schools', 60000],
+  ['master/settings', 60000],
+  ['school/settings', 60000],
+])
+const NO_CACHE_PATHS = new Set([
+  'auth/me',
+  'auth/login',
+  'auth/setup',
+  'notifications',
+  'attendance',
+  'chat/conversations',
+  'chat/messages',
+  'parent/fees',
+])
+const cacheStore = new Map()
+
+function getCacheKey(pathStr, searchParams, userData) {
+  const query = searchParams ? searchParams.toString() : ''
+  const userPart = userData
+    ? `u=${userData.id || 'na'}|r=${userData.role || 'na'}|s=${userData.schoolId || 'na'}`
+    : 'u=anon'
+  return `${pathStr}?${query}|${userPart}`
+}
+
+function getCache(pathStr, searchParams, userData) {
+  const key = getCacheKey(pathStr, searchParams, userData)
+  const entry = cacheStore.get(key)
+  if (!entry) return null
+  if (Date.now() > entry.expiresAt) {
+    cacheStore.delete(key)
+    return null
+  }
+  return entry.value
+}
+
+function setCache(pathStr, searchParams, userData, value) {
+  const ttl = CACHE_TTL_BY_PATH.get(pathStr) || CACHE_TTL_DEFAULT_MS
+  const key = getCacheKey(pathStr, searchParams, userData)
+  cacheStore.set(key, { value, expiresAt: Date.now() + ttl })
+}
+
+function clearCache() {
+  cacheStore.clear()
+}
 
 // Database connection with singleton pattern
 let cachedDb = null
@@ -62,6 +110,8 @@ export async function GET(request, { params }) {
     const searchParams = url.searchParams
     const limit = parseInt(searchParams.get('limit')) || 50
     const skip = parseInt(searchParams.get('skip')) || 0
+    const cacheBypass = searchParams.get('nocache') === '1' || (request.headers.get('cache-control') || '').includes('no-cache')
+    const cacheUser = authenticateToken(request)
 
     // --- ACCESS CONTROL CHECK ---
     // Exempt routes that don't need subscription check
@@ -100,14 +150,25 @@ export async function GET(request, { params }) {
 
       // Developer/Master routes
       case 'master/schools':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const developerData = authenticateToken(request)
         if (!developerData || developerData.role !== 'developer') {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const schools = await db.collection('schools').find({}).limit(limit).skip(skip).toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, schools)
+        }
         return NextResponse.json(schools)
 
       case 'master/stats':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const devStatsData = authenticateToken(request)
         if (!devStatsData || devStatsData.role !== 'developer') {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -116,20 +177,28 @@ export async function GET(request, { params }) {
         const totalUsers = await db.collection('users').countDocuments()
         const activeSchools = await db.collection('schools').countDocuments({ active: true })
 
-        return NextResponse.json({
+        const masterStats = {
           totalSchools,
           totalUsers,
           activeSchools
-        })
+        }
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, masterStats)
+        }
+        return NextResponse.json(masterStats)
 
       // Master Settings
       case 'master/settings':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const masterSettingsUser = authenticateToken(request)
         if (!masterSettingsUser || masterSettingsUser.role !== 'developer') {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const masterSettings = await db.collection('master_settings').findOne({ id: 'system_config' })
-        return NextResponse.json(masterSettings || {
+        const masterSettingsResult = masterSettings || {
           id: 'system_config',
           systemName: 'My Academy',
           systemEmail: 'admin@myacademy.com',
@@ -139,19 +208,35 @@ export async function GET(request, { params }) {
           allowRegistration: true,
           maintenanceMode: false,
           systemVersion: '1.0.0'
-        })
+        }
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, masterSettingsResult)
+        }
+        return NextResponse.json(masterSettingsResult)
 
       // School settings
       case 'school/settings':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const settingsUserData = authenticateToken(request)
         if (!settingsUserData || !hasPermission(settingsUserData.role, ['school_admin'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const schoolSettings = await db.collection('school_settings').findOne({ schoolId: settingsUserData.schoolId })
-        return NextResponse.json(schoolSettings || { schoolId: settingsUserData.schoolId })
+        const schoolSettingsResult = schoolSettings || { schoolId: settingsUserData.schoolId }
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, schoolSettingsResult)
+        }
+        return NextResponse.json(schoolSettingsResult)
 
       // Students routes
       case 'students':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataStudents = authenticateToken(request)
         if (!userDataStudents || !hasPermission(userDataStudents.role, ['school_admin', 'teacher'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -161,9 +246,16 @@ export async function GET(request, { params }) {
           .limit(limit)
           .skip(skip)
           .toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, students)
+        }
         return NextResponse.json(students)
 
       case 'students/by-class':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataByClass = authenticateToken(request)
         if (!userDataByClass || !hasPermission(userDataByClass.role, ['school_admin', 'teacher'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -172,10 +264,17 @@ export async function GET(request, { params }) {
         const studentsByClass = await db.collection('students')
           .find({ classId, schoolId: userDataByClass.schoolId })
           .toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, studentsByClass)
+        }
         return NextResponse.json(studentsByClass)
 
       // Teachers routes
       case 'teachers':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataTeachers = authenticateToken(request)
         if (!userDataTeachers || !hasPermission(userDataTeachers.role, ['school_admin', 'parent'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -192,10 +291,17 @@ export async function GET(request, { params }) {
           return { ...teacher, plainPassword: user?.plainPassword, email: user?.email }
         }))
 
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, teachersWithPassword)
+        }
         return NextResponse.json(teachersWithPassword)
 
       // Parent routes
       case 'parents':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataParents = authenticateToken(request)
         if (!userDataParents || !hasPermission(userDataParents.role, ['school_admin', 'teacher'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -208,10 +314,17 @@ export async function GET(request, { params }) {
           .limit(limit)
           .skip(skip)
           .toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, parents)
+        }
         return NextResponse.json(parents)
 
       // Classes routes
       case 'classes':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataClasses = authenticateToken(request)
         if (!userDataClasses || !hasPermission(userDataClasses.role, ['school_admin', 'teacher'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -219,10 +332,17 @@ export async function GET(request, { params }) {
         const classes = await db.collection('classes')
           .find({ schoolId: userDataClasses.schoolId })
           .toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, classes)
+        }
         return NextResponse.json(classes)
 
       // Subjects routes
       case 'subjects':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataSubjects = authenticateToken(request)
         if (!userDataSubjects || !hasPermission(userDataSubjects.role, ['school_admin', 'teacher'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -230,10 +350,17 @@ export async function GET(request, { params }) {
         const subjects = await db.collection('subjects')
           .find({ schoolId: userDataSubjects.schoolId })
           .toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, subjects)
+        }
         return NextResponse.json(subjects)
 
       // Teacher assignments
       case 'teacher-assignments':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataAssign = authenticateToken(request)
         if (!userDataAssign || !hasPermission(userDataAssign.role, ['school_admin', 'teacher'])) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -246,6 +373,9 @@ export async function GET(request, { params }) {
         const assignments = await db.collection('teacher_assignments')
           .find(assignQuery)
           .toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, assignments)
+        }
         return NextResponse.json(assignments)
 
       // Attendance routes
@@ -277,6 +407,10 @@ export async function GET(request, { params }) {
 
       // Parent dashboard - student info
       case 'parent/students':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const parentData = authenticateToken(request)
         if (!parentData || parentData.role !== 'parent') {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -284,6 +418,9 @@ export async function GET(request, { params }) {
         const parentStudents = await db.collection('students')
           .find({ parentId: parentData.id, schoolId: parentData.schoolId })
           .toArray()
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, parentStudents)
+        }
         return NextResponse.json(parentStudents)
 
       // Parent fees
@@ -346,6 +483,10 @@ export async function GET(request, { params }) {
 
       // Dashboard stats
       case 'dashboard/stats':
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          const cached = getCache(pathStr, searchParams, cacheUser)
+          if (cached) return NextResponse.json(cached)
+        }
         const userDataStats = authenticateToken(request)
         if (!userDataStats) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -392,6 +533,9 @@ export async function GET(request, { params }) {
           stats = { myChildren }
         }
 
+        if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
+          setCache(pathStr, searchParams, cacheUser, stats)
+        }
         return NextResponse.json(stats)
 
       default:
@@ -410,6 +554,7 @@ export async function GET(request, { params }) {
 export async function POST(request, { params }) {
   try {
     const db = await connectDB()
+    clearCache()
     const { path } = params
     const pathStr = Array.isArray(path) ? path.join('/') : path || ''
     const body = await request.json()
@@ -961,30 +1106,35 @@ export async function POST(request, { params }) {
           return NextResponse.json({ error: 'No attendance data provided' }, { status: 400 })
         }
 
-        // Get date from first record
-        const attendanceDate = attendanceList[0].date
+          // Get date from first record
+          const attendanceDate = attendanceList[0].date
 
-        // Delete existing records for this date based on type
-        if (type === 'teacher') {
-          // Admin marking teacher attendance
-          await db.collection('attendance').deleteMany({
-            schoolId: userDataBulkAttendance.schoolId,
-            date: attendanceDate,
-            teacherId: { $exists: true }
-          })
-        } else if (type === 'student') {
-          // Teacher or admin marking student attendance for a class
-          const classId = attendanceList[0].classId
-          await db.collection('attendance').deleteMany({
-            schoolId: userDataBulkAttendance.schoolId,
-            date: attendanceDate,
-            classId: classId,
-            studentId: { $exists: true }
-          })
-        }
+          // Block re-marking attendance if already recorded for the date
+          if (type === 'teacher') {
+            const existingTeacherAttendance = await db.collection('attendance').findOne({
+              schoolId: userDataBulkAttendance.schoolId,
+              date: attendanceDate,
+              teacherId: { $exists: true }
+            })
+            if (existingTeacherAttendance) {
+              return NextResponse.json({ error: 'Attendance already marked for this date' }, { status: 409 })
+            }
+          } else if (type === 'student') {
+            // Teacher or admin marking student attendance for a class
+            const classId = attendanceList[0].classId
+            const existingStudentAttendance = await db.collection('attendance').findOne({
+              schoolId: userDataBulkAttendance.schoolId,
+              date: attendanceDate,
+              classId: classId,
+              studentId: { $exists: true }
+            })
+            if (existingStudentAttendance) {
+              return NextResponse.json({ error: 'Attendance already marked for this class and date' }, { status: 409 })
+            }
+          }
 
-        // Insert new records
-        const bulkAttendance = attendanceList.map(record => ({
+          // Insert new records
+          const bulkAttendance = attendanceList.map(record => ({
           id: uuidv4(),
           ...record,
           schoolId: userDataBulkAttendance.schoolId,
@@ -1317,6 +1467,7 @@ export async function POST(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     const db = await connectDB()
+    clearCache()
     const { path } = params
     const pathStr = Array.isArray(path) ? path.join('/') : path || ''
     const body = await request.json()
@@ -1474,6 +1625,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     const db = await connectDB()
+    clearCache()
     const { path } = params
     const pathStr = Array.isArray(path) ? path.join('/') : path || ''
     const url = new URL(request.url)

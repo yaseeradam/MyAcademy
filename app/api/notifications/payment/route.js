@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
 import crypto from 'crypto'
+const { sendPushToUser } = require('@/lib/push')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -8,15 +9,18 @@ const DB_NAME = process.env.DB_NAME || 'school_management'
 async function connectToDatabase() {
   const client = new MongoClient(MONGO_URL)
   await client.connect()
-  return client.db(DB_NAME)
+  return { db: client.db(DB_NAME), client }
 }
 
 export async function POST(request) {
+  let client
   try {
     const body = await request.json()
     const { paymentId, schoolId, parentName, amount, paymentType, studentName } = body
 
-    const db = await connectToDatabase()
+    const connection = await connectToDatabase()
+    client = connection.client
+    const db = connection.db
 
     const schoolAdmins = await db.collection('users')
       .find({ role: 'school_admin', schoolId, active: true })
@@ -37,6 +41,18 @@ export async function POST(request) {
 
     if (notifications.length > 0) {
       await db.collection('notifications').insertMany(notifications)
+      for (const notification of notifications) {
+        await sendPushToUser(
+          notification.recipientId,
+          schoolId,
+          {
+            title: notification.title,
+            body: notification.message,
+            url: '/?openNotifications=1'
+          },
+          db
+        )
+      }
     }
 
     return NextResponse.json({ success: true, notificationsSent: notifications.length })
@@ -44,5 +60,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Error sending payment notification:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } finally {
+    if (client) await client.close()
   }
 }

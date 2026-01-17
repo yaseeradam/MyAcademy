@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb'
+const { buildCacheKey, getCache, setCache, shouldBypassCache } = require('@/lib/api-cache')
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
@@ -31,9 +32,14 @@ function verifyToken(request) {
 // GET /api/search - Global search across multiple collections
 export async function GET(request) {
   try {
+    const bypassCache = shouldBypassCache(request)
     const user = verifyToken(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    if (!bypassCache) {
+      const cached = getCache(buildCacheKey(request, user))
+      if (cached) return NextResponse.json(cached)
     }
 
     const db = await connectToDatabase()
@@ -90,12 +96,14 @@ export async function GET(request) {
         break
     }
 
-    return NextResponse.json({
+    const payload = {
       query,
       type,
       results,
       total: Object.values(results).reduce((sum, arr) => sum + (arr?.length || 0), 0)
-    })
+    }
+    if (!bypassCache) setCache(buildCacheKey(request, user), payload, 10000)
+    return NextResponse.json(payload)
 
   } catch (error) {
     console.error('Error performing search:', error)

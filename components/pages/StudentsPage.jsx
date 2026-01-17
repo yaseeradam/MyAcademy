@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Download, Eye, Edit, Users, Trash2, Search } from 'lucide-react'
 import { exportStudentsToCSV } from '@/lib/csv-export'
@@ -150,81 +149,113 @@ export default function StudentsPage({
         </div>
       </div>
 
-      {/* Data Table */}
-      <Card className="border border-slate-200/80 bg-white/80 backdrop-blur-xl overflow-hidden">
-        <CardContent className="p-0">
-          <Table className="academic-table">
-            <TableHeader>
-              <TableRow className="border-b border-slate-200/80">
-                <TableHead className="text-slate-700 font-semibold">Name</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Admission #</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Class</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Parent</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Phone</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Gender</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Status</TableHead>
-                <TableHead className="text-slate-700 font-semibold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filterStudents(students).map((student) => {
-                const studentClass = classes.find(c => c.id === student.classId)
-                const studentParent = parents.find(p => p.id === student.parentId)
-                return (
-                  <TableRow key={student.id} className="border-slate-200/80 hover:bg-slate-50">
-                    <TableCell className="font-medium text-slate-900">
-                      {student.firstName} {student.lastName}
-                    </TableCell>
-                    <TableCell className="font-mono text-sm text-slate-600">{student.admissionNumber}</TableCell>
-                    <TableCell className="text-slate-600">{studentClass?.name || 'Not assigned'}</TableCell>
-                    <TableCell className="max-w-xs truncate text-slate-600">{studentParent?.name || 'Not assigned'}</TableCell>
-                    <TableCell className="text-slate-600">{student.phoneNumber || 'N/A'}</TableCell>
-                    <TableCell className="capitalize text-slate-600">{student.gender || 'N/A'}</TableCell>
-                    <TableCell>
+      {/* Grid Cards */}
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {filterStudents(students).map((student) => {
+          const studentClass = classes.find(c => c.id === student.classId)
+          const studentParent = parents.find(p => p.id === student.parentId)
+          const initials = `${student.firstName?.[0] || ''}${student.lastName?.[0] || ''}`.toUpperCase()
+          const avatarUrl = student.profilePicture || student.avatar || student.photo
+          return (
+            <Card key={student.id} className="border border-slate-200/80 bg-white/85 backdrop-blur-xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-start gap-4">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={`${student.firstName || ''} ${student.lastName || ''}`.trim() || 'Student avatar'}
+                      className="h-12 w-12 rounded-2xl object-cover border border-slate-200/80 shadow-sm"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-sky-100 to-amber-100 text-slate-700 font-semibold flex items-center justify-center shadow-sm">
+                      {initials || 'ST'}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-lg font-semibold text-slate-900 truncate">
+                          {student.firstName} {student.lastName}
+                        </p>
+                        <p className="text-xs text-slate-500 font-mono">Admission #{student.admissionNumber}</p>
+                      </div>
                       <Badge className={student.active
                         ? "bg-emerald-100 text-emerald-700 border-emerald-200"
                         : "bg-rose-100 text-rose-700 border-rose-200"
                       }>
                         {student.active ? 'Active' : 'Inactive'}
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleView(student)}
-                          className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        {!readOnly && <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => { setViewStudent(student); onEdit(student); }}
-                            className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => { if (window.confirm('Are you sure?')) onDelete(student.id) }}
-                            className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </>}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                    </div>
+                    <p className="text-sm text-slate-600 truncate mt-2">
+                      Parent: {studentParent?.name || 'Not assigned'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-sm text-slate-600">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-500">Class</span>
+                    <span className="text-slate-700 truncate">{studentClass?.name || 'Not assigned'}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-500">Parent</span>
+                    <span className="text-slate-700 truncate">{studentParent?.name || 'Not assigned'}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-500">Phone</span>
+                    <span className="text-slate-700">{student.phoneNumber || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-500">Gender</span>
+                    <span className="text-slate-700 capitalize">{student.gender || 'N/A'}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-200/80">
+                  <Badge className="bg-sky-100 text-sky-700 border-sky-200">
+                    {studentClass?.name || 'No class'}
+                  </Badge>
+                  <Badge className="bg-amber-100 text-amber-700 border-amber-200">
+                    {student.gender || 'N/A'}
+                  </Badge>
+                  <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
+                    {student.phoneNumber || 'No phone'}
+                  </Badge>
+                  <div className="ml-auto flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleView(student)}
+                      className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    {!readOnly && <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => { setViewStudent(student); onEdit(student); }}
+                        className="bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-100"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => { if (window.confirm('Are you sure?')) onDelete(student.id) }}
+                        className="bg-white/80 border-rose-200 text-rose-600 hover:bg-rose-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
 
       {/* Empty State */}
       {(!students || students.length === 0) && (
