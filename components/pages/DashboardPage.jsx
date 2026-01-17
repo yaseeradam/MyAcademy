@@ -208,81 +208,81 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
         {/* Stats Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
           {/* Total Schools Card */}
-          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16" />
+          <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/75 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-sky-200/40 rounded-full -mr-16 -mt-16" />
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-all duration-300">
-                  <Building2 className="h-6 w-6 text-on-accent" />
+                <div className="p-3 bg-gradient-to-br from-sky-400 to-cyan-300 rounded-xl shadow-lg shadow-sky-200/60 group-hover:scale-110 transition-all duration-300">
+                  <Building2 className="h-6 w-6 text-slate-900" />
                 </div>
-                <div className="flex items-center gap-1 text-blue-400 text-xs font-medium">
-                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                <div className="flex items-center gap-1 text-sky-600 text-xs font-medium">
+                  <span className="w-2 h-2 bg-sky-400 rounded-full animate-pulse" />
                   Live
                 </div>
               </div>
               <div className="mt-4">
-                <CardTitle className="text-4xl font-bold text-white">{totalSchools}</CardTitle>
-                <CardDescription className="text-blue-200/70 font-medium mt-1">Total Schools</CardDescription>
+                <CardTitle className="text-4xl font-bold text-slate-900">{totalSchools}</CardTitle>
+                <CardDescription className="text-slate-500 font-medium mt-1">Total Schools</CardDescription>
               </div>
             </CardHeader>
           </Card>
 
           {/* Active Schools Card */}
-          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-16 -mt-16" />
+          <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/75 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200/40 rounded-full -mr-16 -mt-16" />
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
-                <div className="p-3 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-all duration-300">
-                  <CheckCircle className="h-6 w-6 text-on-accent" />
+                <div className="p-3 bg-gradient-to-br from-emerald-400 to-green-300 rounded-xl shadow-lg shadow-emerald-200/60 group-hover:scale-110 transition-all duration-300">
+                  <CheckCircle className="h-6 w-6 text-slate-900" />
                 </div>
-                <div className="text-emerald-400 text-xs font-medium flex items-center gap-1">
+                <div className="text-emerald-600 text-xs font-medium flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" />
                   Online
                 </div>
               </div>
               <div className="mt-4">
-                <CardTitle className="text-4xl font-bold text-white">{activeSchools}</CardTitle>
-                <CardDescription className="text-blue-200/70 font-medium mt-1">Active Schools</CardDescription>
+                <CardTitle className="text-4xl font-bold text-slate-900">{activeSchools}</CardTitle>
+                <CardDescription className="text-slate-500 font-medium mt-1">Active Schools</CardDescription>
               </div>
             </CardHeader>
           </Card>
 
           {/* Inactive Schools Card */}
-          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full -mr-16 -mt-16" />
+          <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/75 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-200/40 rounded-full -mr-16 -mt-16" />
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
-                <div className="p-3 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl shadow-lg shadow-red-500/30 group-hover:scale-110 transition-all duration-300">
-                  <XCircle className="h-6 w-6 text-on-accent" />
+                <div className="p-3 bg-gradient-to-br from-rose-400 to-red-300 rounded-xl shadow-lg shadow-rose-200/60 group-hover:scale-110 transition-all duration-300">
+                  <XCircle className="h-6 w-6 text-slate-900" />
                 </div>
-                <div className="text-red-400 text-xs font-medium">Offline</div>
+                <div className="text-rose-600 text-xs font-medium">Offline</div>
               </div>
               <div className="mt-4">
-                <CardTitle className="text-4xl font-bold text-white">{inactiveSchools}</CardTitle>
-                <CardDescription className="text-blue-200/70 font-medium mt-1">Inactive Schools</CardDescription>
+                <CardTitle className="text-4xl font-bold text-slate-900">{inactiveSchools}</CardTitle>
+                <CardDescription className="text-slate-500 font-medium mt-1">Inactive Schools</CardDescription>
               </div>
             </CardHeader>
           </Card>
 
           {/* Active Rate Card */}
-          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/10 transition-all duration-300 group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mt-16" />
+          <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden rounded-2xl hover:bg-white/75 transition-all duration-300 group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-200/40 rounded-full -mr-16 -mt-16" />
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
-                <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-all duration-300">
-                  <TrendingUp className="h-6 w-6 text-on-accent" />
+                <div className="p-3 bg-gradient-to-br from-amber-400 to-orange-300 rounded-xl shadow-lg shadow-amber-200/60 group-hover:scale-110 transition-all duration-300">
+                  <TrendingUp className="h-6 w-6 text-slate-900" />
                 </div>
-                <div className="text-amber-400 text-xs font-medium">Rate</div>
+                <div className="text-amber-600 text-xs font-medium">Rate</div>
               </div>
               <div className="mt-4">
-                <CardTitle className="text-4xl font-bold text-white">
+                <CardTitle className="text-4xl font-bold text-slate-900">
                   {activeSchools > 0 ? Math.round((activeSchools / totalSchools) * 100) : 0}%
                 </CardTitle>
-                <CardDescription className="text-blue-200/70 font-medium mt-1">Active Rate</CardDescription>
+                <CardDescription className="text-slate-500 font-medium mt-1">Active Rate</CardDescription>
                 {/* Progress bar */}
-                <div className="mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="mt-3 h-1.5 bg-slate-200/80 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full transition-all duration-500"
                     style={{ width: `${activeSchools > 0 ? Math.round((activeSchools / totalSchools) * 100) : 0}%` }}
                   />
                 </div>
@@ -293,75 +293,69 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
 
         {/* Analytics Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
-            <CardHeader className="border-b border-white/5 p-4">
-              <CardTitle className="text-white">Total Users</CardTitle>
-              <CardDescription className="text-blue-200/60">Across all schools</CardDescription>
+          <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="border-b border-slate-200/60 p-4">
+              <CardTitle className="text-slate-900">Total Users</CardTitle>
+              <CardDescription className="text-slate-500">Across all schools</CardDescription>
             </CardHeader>
             <CardContent className="p-4">
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">{stats?.totalUsers || 0}</div>
-              <p className="text-sm text-blue-200/60 mt-2">System-wide users</p>
+              <div className="text-3xl font-bold text-sky-600">{stats?.totalUsers || 0}</div>
+              <p className="text-sm text-slate-500 mt-2">System-wide users</p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
-            <CardHeader className="border-b border-white/5 p-4">
-              <CardTitle className="text-white">Total Students</CardTitle>
-              <CardDescription className="text-blue-200/60">Enrolled students</CardDescription>
+          <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="border-b border-slate-200/60 p-4">
+              <CardTitle className="text-slate-900">Total Students</CardTitle>
+              <CardDescription className="text-slate-500">Enrolled students</CardDescription>
             </CardHeader>
             <CardContent className="p-4">
-              <div className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent">{stats?.totalStudents || 0}</div>
-              <p className="text-sm text-blue-200/60 mt-2">Across all schools</p>
+              <div className="text-3xl font-bold text-emerald-600">{stats?.totalStudents || 0}</div>
+              <p className="text-sm text-slate-500 mt-2">Across all schools</p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
-            <CardHeader className="border-b border-white/5 p-4">
-              <CardTitle className="text-white">Total Teachers</CardTitle>
-              <CardDescription className="text-blue-200/60">Teaching staff</CardDescription>
+          <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="border-b border-slate-200/60 p-4">
+              <CardTitle className="text-slate-900">Total Teachers</CardTitle>
+              <CardDescription className="text-slate-500">Teaching staff</CardDescription>
             </CardHeader>
             <CardContent className="p-4">
-              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-500 bg-clip-text text-transparent">{stats?.totalTeachers || 0}</div>
-              <p className="text-sm text-blue-200/60 mt-2">Across all schools</p>
+              <div className="text-3xl font-bold text-indigo-600">{stats?.totalTeachers || 0}</div>
+              <p className="text-sm text-slate-500 mt-2">Across all schools</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Schools List */}
-        <Card className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden">
-          <CardHeader className="border-b border-white/5 p-5">
-            <CardTitle className="text-xl text-white">Recent Schools</CardTitle>
-            <CardDescription className="text-blue-200/60">Latest registered schools in the system</CardDescription>
+        <Card className="border border-slate-200/70 bg-white/65 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="border-b border-slate-200/60 p-5">
+            <CardTitle className="text-xl text-slate-900">Recent Schools</CardTitle>
+            <CardDescription className="text-slate-500">Latest registered schools in the system</CardDescription>
           </CardHeader>
           <CardContent className="p-5">
             <div className="space-y-3">
               {schools?.slice(0, 5).map((school) => (
-                <div key={school.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all gap-3">
+                <div key={school.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white/60 rounded-xl border border-slate-200/60 hover:bg-white/70 transition-all gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    {school.logo ? (
-                      <img
-                        src={school.logo}
-                        alt={school.name}
-                        className="h-10 w-10 rounded-xl object-cover ring-2 ring-slate-200/80"
-                      />
-                    ) : (
-                      <div className="p-2.5 bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-xl">
-                        <Building2 className="h-5 w-5 text-blue-400" />
-                      </div>
-                    )}
+                    <img
+                      src={school.logo || '/logo.png'}
+                      alt={school.name}
+                      className="h-10 w-10 rounded-xl object-cover ring-2 ring-slate-200/80 bg-white"
+                    />
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-white truncate">{school.name}</p>
-                      <p className="text-sm text-blue-200/60 truncate">{school.email}</p>
+                      <p className="font-semibold text-slate-900 truncate">{school.name}</p>
+                      <p className="text-sm text-slate-500 truncate">{school.email || '—'}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-center">
                     {school.active !== false ? (
                       <>
-                        <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-medium border border-emerald-400/30">Active</span>
+                        <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium border border-emerald-200">Active</span>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-red-400 hover:bg-red-500/20 border-red-500/30 hover:border-red-500/50"
+                          className="text-rose-600 hover:bg-rose-50 border-rose-200 hover:border-rose-300"
                           onClick={() => onToggleSchoolStatus?.(school.id, false)}
                         >
                           Deactivate
@@ -369,11 +363,11 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
                       </>
                     ) : (
                       <>
-                        <span className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-xs font-medium border border-red-400/30">Inactive</span>
+                        <span className="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-medium border border-rose-200">Inactive</span>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/30 hover:border-emerald-500/50"
+                          className="text-emerald-600 hover:bg-emerald-50 border-emerald-200 hover:border-emerald-300"
                           onClick={() => onToggleSchoolStatus?.(school.id, true)}
                         >
                           Activate
@@ -384,8 +378,8 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
                 </div>
               ))}
               {(!schools || schools.length === 0) && (
-                <div className="text-center py-8 text-blue-200/60">
-                  <Building2 className="h-12 w-12 mx-auto mb-2 text-blue-200/40" />
+                <div className="text-center py-8 text-slate-500">
+                  <Building2 className="h-12 w-12 mx-auto mb-2 text-slate-300" />
                   <p>No schools registered yet</p>
                 </div>
               )}

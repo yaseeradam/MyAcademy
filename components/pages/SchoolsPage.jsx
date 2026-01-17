@@ -227,43 +227,43 @@ export default function SchoolsPage({
       {/* Schools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredSchools.map((school) => (
-          <Card key={school.id} className="border-0 bg-white/5 backdrop-blur-xl overflow-hidden hover:bg-white/10 transition-all duration-300 group">
-            <CardHeader className="border-b border-white/5 pb-4">
+          <Card key={school.id} className="border border-slate-200/70 bg-white/70 backdrop-blur-xl overflow-hidden hover:bg-white/80 transition-all duration-300 group">
+            <CardHeader className="border-b border-slate-200/60 pb-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   {/* School logo or default logo */}
-                  <div className={`p-1 rounded-xl ring-2 ${school.active ? 'ring-emerald-400/50' : 'ring-red-400/50'}`}>
+                  <div className={`p-1 rounded-xl ring-2 ${school.active ? 'ring-emerald-300/60' : 'ring-rose-300/60'}`}>
                     <img
                       src={school.logo || '/logo.png'}
                       alt={school.name}
-                      className="h-10 w-10 rounded-lg object-cover"
+                      className="h-10 w-10 rounded-lg object-cover bg-white"
                     />
                   </div>
                   <div>
-                    <CardTitle className="text-lg text-white">{school.name}</CardTitle>
-                    <Badge className={`mt-1 ${school.active ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30' : 'bg-red-500/20 text-red-300 border-red-400/30'}`}>
+                    <CardTitle className="text-lg text-slate-900">{school.name}</CardTitle>
+                    <Badge className={`mt-1 ${school.active ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-700 border-rose-200'}`}>
                       {school.active ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                 </div>
               </div>
-              <CardDescription className="text-blue-200/60 mt-2">
+              <CardDescription className="text-slate-500 mt-2">
                 Created: {new Date(school.createdAt).toLocaleDateString()}
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4">
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-blue-200/60">Admin ID:</span>
-                  <span className="font-mono text-xs bg-white/10 px-2 py-1 rounded text-blue-200/80">
+                  <span className="text-slate-500">Admin ID:</span>
+                  <span className="font-mono text-xs bg-slate-100 px-2 py-1 rounded text-slate-600 border border-slate-200">
                     {school.adminId?.slice(0, 8)}...
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-blue-200/60">Status:</span>
+                  <span className="text-slate-500">Status:</span>
                   <div className="flex items-center space-x-2">
-                    <div className={`w-2 h-2 rounded-full ${school.active ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
-                    <span className={school.active ? 'text-emerald-400' : 'text-red-400'}>
+                    <div className={`w-2 h-2 rounded-full ${school.active ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                    <span className={school.active ? 'text-emerald-600' : 'text-rose-600'}>
                       {school.active ? "Operational" : "Inactive"}
                     </span>
                   </div>

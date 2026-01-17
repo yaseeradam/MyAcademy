@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Clock, FileText, DollarSign, BookOpen, BookMarked, GraduationCap, Megaphone, CalendarDays, Award } from 'lucide-react'
+import { Clock, FileText, DollarSign, BookOpen, BookMarked, GraduationCap, Megaphone, CalendarDays, Award, Database } from 'lucide-react'
 
 export default function MoreFeaturesPage({ setActiveTab }) {
   const features = [
@@ -76,6 +76,14 @@ export default function MoreFeaturesPage({ setActiveTab }) {
       gradientOverlay: 'from-indigo-100/70 to-white/40',
       iconContainer: 'from-indigo-500 to-indigo-400 shadow-indigo-200/70',
       description: 'Manage books and borrowing'
+    },
+    {
+      id: 'backup-tools',
+      label: 'Backup & Export',
+      icon: Database,
+      gradientOverlay: 'from-slate-100/70 to-white/40',
+      iconContainer: 'from-slate-600 to-slate-400 shadow-slate-200/70',
+      description: 'Schedule backups and export CSV'
     }
   ]
 

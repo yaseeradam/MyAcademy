@@ -49,7 +49,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
   }
 
   return (
-    <div className="min-h-screen flex text-foreground font-sans theme-soft selection:bg-sky-200/60">
+    <div className="min-h-screen flex text-foreground font-sans selection:bg-sky-200/60 theme-soft">
       {sidebarOpen && <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 lg:hidden animate-in fade-in" onClick={() => setSidebarOpen(false)} />}
 
       {/* Sidebar */}
@@ -65,7 +65,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
               <div className="flex items-center gap-3 overflow-hidden flex-1">
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-sky-300 blur-lg opacity-40 rounded-full"></div>
-                  {schoolSettings?.logo || school?.logo ? (
+                  {user.role !== 'developer' && (schoolSettings?.logo || school?.logo) ? (
                     <img src={schoolSettings?.logo || school?.logo} alt="Logo" className="relative h-9 w-9 rounded-xl object-cover ring-2 ring-slate-200/70 shadow-lg" />
                   ) : (
                     <div className="relative h-9 w-9 rounded-xl bg-gradient-to-br from-sky-400 to-emerald-300 flex items-center justify-center shadow-lg ring-2 ring-white/80">

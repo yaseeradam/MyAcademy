@@ -158,7 +158,12 @@ export async function GET(request, { params }) {
         if (!developerData || developerData.role !== 'developer') {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-        const schools = await db.collection('schools').find({}).limit(limit).skip(skip).toArray()
+        const schools = await db.collection('schools')
+          .find({}, { projection: { id: 1, name: 1, email: 1, logo: 1, active: 1, createdAt: 1 } })
+          .sort({ createdAt: -1 })
+          .limit(limit)
+          .skip(skip)
+          .toArray()
         if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
           setCache(pathStr, searchParams, cacheUser, schools)
         }
@@ -495,9 +500,11 @@ export async function GET(request, { params }) {
         let stats = {}
 
         if (userDataStats.role === 'developer') {
-          const totalSchools = await db.collection('schools').countDocuments()
-          const totalUsers = await db.collection('users').countDocuments()
-          const activeSchools = await db.collection('schools').countDocuments({ active: true })
+          const [totalSchools, totalUsers, activeSchools] = await Promise.all([
+            db.collection('schools').estimatedDocumentCount(),
+            db.collection('users').estimatedDocumentCount(),
+            db.collection('schools').countDocuments({ active: true })
+          ])
 
           stats = {
             totalSchools,
