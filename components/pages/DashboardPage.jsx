@@ -25,7 +25,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
-                  <GraduationCap className="h-5 w-5 text-white" />
+                  <GraduationCap className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{totalChildren}</CardTitle>
@@ -38,7 +38,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/30">
-                  <Calendar className="h-5 w-5 text-white" />
+                  <Calendar className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{attendanceRate}%</CardTitle>
@@ -51,7 +51,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30">
-                  <CreditCard className="h-5 w-5 text-white" />
+                  <CreditCard className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{paidFees.length}</CardTitle>
@@ -64,7 +64,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg shadow-red-500/30">
-                  <CreditCard className="h-5 w-5 text-white" />
+                  <CreditCard className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{unpaidChildren.length}</CardTitle>
@@ -146,7 +146,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
-                  <Users className="h-5 w-5 text-white" />
+                  <Users className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{myStudents.length}</CardTitle>
@@ -159,7 +159,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/30">
-                  <School className="h-5 w-5 text-white" />
+                  <School className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{myClassIds.length}</CardTitle>
@@ -172,7 +172,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30">
-                  <Users2 className="h-5 w-5 text-white" />
+                  <Users2 className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{myParents.length}</CardTitle>
@@ -185,7 +185,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2.5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/30">
-                  <School className="h-5 w-5 text-white" />
+                  <School className="h-5 w-5 text-on-accent" />
                 </div>
               </div>
               <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">{mySubjectIds.length}</CardTitle>
@@ -213,7 +213,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-all duration-300">
-                  <Building2 className="h-6 w-6 text-white" />
+                  <Building2 className="h-6 w-6 text-on-accent" />
                 </div>
                 <div className="flex items-center gap-1 text-blue-400 text-xs font-medium">
                   <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
@@ -233,7 +233,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-all duration-300">
-                  <CheckCircle className="h-6 w-6 text-white" />
+                  <CheckCircle className="h-6 w-6 text-on-accent" />
                 </div>
                 <div className="text-emerald-400 text-xs font-medium flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" />
@@ -253,7 +253,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl shadow-lg shadow-red-500/30 group-hover:scale-110 transition-all duration-300">
-                  <XCircle className="h-6 w-6 text-white" />
+                  <XCircle className="h-6 w-6 text-on-accent" />
                 </div>
                 <div className="text-red-400 text-xs font-medium">Offline</div>
               </div>
@@ -270,7 +270,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
             <CardHeader className="relative z-10 p-6">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-all duration-300">
-                  <TrendingUp className="h-6 w-6 text-white" />
+                  <TrendingUp className="h-6 w-6 text-on-accent" />
                 </div>
                 <div className="text-amber-400 text-xs font-medium">Rate</div>
               </div>
@@ -338,9 +338,17 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
               {schools?.slice(0, 5).map((school) => (
                 <div key={school.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="p-2.5 bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-xl">
-                      <Building2 className="h-5 w-5 text-blue-400" />
-                    </div>
+                    {school.logo ? (
+                      <img
+                        src={school.logo}
+                        alt={school.name}
+                        className="h-10 w-10 rounded-xl object-cover ring-2 ring-slate-200/80"
+                      />
+                    ) : (
+                      <div className="p-2.5 bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-xl">
+                        <Building2 className="h-5 w-5 text-blue-400" />
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-white truncate">{school.name}</p>
                       <p className="text-sm text-blue-200/60 truncate">{school.email}</p>
@@ -397,7 +405,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
           <CardHeader className="relative z-10 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
-                <Users className="h-5 w-5 text-white" />
+                <Users className="h-5 w-5 text-on-accent" />
               </div>
             </div>
             <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">
@@ -412,7 +420,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
           <CardHeader className="relative z-10 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/30">
-                <UserCheck className="h-5 w-5 text-white" />
+                <UserCheck className="h-5 w-5 text-on-accent" />
               </div>
             </div>
             <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">
@@ -427,7 +435,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
           <CardHeader className="relative z-10 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg shadow-amber-500/30">
-                <Users2 className="h-5 w-5 text-white" />
+                <Users2 className="h-5 w-5 text-on-accent" />
               </div>
             </div>
             <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">
@@ -442,7 +450,7 @@ export default function DashboardPage({ stats, students, teachers, parents, clas
           <CardHeader className="relative z-10 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2.5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/30">
-                <School className="h-5 w-5 text-white" />
+                <School className="h-5 w-5 text-on-accent" />
               </div>
             </div>
             <CardTitle className="text-2xl sm:text-3xl font-bold text-white mb-1">

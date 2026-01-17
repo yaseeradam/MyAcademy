@@ -112,10 +112,10 @@ export default function ExamsPage({ exams, classes, subjects, students, showModa
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" /> Back</Button>
-          <h2 className="text-2xl font-bold text-gray-800">Exams & Grading</h2>
+          <Button variant="outline" size="sm" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" /> Back</Button>
+          <h2 className="text-2xl font-bold text-slate-900">Exams & Grading</h2>
         </div>
-        <Button onClick={() => { setForm({ classId: '', subjectId: '', title: '', date: '', totalMarks: '', passingMarks: '', duration: '', term: '' }); setShowModal(true) }} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => { setForm({ classId: '', subjectId: '', title: '', date: '', totalMarks: '', passingMarks: '', duration: '', term: '' }); setShowModal(true) }} className="bg-sky-500 hover:bg-sky-600 text-white">
           <Plus className="h-4 w-4 mr-2" /> Create Exam
         </Button>
       </div>
@@ -126,54 +126,54 @@ export default function ExamsPage({ exams, classes, subjects, students, showModa
           const subject = subjects.find(s => s.id === exam.subjectId)
           const grades = exam.grades || []
           return (
-            <Card key={exam.id || exam._id}>
+            <Card key={exam.id || exam._id} className="border border-slate-200/80 bg-white/80 backdrop-blur-xl">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-blue-600" />
+                    <FileText className="h-5 w-5 text-sky-600" />
                     {exam.title}
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => { setGradeForm({ examId: exam.id || exam._id, studentId: '', marksObtained: '', grade: '', remarks: '' }); setShowGradeModal(true) }}>
+                    <Button size="sm" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={() => { setGradeForm({ examId: exam.id || exam._id, studentId: '', marksObtained: '', grade: '', remarks: '' }); setShowGradeModal(true) }}>
                       <Award className="h-4 w-4 mr-1" /> Add Grade
                     </Button>
                     {grades.length > 0 && (
-                      <Button size="sm" variant="outline" onClick={() => generateReportCards(exam)}>
+                      <Button size="sm" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={() => generateReportCards(exam)}>
                         <Download className="h-4 w-4 mr-1" /> Report Cards
                       </Button>
                     )}
-                    <Button size="sm" variant="outline" onClick={() => { setForm(exam); setShowModal(true) }}><Edit className="h-4 w-4" /></Button>
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(exam.id || exam._id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
+                    <Button size="sm" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-100" onClick={() => { setForm(exam); setShowModal(true) }}><Edit className="h-4 w-4" /></Button>
+                    <Button size="sm" variant="outline" className="border-rose-200 text-rose-600 hover:bg-rose-50" onClick={() => handleDelete(exam.id || exam._id)}><Trash2 className="h-4 w-4" /></Button>
                   </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                  <div><span className="text-gray-600">Class:</span> <span className="font-semibold">{cls?.name}</span></div>
-                  <div><span className="text-gray-600">Subject:</span> <span className="font-semibold">{subject?.name}</span></div>
-                  <div><span className="text-gray-600">Date:</span> <span className="font-semibold">{new Date(exam.date).toLocaleDateString()}</span></div>
-                  <div><span className="text-gray-600">Total Marks:</span> <span className="font-semibold">{exam.totalMarks}</span></div>
+                  <div><span className="text-slate-500">Class:</span> <span className="font-semibold text-slate-800">{cls?.name}</span></div>
+                  <div><span className="text-slate-500">Subject:</span> <span className="font-semibold text-slate-800">{subject?.name}</span></div>
+                  <div><span className="text-slate-500">Date:</span> <span className="font-semibold text-slate-800">{new Date(exam.date).toLocaleDateString()}</span></div>
+                  <div><span className="text-slate-500">Total Marks:</span> <span className="font-semibold text-slate-800">{exam.totalMarks}</span></div>
                 </div>
                 {grades.length > 0 && (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead className="bg-gray-100">
+                      <thead className="bg-slate-50">
                         <tr>
-                          <th className="p-2 text-left">Student</th>
-                          <th className="p-2 text-center">Marks</th>
-                          <th className="p-2 text-center">Grade</th>
-                          <th className="p-2 text-left">Remarks</th>
+                          <th className="p-2 text-left text-slate-600">Student</th>
+                          <th className="p-2 text-center text-slate-600">Marks</th>
+                          <th className="p-2 text-center text-slate-600">Grade</th>
+                          <th className="p-2 text-left text-slate-600">Remarks</th>
                         </tr>
                       </thead>
                       <tbody>
                         {grades.map((g, i) => {
                           const student = students.find(s => s.id === g.studentId)
                           return (
-                            <tr key={i} className="border-t">
-                              <td className="p-2">{student?.firstName} {student?.lastName}</td>
-                              <td className="p-2 text-center">{g.marksObtained}/{exam.totalMarks}</td>
-                              <td className="p-2 text-center"><span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">{g.grade}</span></td>
-                              <td className="p-2">{g.remarks}</td>
+                            <tr key={i} className="border-t border-slate-200/70">
+                              <td className="p-2 text-slate-700">{student?.firstName} {student?.lastName}</td>
+                              <td className="p-2 text-center text-slate-700">{g.marksObtained}/{exam.totalMarks}</td>
+                              <td className="p-2 text-center"><span className="px-2 py-1 bg-sky-100 text-sky-700 rounded">{g.grade}</span></td>
+                              <td className="p-2 text-slate-600">{g.remarks}</td>
                             </tr>
                           )
                         })}
@@ -188,85 +188,85 @@ export default function ExamsPage({ exams, classes, subjects, students, showModa
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent>
+        <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
           <DialogHeader><DialogTitle>{form.id || form._id ? 'Edit' : 'Create'} Exam</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label>Title</Label>
-              <Input value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} required />
+              <Input className="bg-white border-slate-200 text-slate-800" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} required />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Class</Label>
                 <Select value={form.classId} onValueChange={(v) => setForm({...form, classId: v})}>
-                  <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
-                  <SelectContent>{classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-800"><SelectValue placeholder="Select class" /></SelectTrigger>
+                  <SelectContent className="bg-white border-slate-200 text-slate-800">{classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div>
                 <Label>Subject</Label>
                 <Select value={form.subjectId} onValueChange={(v) => setForm({...form, subjectId: v})}>
-                  <SelectTrigger><SelectValue placeholder="Select subject" /></SelectTrigger>
-                  <SelectContent>{subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-800"><SelectValue placeholder="Select subject" /></SelectTrigger>
+                  <SelectContent className="bg-white border-slate-200 text-slate-800">{subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Date</Label>
-                <Input type="date" value={form.date} onChange={(e) => setForm({...form, date: e.target.value})} required />
+                <Input className="bg-white border-slate-200 text-slate-800" type="date" value={form.date} onChange={(e) => setForm({...form, date: e.target.value})} required />
               </div>
               <div>
                 <Label>Duration (mins)</Label>
-                <Input type="number" value={form.duration} onChange={(e) => setForm({...form, duration: e.target.value})} required />
+                <Input className="bg-white border-slate-200 text-slate-800" type="number" value={form.duration} onChange={(e) => setForm({...form, duration: e.target.value})} required />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Total Marks</Label>
-                <Input type="number" value={form.totalMarks} onChange={(e) => setForm({...form, totalMarks: e.target.value})} required />
+                <Input className="bg-white border-slate-200 text-slate-800" type="number" value={form.totalMarks} onChange={(e) => setForm({...form, totalMarks: e.target.value})} required />
               </div>
               <div>
                 <Label>Passing Marks</Label>
-                <Input type="number" value={form.passingMarks} onChange={(e) => setForm({...form, passingMarks: e.target.value})} required />
+                <Input className="bg-white border-slate-200 text-slate-800" type="number" value={form.passingMarks} onChange={(e) => setForm({...form, passingMarks: e.target.value})} required />
               </div>
             </div>
             <div>
               <Label>Term</Label>
               <Select value={form.term} onValueChange={(v) => setForm({...form, term: v})}>
-                <SelectTrigger><SelectValue placeholder="Select term" /></SelectTrigger>
-                <SelectContent>
+                <SelectTrigger className="bg-white border-slate-200 text-slate-800"><SelectValue placeholder="Select term" /></SelectTrigger>
+                <SelectContent className="bg-white border-slate-200 text-slate-800">
                   <SelectItem value="First Term">First Term</SelectItem>
                   <SelectItem value="Second Term">Second Term</SelectItem>
                   <SelectItem value="Third Term">Third Term</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{form.id || form._id ? 'Update' : 'Create'} Exam</Button>
+            <Button type="submit" className="w-full bg-sky-500 hover:bg-sky-600 text-white">{form.id || form._id ? 'Update' : 'Create'} Exam</Button>
           </form>
         </DialogContent>
       </Dialog>
 
       <Dialog open={showGradeModal} onOpenChange={setShowGradeModal}>
-        <DialogContent>
+        <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
           <DialogHeader><DialogTitle>Add Grade</DialogTitle></DialogHeader>
           <form onSubmit={handleGradeSubmit} className="space-y-4">
             <div>
               <Label>Student</Label>
               <Select value={gradeForm.studentId} onValueChange={(v) => setGradeForm({...gradeForm, studentId: v})}>
-                <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</SelectItem>)}</SelectContent>
+                <SelectTrigger className="bg-white border-slate-200 text-slate-800"><SelectValue placeholder="Select student" /></SelectTrigger>
+                <SelectContent className="bg-white border-slate-200 text-slate-800">{students.map(s => <SelectItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div>
               <Label>Marks Obtained</Label>
-              <Input type="number" value={gradeForm.marksObtained} onChange={(e) => setGradeForm({...gradeForm, marksObtained: e.target.value})} required />
+              <Input className="bg-white border-slate-200 text-slate-800" type="number" value={gradeForm.marksObtained} onChange={(e) => setGradeForm({...gradeForm, marksObtained: e.target.value})} required />
             </div>
             <div>
               <Label>Grade</Label>
               <Select value={gradeForm.grade} onValueChange={(v) => setGradeForm({...gradeForm, grade: v})}>
-                <SelectTrigger><SelectValue placeholder="Select grade" /></SelectTrigger>
-                <SelectContent>
+                <SelectTrigger className="bg-white border-slate-200 text-slate-800"><SelectValue placeholder="Select grade" /></SelectTrigger>
+                <SelectContent className="bg-white border-slate-200 text-slate-800">
                   <SelectItem value="A">A - Excellent</SelectItem>
                   <SelectItem value="B">B - Very Good</SelectItem>
                   <SelectItem value="C">C - Good</SelectItem>
@@ -277,9 +277,9 @@ export default function ExamsPage({ exams, classes, subjects, students, showModa
             </div>
             <div>
               <Label>Remarks</Label>
-              <Textarea value={gradeForm.remarks} onChange={(e) => setGradeForm({...gradeForm, remarks: e.target.value})} />
+              <Textarea className="bg-white border-slate-200 text-slate-800" value={gradeForm.remarks} onChange={(e) => setGradeForm({...gradeForm, remarks: e.target.value})} />
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Add Grade</Button>
+            <Button type="submit" className="w-full bg-sky-500 hover:bg-sky-600 text-white">Add Grade</Button>
           </form>
         </DialogContent>
       </Dialog>

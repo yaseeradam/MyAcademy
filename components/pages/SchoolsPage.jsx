@@ -136,8 +136,8 @@ export default function SchoolsPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Schools Management</h2>
-          <p className="text-blue-200/60 text-sm mt-1">Manage all registered schools</p>
+          <h2 className="text-2xl font-bold text-slate-900">Schools Management</h2>
+          <p className="text-slate-500 text-sm mt-1">Manage all registered schools</p>
         </div>
         <Dialog open={showMasterSchoolModal} onOpenChange={setShowMasterSchoolModal}>
           <DialogTrigger asChild>
@@ -146,39 +146,39 @@ export default function SchoolsPage({
               Create School
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-[#0f1d32] border-white/10 text-white">
+          <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
             <DialogHeader>
-              <DialogTitle className="text-white">Create New School</DialogTitle>
-              <DialogDescription className="text-blue-200/60">
+              <DialogTitle className="text-slate-900">Create New School</DialogTitle>
+              <DialogDescription className="text-slate-500">
                 Set up a new school with admin credentials.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreateSchool}>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="schoolName" className="text-blue-200/80">School Name</Label>
+                  <Label htmlFor="schoolName" className="text-slate-600">School Name</Label>
                   <Input
                     id="schoolName"
                     value={masterSchoolForm.schoolName}
                     onChange={(e) => setMasterSchoolForm((prev) => ({ ...prev, schoolName: e.target.value }))}
                     placeholder="Enter school name"
                     required
-                    className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                    className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="adminName" className="text-blue-200/80">Admin Name</Label>
+                  <Label htmlFor="adminName" className="text-slate-600">Admin Name</Label>
                   <Input
                     id="adminName"
                     value={masterSchoolForm.adminName}
                     onChange={(e) => setMasterSchoolForm((prev) => ({ ...prev, adminName: e.target.value }))}
                     placeholder="Enter admin full name"
                     required
-                    className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                    className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="adminEmail" className="text-blue-200/80">Admin Email</Label>
+                  <Label htmlFor="adminEmail" className="text-slate-600">Admin Email</Label>
                   <Input
                     id="adminEmail"
                     type="email"
@@ -186,11 +186,11 @@ export default function SchoolsPage({
                     onChange={(e) => setMasterSchoolForm((prev) => ({ ...prev, adminEmail: e.target.value }))}
                     placeholder="Enter admin email"
                     required
-                    className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                    className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="adminPassword" className="text-blue-200/80">Admin Password</Label>
+                  <Label htmlFor="adminPassword" className="text-slate-600">Admin Password</Label>
                   <Input
                     id="adminPassword"
                     type="password"
@@ -198,7 +198,7 @@ export default function SchoolsPage({
                     onChange={(e) => setMasterSchoolForm((prev) => ({ ...prev, adminPassword: e.target.value }))}
                     placeholder="Enter admin password"
                     required
-                    className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                    className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -214,13 +214,13 @@ export default function SchoolsPage({
 
       {/* Search Bar */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-200/40" />
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
         <Input
           type="text"
           placeholder="Search schools by name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 focus:border-amber-500/50"
+          className="pl-11 bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-300"
         />
       </div>
 
@@ -342,28 +342,28 @@ export default function SchoolsPage({
 
       {/* Add Admin Modal */}
       <Dialog open={showAddAdminModal} onOpenChange={setShowAddAdminModal}>
-        <DialogContent className="bg-[#0f1d32] border-white/10 text-white">
+        <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
           <DialogHeader>
-            <DialogTitle className="text-white">Add School Admin</DialogTitle>
-            <DialogDescription className="text-blue-200/60">
+            <DialogTitle className="text-slate-900">Add School Admin</DialogTitle>
+            <DialogDescription className="text-slate-500">
               Add a new administrator for {selectedSchool?.name}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAddAdmin}>
             <div className="space-y-4 py-4">
               <div>
-                <Label htmlFor="adminName" className="text-blue-200/80">Admin Name</Label>
+                <Label htmlFor="adminName" className="text-slate-600">Admin Name</Label>
                 <Input
                   id="adminName"
                   value={adminForm.name}
                   onChange={(e) => setAdminForm({ ...adminForm, name: e.target.value })}
                   placeholder="Enter admin name"
                   required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                  className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                 />
               </div>
               <div>
-                <Label htmlFor="adminEmail" className="text-blue-200/80">Admin Email</Label>
+                <Label htmlFor="adminEmail" className="text-slate-600">Admin Email</Label>
                 <Input
                   id="adminEmail"
                   type="email"
@@ -371,23 +371,23 @@ export default function SchoolsPage({
                   onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
                   placeholder="Enter admin email"
                   required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                  className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                 />
               </div>
               <div>
-                <Label className="text-blue-200/80">Admin Password</Label>
+                <Label className="text-slate-600">Admin Password</Label>
                 <div className="relative">
                   <Input
                     type={showAdminPassword ? "text" : "password"}
                     value={adminForm.password}
                     onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
                     placeholder="Enter admin password"
-                    className="pr-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                    className="pr-10 bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                   />
                   <button
                     type="button"
                     onClick={() => setShowAdminPassword(!showAdminPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-200/60 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-700"
                   >
                     {showAdminPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -395,7 +395,7 @@ export default function SchoolsPage({
                 {/* Password Strength Meter */}
                 {adminForm.password && (
                   <div className="space-y-1 mt-2">
-                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-300 ${adminForm.password.length >= 8 &&
                           /[A-Z]/.test(adminForm.password) &&
@@ -409,7 +409,7 @@ export default function SchoolsPage({
                           }`}
                       />
                     </div>
-                    <p className="text-xs text-blue-200/60 text-right">
+                    <p className="text-xs text-slate-500 text-right">
                       {adminForm.password.length < 8
                         ? "Too short"
                         : adminForm.password.length >= 8 &&
@@ -424,7 +424,7 @@ export default function SchoolsPage({
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowAddAdminModal(false)} className="border-white/10 text-blue-200/80 hover:bg-white/10">
+              <Button type="button" variant="outline" onClick={() => setShowAddAdminModal(false)} className="border-slate-200 text-slate-600 hover:bg-slate-100">
                 Cancel
               </Button>
               <Button type="submit" disabled={addingAdmin} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">
@@ -437,17 +437,17 @@ export default function SchoolsPage({
 
       {/* Reset Password Modal */}
       <Dialog open={showResetPasswordModal} onOpenChange={setShowResetPasswordModal}>
-        <DialogContent className="bg-[#0f1d32] border-white/10 text-white">
+        <DialogContent className="bg-white border-slate-200 text-slate-800 shadow-xl shadow-slate-200/70">
           <DialogHeader>
-            <DialogTitle className="text-white">Reset School Admin Password</DialogTitle>
-            <DialogDescription className="text-blue-200/60">
+            <DialogTitle className="text-slate-900">Reset School Admin Password</DialogTitle>
+            <DialogDescription className="text-slate-500">
               Enter a new password for {selectedSchool?.name}'s admin.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleResetPassword}>
             <div className="space-y-4 py-4">
               <div>
-                <Label htmlFor="resetEmail" className="text-blue-200/80">Admin Email</Label>
+                <Label htmlFor="resetEmail" className="text-slate-600">Admin Email</Label>
                 <Input
                   id="resetEmail"
                   type="email"
@@ -455,11 +455,11 @@ export default function SchoolsPage({
                   onChange={(e) => setResetEmail(e.target.value)}
                   placeholder="Enter admin email"
                   required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                  className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                 />
               </div>
               <div>
-                <Label htmlFor="newPassword" className="text-blue-200/80">New Password</Label>
+                <Label htmlFor="newPassword" className="text-slate-600">New Password</Label>
                 <div className="relative">
                   <Input
                     id="newPassword"
@@ -468,12 +468,12 @@ export default function SchoolsPage({
                     onChange={(e) => setResetPassword(e.target.value)}
                     placeholder="Enter new password"
                     required
-                    className="pr-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                    className="pr-10 bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-200/60 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-700"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -481,7 +481,7 @@ export default function SchoolsPage({
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowResetPasswordModal(false)} className="border-white/10 text-blue-200/80 hover:bg-white/10">
+              <Button type="button" variant="outline" onClick={() => setShowResetPasswordModal(false)} className="border-slate-200 text-slate-600 hover:bg-slate-100">
                 Cancel
               </Button>
               <Button type="submit" disabled={isResetting} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">

@@ -24,38 +24,48 @@ export function useNewFeatures(user, token, apiCall, loadDashboardData, modal) {
   const [routes, setRoutes] = useState([])
   const [healthRecords, setHealthRecords] = useState([])
 
+  // Get school-specific storage key to isolate data per school
+  const getStorageKey = useCallback((key) => {
+    const schoolId = user?.schoolId || 'unknown'
+    return `${schoolId}_${key}`
+  }, [user?.schoolId])
+
   // Helper to safely store with limits
   const safeSetStorage = useCallback((key, data) => {
     try {
       const limit = STORAGE_LIMITS[key] || 100
       const limitedData = data.slice(-limit) // Keep only most recent items
-      localStorage.setItem(key, JSON.stringify(limitedData))
+      const storageKey = getStorageKey(key)
+      localStorage.setItem(storageKey, JSON.stringify(limitedData))
       return limitedData
     } catch (error) {
       console.error(`Error storing ${key}:`, error)
       // If storage is full, clear old data
       if (error.name === 'QuotaExceededError') {
         const limitedData = data.slice(-Math.floor(limit / 2))
-        localStorage.setItem(key, JSON.stringify(limitedData))
+        const storageKey = getStorageKey(key)
+        localStorage.setItem(storageKey, JSON.stringify(limitedData))
         return limitedData
       }
       return data
     }
-  }, [])
+  }, [getStorageKey])
 
   const loadAllData = useCallback(() => {
+    if (!user?.schoolId) return // Don't load if no schoolId
+
     try {
-      // Load from localStorage with limits
+      // Load from localStorage with school-specific keys
       const stored = {
-        timetables: JSON.parse(localStorage.getItem('timetables') || '[]').slice(-STORAGE_LIMITS.timetables),
-        exams: JSON.parse(localStorage.getItem('exams') || '[]').slice(-STORAGE_LIMITS.exams),
-        fees: JSON.parse(localStorage.getItem('fees') || '[]').slice(-STORAGE_LIMITS.fees),
-        homework: JSON.parse(localStorage.getItem('homework') || '[]').slice(-STORAGE_LIMITS.homework),
-        books: JSON.parse(localStorage.getItem('books') || '[]').slice(-STORAGE_LIMITS.books),
-        events: JSON.parse(localStorage.getItem('events') || '[]').slice(-STORAGE_LIMITS.events),
-        behaviors: JSON.parse(localStorage.getItem('behaviors') || '[]').slice(-STORAGE_LIMITS.behaviors),
-        routes: JSON.parse(localStorage.getItem('routes') || '[]').slice(-STORAGE_LIMITS.routes),
-        healthRecords: JSON.parse(localStorage.getItem('healthRecords') || '[]').slice(-STORAGE_LIMITS.healthRecords)
+        timetables: JSON.parse(localStorage.getItem(getStorageKey('timetables')) || '[]').slice(-STORAGE_LIMITS.timetables),
+        exams: JSON.parse(localStorage.getItem(getStorageKey('exams')) || '[]').slice(-STORAGE_LIMITS.exams),
+        fees: JSON.parse(localStorage.getItem(getStorageKey('fees')) || '[]').slice(-STORAGE_LIMITS.fees),
+        homework: JSON.parse(localStorage.getItem(getStorageKey('homework')) || '[]').slice(-STORAGE_LIMITS.homework),
+        books: JSON.parse(localStorage.getItem(getStorageKey('books')) || '[]').slice(-STORAGE_LIMITS.books),
+        events: JSON.parse(localStorage.getItem(getStorageKey('events')) || '[]').slice(-STORAGE_LIMITS.events),
+        behaviors: JSON.parse(localStorage.getItem(getStorageKey('behaviors')) || '[]').slice(-STORAGE_LIMITS.behaviors),
+        routes: JSON.parse(localStorage.getItem(getStorageKey('routes')) || '[]').slice(-STORAGE_LIMITS.routes),
+        healthRecords: JSON.parse(localStorage.getItem(getStorageKey('healthRecords')) || '[]').slice(-STORAGE_LIMITS.healthRecords)
       }
       setTimetables(stored.timetables)
       setExams(stored.exams)
@@ -69,10 +79,10 @@ export function useNewFeatures(user, token, apiCall, loadDashboardData, modal) {
     } catch (error) {
       console.error('Error loading data:', error)
     }
-  }, [])
+  }, [getStorageKey, user?.schoolId])
 
   useEffect(() => {
-    if (user && token && user.role === 'school_admin') {
+    if (user && token && user.role === 'school_admin' && user.schoolId) {
       loadAllData()
     }
   }, [user, token, loadAllData])

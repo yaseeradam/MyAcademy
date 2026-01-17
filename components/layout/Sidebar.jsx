@@ -127,7 +127,7 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
                     : 'text-blue-200/70 hover:bg-white/5 hover:text-white'
                   }`}
               >
-                <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${sidebarCollapsed ? 'mx-auto' : 'mr-3'} ${activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'}`} />
+                <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${sidebarCollapsed ? 'mx-auto' : 'mr-3'} ${activeTab === item.id ? 'scale-110 text-on-accent' : 'text-slate-300 group-hover:text-amber-200 group-hover:scale-110'}`} />
                 {!sidebarCollapsed && (
                   <>
                     <span className="flex-1">{item.label}</span>

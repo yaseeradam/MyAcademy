@@ -47,6 +47,7 @@ import BehaviorPage from '@/components/pages/BehaviorPage'
 import TransportPage from '@/components/pages/TransportPage'
 import HealthPage from '@/components/pages/HealthPage'
 import MoreFeaturesPage from '@/components/pages/MoreFeaturesPage'
+import ReportCardsPage from '@/components/pages/ReportCardsPage'
 import ParentFeesPage from '@/components/pages/ParentFeesPage'
 import GradebookPage from '@/components/pages/GradebookPage'
 import { Home, MessageCircle, Building2, Settings as SettingsIcon, Users2, Users, UserCheck, School as SchoolIcon, BookOpen, GraduationCap, Calendar, Trophy, CreditCard, BarChart3, Clock, FileText, DollarSign, BookMarked, CalendarDays, Heart, Bus, AlertCircle, Grid3x3 } from 'lucide-react'
@@ -323,10 +324,17 @@ function App() {
       modal.showLoading('Uploading logo...')
       const formData = new FormData()
       formData.append('file', file)
-      const response = await fetch('/api/upload', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData })
+      if (school?.id) {
+        formData.append('fileType', 'profile')
+        formData.append('entityType', 'school')
+        formData.append('entityId', school.id)
+      }
+      const response = await fetch('/api/storage/upload', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData })
       if (!response.ok) throw new Error('Upload failed')
       const data = await response.json()
-      setSchoolSettings(prev => ({ ...prev, logo: data.url }))
+      const logoUrl = data?.file?.downloadURL || ''
+      if (!logoUrl) throw new Error('Upload failed')
+      setSchoolSettings(prev => ({ ...prev, logo: logoUrl }))
       modal.showSuccess('Upload Successful', 'Logo uploaded successfully!')
     } catch (error) {
       modal.showError('Upload Failed', 'Failed to upload logo')
@@ -543,6 +551,7 @@ function App() {
       {activeTab === 'more-features' && user.role === 'school_admin' && <MoreFeaturesPage setActiveTab={setActiveTab} />}
       {activeTab === 'timetable' && user.role === 'school_admin' && <TimetablePage timetables={newFeatures.timetables} classes={classes} subjects={subjects} teachers={teachers} showModal={showTimetableModal} setShowModal={setShowTimetableModal} form={timetableForm} setForm={setTimetableForm} handleSubmit={(e) => newFeatures.handleTimetableSubmit(e, timetableForm, setShowTimetableModal)} handleDelete={newFeatures.handleTimetableDelete} onBack={() => setActiveTab('more-features')} school={school} schoolSettings={schoolSettings} />}
       {activeTab === 'exams' && user.role === 'school_admin' && <ExamsPage exams={newFeatures.exams} classes={classes} subjects={subjects} students={students} showModal={showExamModal} setShowModal={setShowExamModal} showGradeModal={showGradeModal} setShowGradeModal={setShowGradeModal} form={examForm} setForm={setExamForm} gradeForm={gradeForm} setGradeForm={setGradeForm} handleSubmit={(e) => newFeatures.handleExamSubmit(e, examForm, setShowExamModal)} handleGradeSubmit={(e) => newFeatures.handleGradeSubmit(e, gradeForm, setShowGradeModal)} handleDelete={newFeatures.handleDeleteExam} onBack={() => setActiveTab('more-features')} school={school} schoolSettings={schoolSettings} />}
+      {activeTab === 'report-cards' && user.role === 'school_admin' && <ReportCardsPage school={school} schoolSettings={schoolSettings} classes={classes} students={students} subjects={subjects} apiCall={apiCall} modal={modal} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'fees' && user.role === 'school_admin' && <FeesPage fees={newFeatures.fees} students={students} classes={classes} showModal={showFeeModal} setShowModal={setShowFeeModal} showPaymentModal={showPaymentModal} setShowPaymentModal={setShowPaymentModal} form={feeForm} setForm={setFeeForm} paymentForm={paymentForm} setPaymentForm={setPaymentForm} handleSubmit={(e) => newFeatures.handleFeeSubmit(e, feeForm, setShowFeeModal)} handlePayment={(e) => newFeatures.handlePayment(e, paymentForm, setShowPaymentModal)} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'homework' && user.role === 'school_admin' && <HomeworkPage homework={newFeatures.homework} classes={classes} subjects={subjects} students={students} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => { }} handleDelete={newFeatures.handleDeleteHomework} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'library' && user.role === 'school_admin' && <LibraryPage books={newFeatures.books} students={students} showModal={showBookModal} setShowModal={setShowBookModal} showIssueModal={showIssueModal} setShowIssueModal={setShowIssueModal} form={bookForm} setForm={setBookForm} issueForm={issueForm} setIssueForm={setIssueForm} handleSubmit={(e) => newFeatures.handleBookSubmit(e, bookForm, setShowBookModal)} handleIssue={(e) => newFeatures.handleIssueBook(e, issueForm, setShowIssueModal)} handleReturn={newFeatures.handleReturnBook} handleDelete={newFeatures.handleDeleteBook} searchTerm={bookSearch} setSearchTerm={setBookSearch} onBack={() => setActiveTab('more-features')} />}
@@ -567,7 +576,7 @@ function App() {
       )}
       {activeTab === 'school-fees' && user.role === 'parent' && <SchoolFeesPage user={user} />}
 
-      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'homework', 'fees', 'library', 'events', 'behavior', 'transport', 'health', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
+      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'report-cards', 'homework', 'fees', 'library', 'events', 'behavior', 'transport', 'health', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
 
       <ReportDialog
         open={showReportDialog}

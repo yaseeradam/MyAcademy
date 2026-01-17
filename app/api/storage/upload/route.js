@@ -6,7 +6,7 @@ import { getAuth } from 'firebase/auth'
 
 const MONGO_URL = process.env.MONGO_URL
 const DB_NAME = process.env.DB_NAME || 'school_management'
-const JWT_SECRET = process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
 // Firebase configuration
 const firebaseConfig = {
@@ -81,6 +81,11 @@ export async function POST(request) {
     }
 
     const db = await connectToDatabase()
+
+    // Enforce school isolation for school logo uploads
+    if (entityType === 'school' && entityId && entityId !== user.schoolId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     // Generate unique filename
     const fileExtension = file.name.split('.').pop()

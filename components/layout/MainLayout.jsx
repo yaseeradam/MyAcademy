@@ -82,7 +82,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
                   )}
 
                   <div className="relative flex items-center w-full">
-                    <Icon className={`h-5 w-5 ${sidebarCollapsed ? 'mx-auto' : 'mr-3'} flex-shrink-0 transition-transform duration-300 ${isActive ? 'scale-110 text-slate-900' : 'group-hover:scale-110'}`} />
+                    <Icon className={`h-5 w-5 ${sidebarCollapsed ? 'mx-auto' : 'mr-3'} flex-shrink-0 transition-transform duration-300 ${isActive ? 'scale-110 text-on-accent' : 'text-slate-500 group-hover:text-sky-700 group-hover:scale-110'}`} />
                     {!sidebarCollapsed && <span className="flex-1 truncate">{item.label}</span>}
 
                     {item.id === 'messages' && unreadMessages > 0 && !sidebarCollapsed && (
