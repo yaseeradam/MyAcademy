@@ -17,14 +17,14 @@ export default function CertificatesPage({
     modal,
     onBack
 }) {
-    const [selectedClass, setSelectedClass] = useState('')
+    const [selectedClass, setSelectedClass] = useState('all')
     const [searchTerm, setSearchTerm] = useState('')
     const [certificateType, setCertificateType] = useState('merit')
     const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0])
     const [reason, setReason] = useState('Outstanding Academic Performance')
 
     const filteredStudents = students.filter(student => {
-        const matchesClass = !selectedClass || student.classId === selectedClass
+        const matchesClass = selectedClass === 'all' || student.classId === selectedClass
         const fullName = `${student.firstName} ${student.lastName}`.toLowerCase()
         const matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
             student.admissionNumber?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -225,7 +225,7 @@ export default function CertificatesPage({
                                         <SelectValue placeholder="All Classes" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">All Classes</SelectItem>
+                                        <SelectItem value="all">All Classes</SelectItem>
                                         {classes.map(cls => (
                                             <SelectItem key={cls.id} value={cls.id}>{cls.name}</SelectItem>
                                         ))}
