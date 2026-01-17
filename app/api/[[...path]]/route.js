@@ -439,54 +439,54 @@ export async function GET(request, { params }) {
         return NextResponse.json(parentStudents)
 
       // Parent fees
-        case 'parent/fees':
-          const parentFeesData = authenticateToken(request)
-          if (!parentFeesData || parentFeesData.role !== 'parent') {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-          }
-          const childrenIds = await db.collection('students')
-            .find({ parentId: parentFeesData.id, schoolId: parentFeesData.schoolId })
-            .project({ id: 1 })
-            .toArray()
-          const studentIds = childrenIds.map(c => c.id)
-          const feePayments = await db.collection('fee_payments')
-            .find({ studentId: { $in: studentIds }, schoolId: parentFeesData.schoolId })
-            .toArray()
-          return NextResponse.json(feePayments)
+      case 'parent/fees':
+        const parentFeesData = authenticateToken(request)
+        if (!parentFeesData || parentFeesData.role !== 'parent') {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+        const childrenIds = await db.collection('students')
+          .find({ parentId: parentFeesData.id, schoolId: parentFeesData.schoolId })
+          .project({ id: 1 })
+          .toArray()
+        const studentIds = childrenIds.map(c => c.id)
+        const feePayments = await db.collection('fee_payments')
+          .find({ studentId: { $in: studentIds }, schoolId: parentFeesData.schoolId })
+          .toArray()
+        return NextResponse.json(feePayments)
 
-        case 'parent/results':
-          const parentResultsData = authenticateToken(request)
-          if (!parentResultsData || parentResultsData.role !== 'parent') {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-          }
-          const parentUser = await db.collection('users').findOne({
-            id: parentResultsData.id,
-            role: 'parent',
-            schoolId: parentResultsData.schoolId
-          })
-          const parentIdCandidates = [parentResultsData.id]
-          if (parentUser?._id) {
-            parentIdCandidates.push(parentUser._id)
-            parentIdCandidates.push(parentUser._id.toString())
-          }
-          const parentStudents = await db.collection('students')
-            .find({ parentId: { $in: parentIdCandidates }, schoolId: parentResultsData.schoolId })
+      case 'parent/results':
+        const parentResultsData = authenticateToken(request)
+        if (!parentResultsData || parentResultsData.role !== 'parent') {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+        const parentResultsUser = await db.collection('users').findOne({
+          id: parentResultsData.id,
+          role: 'parent',
+          schoolId: parentResultsData.schoolId
+        })
+        const resultsIdCandidates = [parentResultsData.id]
+        if (parentResultsUser?._id) {
+          resultsIdCandidates.push(parentResultsUser._id)
+          resultsIdCandidates.push(parentResultsUser._id.toString())
+        }
+        const resultsStudents = await db.collection('students')
+          .find({ parentId: { $in: resultsIdCandidates }, schoolId: parentResultsData.schoolId })
+          .toArray()
+        const parentStudentIds = resultsStudents.map(s => s.id)
+        if (parentStudentIds.length === 0) {
+          return NextResponse.json({ students: [], reportCards: [], certificates: [] })
+        }
+        const [reportCards, certificates] = await Promise.all([
+          db.collection('report_cards')
+            .find({ studentId: { $in: parentStudentIds }, schoolId: parentResultsData.schoolId })
+            .sort({ issuedAt: -1 })
+            .toArray(),
+          db.collection('certificates')
+            .find({ studentId: { $in: parentStudentIds }, schoolId: parentResultsData.schoolId })
+            .sort({ issuedAt: -1 })
             .toArray()
-          const parentStudentIds = parentStudents.map(s => s.id)
-          if (parentStudentIds.length === 0) {
-            return NextResponse.json({ students: [], reportCards: [], certificates: [] })
-          }
-          const [reportCards, certificates] = await Promise.all([
-            db.collection('report_cards')
-              .find({ studentId: { $in: parentStudentIds }, schoolId: parentResultsData.schoolId })
-              .sort({ issuedAt: -1 })
-              .toArray(),
-            db.collection('certificates')
-              .find({ studentId: { $in: parentStudentIds }, schoolId: parentResultsData.schoolId })
-              .sort({ issuedAt: -1 })
-              .toArray()
-          ])
-          return NextResponse.json({ students: parentStudents, reportCards, certificates })
+        ])
+        return NextResponse.json({ students: resultsStudents, reportCards, certificates })
 
       // Notifications
       case 'notifications':
@@ -1157,35 +1157,35 @@ export async function POST(request, { params }) {
           return NextResponse.json({ error: 'No attendance data provided' }, { status: 400 })
         }
 
-          // Get date from first record
-          const attendanceDate = attendanceList[0].date
+        // Get date from first record
+        const attendanceDate = attendanceList[0].date
 
-          // Block re-marking attendance if already recorded for the date
-          if (type === 'teacher') {
-            const existingTeacherAttendance = await db.collection('attendance').findOne({
-              schoolId: userDataBulkAttendance.schoolId,
-              date: attendanceDate,
-              teacherId: { $exists: true }
-            })
-            if (existingTeacherAttendance) {
-              return NextResponse.json({ error: 'Attendance already marked for this date' }, { status: 409 })
-            }
-          } else if (type === 'student') {
-            // Teacher or admin marking student attendance for a class
-            const classId = attendanceList[0].classId
-            const existingStudentAttendance = await db.collection('attendance').findOne({
-              schoolId: userDataBulkAttendance.schoolId,
-              date: attendanceDate,
-              classId: classId,
-              studentId: { $exists: true }
-            })
-            if (existingStudentAttendance) {
-              return NextResponse.json({ error: 'Attendance already marked for this class and date' }, { status: 409 })
-            }
+        // Block re-marking attendance if already recorded for the date
+        if (type === 'teacher') {
+          const existingTeacherAttendance = await db.collection('attendance').findOne({
+            schoolId: userDataBulkAttendance.schoolId,
+            date: attendanceDate,
+            teacherId: { $exists: true }
+          })
+          if (existingTeacherAttendance) {
+            return NextResponse.json({ error: 'Attendance already marked for this date' }, { status: 409 })
           }
+        } else if (type === 'student') {
+          // Teacher or admin marking student attendance for a class
+          const classId = attendanceList[0].classId
+          const existingStudentAttendance = await db.collection('attendance').findOne({
+            schoolId: userDataBulkAttendance.schoolId,
+            date: attendanceDate,
+            classId: classId,
+            studentId: { $exists: true }
+          })
+          if (existingStudentAttendance) {
+            return NextResponse.json({ error: 'Attendance already marked for this class and date' }, { status: 409 })
+          }
+        }
 
-          // Insert new records
-          const bulkAttendance = attendanceList.map(record => ({
+        // Insert new records
+        const bulkAttendance = attendanceList.map(record => ({
           id: uuidv4(),
           ...record,
           schoolId: userDataBulkAttendance.schoolId,
