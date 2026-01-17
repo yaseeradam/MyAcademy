@@ -110,9 +110,17 @@ export function useForms(apiCall, loadDashboardData, modal, parents = []) {
     modal?.showLoading(isUpdate ? 'Updating parent...' : 'Creating parent account...')
     try {
       if (isUpdate) {
-        // Assume 'parents' endpoint supports PUT or fallback to manual user update if needed.
-        // Keeping original logic structure but ensuring apiCall is correct.
-        await apiCall(`parents?id=${parentForm.parentData.id || parentForm.parentData._id}`, { method: 'PUT', body: JSON.stringify(parentForm.parentData) })
+        if (password && password.length > 0 && password.length < 8) {
+          modal?.showError('Invalid Password', 'Password must be at least 8 characters long.')
+          return false
+        }
+        await apiCall(`parents?id=${parentForm.parentData.id || parentForm.parentData._id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            parentData: parentForm.parentData,
+            parentCredentials: parentForm.parentCredentials
+          })
+        })
         modal?.showSuccess('Parent Updated', 'Parent updated successfully!')
       } else {
         const result = await apiCall('parents', { method: 'POST', body: JSON.stringify(parentForm) })

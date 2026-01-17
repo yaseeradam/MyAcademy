@@ -16,6 +16,7 @@ export default function StudentsPage({
   classes,
   parents,
   school,
+  schoolSettings,
   studentSearch,
   setStudentSearch,
   studentFilters,
@@ -275,7 +276,13 @@ export default function StudentsPage({
         parent={parents.find(p => p.id === viewStudent?.parentId)}
         classInfo={classes.find(c => c.id === viewStudent?.classId)}
         onEdit={handleEdit}
-        schoolName={school?.name}
+        schoolName={schoolSettings?.schoolName || school?.name}
+        schoolLogo={schoolSettings?.logo || school?.logo}
+        schoolMeta={{
+          address: schoolSettings?.address || school?.address || '',
+          phoneNumber: schoolSettings?.phoneNumber || school?.phoneNumber || '',
+          email: schoolSettings?.email || school?.email || ''
+        }}
       />
 
       <EditStudentModal

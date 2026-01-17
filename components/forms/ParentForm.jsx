@@ -66,14 +66,14 @@ export default function ParentForm({
               <div className="flex-1 space-y-2">
                 <label className="block cursor-pointer">
                   <Input type="file" accept="image/*" onChange={(e) => handlePhotoUpload(e, 'parent')} className="hidden" id="parent-file" />
-                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white" onClick={() => document.getElementById('parent-file').click()}>
+                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-slate-700 hover:bg-white/10 hover:text-slate-900" onClick={() => document.getElementById('parent-file').click()}>
                     <Upload className="h-4 w-4 mr-2" />
                     Choose Photo from Device
                   </Button>
                 </label>
                 <label className="block cursor-pointer">
                   <Input type="file" accept="image/*" capture="environment" onChange={(e) => handlePhotoUpload(e, 'parent')} className="hidden" id="parent-camera-form" />
-                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white" onClick={() => document.getElementById('parent-camera-form').click()}>
+                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-slate-700 hover:bg-white/10 hover:text-slate-900" onClick={() => document.getElementById('parent-camera-form').click()}>
                     <Camera className="h-4 w-4 mr-2" />
                     Take Photo with Camera
                   </Button>
@@ -91,17 +91,17 @@ export default function ParentForm({
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Full Name *</Label>
-                <Input value={parentForm.parentData.name} onChange={(e) => setParentForm(prev => ({ ...prev, parentData: { ...prev.parentData, name: e.target.value } }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter full name" required />
+                <Label className="text-slate-700">Full Name *</Label>
+                <Input value={parentForm.parentData.name} onChange={(e) => setParentForm(prev => ({ ...prev, parentData: { ...prev.parentData, name: e.target.value } }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter full name" required />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Phone Number *</Label>
-                <Input value={parentForm.parentData.phoneNumber} onChange={(e) => setParentForm(prev => ({ ...prev, parentData: { ...prev.parentData, phoneNumber: e.target.value } }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="Enter phone" required />
+                <Label className="text-slate-700">Phone Number *</Label>
+                <Input value={parentForm.parentData.phoneNumber} onChange={(e) => setParentForm(prev => ({ ...prev, parentData: { ...prev.parentData, phoneNumber: e.target.value } }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter phone" required />
               </div>
             </div>
             <div className="mt-4 space-y-2">
-              <Label className="text-blue-200/80">Address</Label>
-              <Textarea value={parentForm.parentData.address} onChange={(e) => setParentForm(prev => ({ ...prev, parentData: { ...prev.parentData, address: e.target.value } }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 min-h-[80px]" placeholder="Enter full address" />
+              <Label className="text-slate-700">Address</Label>
+              <Textarea value={parentForm.parentData.address} onChange={(e) => setParentForm(prev => ({ ...prev, parentData: { ...prev.parentData, address: e.target.value } }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 min-h-[80px] shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter full address" />
             </div>
           </div>
 
@@ -113,24 +113,24 @@ export default function ParentForm({
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Email *</Label>
-                <Input type="email" value={parentForm.parentCredentials.email} onChange={(e) => setParentForm(prev => ({ ...prev, parentCredentials: { ...prev.parentCredentials, email: e.target.value } }))} className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40" placeholder="parent@email.com" required />
+                <Label className="text-slate-700">Email *</Label>
+                <Input type="email" value={parentForm.parentCredentials.email} onChange={(e) => setParentForm(prev => ({ ...prev, parentCredentials: { ...prev.parentCredentials, email: e.target.value } }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="parent@email.com" required />
               </div>
               <div className="space-y-2">
-                <Label className="text-blue-200/80">Password *</Label>
+                <Label className="text-slate-700">Password *</Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
                     value={parentForm.parentCredentials.password}
                     onChange={(e) => setParentForm(prev => ({ ...prev, parentCredentials: { ...prev.parentCredentials, password: e.target.value } }))}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40 pr-10"
+                    className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 pr-10 shadow-sm focus:border-sky-300 focus:ring-sky-200/50"
                     placeholder="Enter password"
                     required={!parentForm.parentData.id && !parentForm.parentData._id}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-200/60 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-900"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -150,7 +150,7 @@ export default function ParentForm({
                         />
                       ))}
                     </div>
-                    <p className="text-xs text-blue-200/60 text-right">
+                    <p className="text-xs text-slate-500 text-right">
                       {strength <= 2 ? 'Weak' : strength === 3 ? 'Medium' : 'Strong'}
                     </p>
                   </div>
@@ -161,7 +161,7 @@ export default function ParentForm({
         </div>
 
         <div className="flex gap-3 mt-6">
-          <Button type="button" variant="outline" onClick={() => setShowFormView(null)} className="flex-1 h-11 bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white">Cancel</Button>
+          <Button type="button" variant="outline" onClick={() => setShowFormView(null)} className="flex-1 h-11 bg-transparent border-white/10 text-slate-700 hover:bg-white/10 hover:text-slate-900">Cancel</Button>
           <Button type="submit" className="flex-1 h-11 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold" disabled={isSubmitting}>
             {isSubmitting ? 'Saving...' : (parentForm.parentData.id || parentForm.parentData._id ? 'Update Parent' : 'Create Parent')}
           </Button>

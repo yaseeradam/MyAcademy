@@ -18,7 +18,9 @@ export default function StudentForm({
   setShowFormView,
   isSubmitting,
   parents,
-  classes
+  classes,
+  school,
+  schoolSettings
 }) {
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [createdStudent, setCreatedStudent] = useState(null)
@@ -38,6 +40,13 @@ export default function StudentForm({
 
   const parentName = parents.find(p => p.id === createdStudent?.parentId)?.name || 'N/A'
   const className = classes.find(c => c.id === createdStudent?.classId)?.name || 'N/A'
+  const schoolName = schoolSettings?.schoolName || school?.name || 'School'
+  const schoolLogo = schoolSettings?.logo || school?.logo || ''
+  const schoolMeta = {
+    address: schoolSettings?.address || school?.address || '',
+    phoneNumber: schoolSettings?.phoneNumber || school?.phoneNumber || '',
+    email: schoolSettings?.email || school?.email || ''
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -73,14 +82,14 @@ export default function StudentForm({
               <div className="flex-1 space-y-2">
                 <label className="block cursor-pointer">
                   <Input type="file" accept="image/*" onChange={(e) => handlePhotoUpload(e, 'student')} className="hidden" id="student-file" />
-                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white" onClick={() => document.getElementById('student-file').click()}>
+                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-slate-700 hover:bg-white/10 hover:text-slate-900" onClick={() => document.getElementById('student-file').click()}>
                     <Upload className="h-4 w-4 mr-2" />
                     Choose Photo from Device
                   </Button>
                 </label>
                 <label className="block cursor-pointer">
                   <Input type="file" accept="image/*" capture="environment" onChange={(e) => handlePhotoUpload(e, 'student')} className="hidden" id="student-camera" />
-                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-blue-200/80 hover:bg-white/10 hover:text-white" onClick={() => document.getElementById('student-camera').click()}>
+                  <Button type="button" variant="outline" className="w-full h-10 bg-transparent border-white/10 text-slate-700 hover:bg-white/10 hover:text-slate-900" onClick={() => document.getElementById('student-camera').click()}>
                     <Camera className="h-4 w-4 mr-2" />
                     Take Photo with Camera
                   </Button>
@@ -99,20 +108,20 @@ export default function StudentForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-slate-700">First Name *</Label>
-                <Input value={studentForm.firstName} onChange={(e) => setStudentForm(prev => ({ ...prev, firstName: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter first name" required />
+                <Input value={studentForm.firstName} onChange={(e) => setStudentForm(prev => ({ ...prev, firstName: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter first name" required />
               </div>
               <div className="space-y-2">
                 <Label className="text-slate-700">Last Name *</Label>
-                <Input value={studentForm.lastName} onChange={(e) => setStudentForm(prev => ({ ...prev, lastName: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter last name" required />
+                <Input value={studentForm.lastName} onChange={(e) => setStudentForm(prev => ({ ...prev, lastName: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter last name" required />
               </div>
               <div className="space-y-2">
                 <Label className="text-slate-700">Date of Birth *</Label>
-                <Input type="date" value={studentForm.dateOfBirth} onChange={(e) => setStudentForm(prev => ({ ...prev, dateOfBirth: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900" required />
+                <Input type="date" value={studentForm.dateOfBirth} onChange={(e) => setStudentForm(prev => ({ ...prev, dateOfBirth: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" required />
               </div>
               <div className="space-y-2">
                 <Label className="text-slate-700">Gender *</Label>
                 <Select value={studentForm.gender} onValueChange={(value) => setStudentForm(prev => ({ ...prev, gender: value }))}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-slate-900"><SelectValue placeholder="Select gender" /></SelectTrigger>
+                  <SelectTrigger className="bg-white/80 border-slate-200/80 text-slate-900 shadow-sm focus:ring-sky-200/50"><SelectValue placeholder="Select gender" /></SelectTrigger>
                   <SelectContent className="bg-white border-slate-200">
                     <SelectItem value="male" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Male</SelectItem>
                     <SelectItem value="female" className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">Female</SelectItem>
@@ -121,16 +130,16 @@ export default function StudentForm({
               </div>
               <div className="space-y-2">
                 <Label className="text-slate-700">Phone Number</Label>
-                <Input value={studentForm.phoneNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, phoneNumber: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter phone" />
+                <Input value={studentForm.phoneNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, phoneNumber: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter phone" />
               </div>
               <div className="space-y-2">
                 <Label className="text-slate-700">Email (Optional)</Label>
-                <Input type="email" value={studentForm.email} onChange={(e) => setStudentForm(prev => ({ ...prev, email: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter email" />
+                <Input type="email" value={studentForm.email} onChange={(e) => setStudentForm(prev => ({ ...prev, email: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter email" />
               </div>
             </div>
             <div className="mt-4 space-y-2">
               <Label className="text-slate-700">Address</Label>
-              <Textarea value={studentForm.address} onChange={(e) => setStudentForm(prev => ({ ...prev, address: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500 min-h-[80px]" placeholder="Enter full address" />
+              <Textarea value={studentForm.address} onChange={(e) => setStudentForm(prev => ({ ...prev, address: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 min-h-[80px] shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter full address" />
             </div>
           </div>
 
@@ -143,16 +152,16 @@ export default function StudentForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-slate-700">Admission Number *</Label>
-                <Input value={studentForm.admissionNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, admissionNumber: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter admission number" required />
+                <Input value={studentForm.admissionNumber} onChange={(e) => setStudentForm(prev => ({ ...prev, admissionNumber: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter admission number" required />
               </div>
               <div className="space-y-2">
                 <Label className="text-slate-700">Emergency Contact</Label>
-                <Input value={studentForm.emergencyContact} onChange={(e) => setStudentForm(prev => ({ ...prev, emergencyContact: e.target.value }))} className="bg-white/5 border-white/10 text-slate-900 placeholder:text-slate-500" placeholder="Enter emergency contact" />
+                <Input value={studentForm.emergencyContact} onChange={(e) => setStudentForm(prev => ({ ...prev, emergencyContact: e.target.value }))} className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50" placeholder="Enter emergency contact" />
               </div>
               <div className="space-y-2">
                 <Label className="text-slate-700">Parent *</Label>
                 <Select value={studentForm.parentId} onValueChange={(value) => setStudentForm(prev => ({ ...prev, parentId: value }))}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-slate-900"><SelectValue placeholder="Select parent" /></SelectTrigger>
+                  <SelectTrigger className="bg-white/80 border-slate-200/80 text-slate-900 shadow-sm focus:ring-sky-200/50"><SelectValue placeholder="Select parent" /></SelectTrigger>
                   <SelectContent className="bg-white border-slate-200">
                     {parents.map((parent) => (<SelectItem key={parent.id} value={parent.id} className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">{parent.name} - {parent.email}</SelectItem>))}
                   </SelectContent>
@@ -161,7 +170,7 @@ export default function StudentForm({
               <div className="space-y-2">
                 <Label className="text-slate-700">Class *</Label>
                 <Select value={studentForm.classId} onValueChange={(value) => setStudentForm(prev => ({ ...prev, classId: value }))}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-slate-900"><SelectValue placeholder="Select class" /></SelectTrigger>
+                  <SelectTrigger className="bg-white/80 border-slate-200/80 text-slate-900 shadow-sm focus:ring-sky-200/50"><SelectValue placeholder="Select class" /></SelectTrigger>
                   <SelectContent className="bg-white border-slate-200">
                     {classes.map((cls) => (<SelectItem key={cls.id} value={cls.id} className="text-slate-800 focus:bg-slate-100 focus:text-slate-900">{cls.name}</SelectItem>))}
                   </SelectContent>
@@ -185,6 +194,9 @@ export default function StudentForm({
         student={createdStudent}
         parentName={parentName}
         className={className}
+        schoolName={schoolName}
+        schoolLogo={schoolLogo}
+        schoolMeta={schoolMeta}
       />
     </div>
   )

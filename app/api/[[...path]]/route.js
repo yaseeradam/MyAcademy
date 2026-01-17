@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
@@ -420,8 +420,18 @@ export async function GET(request, { params }) {
         if (!parentData || parentData.role !== 'parent') {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
+        const parentUser = await db.collection('users').findOne({
+          id: parentData.id,
+          role: 'parent',
+          schoolId: parentData.schoolId
+        })
+        const parentIdCandidates = [parentData.id]
+        if (parentUser?._id) {
+          parentIdCandidates.push(parentUser._id)
+          parentIdCandidates.push(parentUser._id.toString())
+        }
         const parentStudents = await db.collection('students')
-          .find({ parentId: parentData.id, schoolId: parentData.schoolId })
+          .find({ parentId: { $in: parentIdCandidates }, schoolId: parentData.schoolId })
           .toArray()
         if (!cacheBypass && !NO_CACHE_PATHS.has(pathStr)) {
           setCache(pathStr, searchParams, cacheUser, parentStudents)
@@ -1539,8 +1549,28 @@ export async function PUT(request, { params }) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        // Remove _id if present
-        const { _id: pid, ...parentUpdateData } = body;
+        const { parentData, parentCredentials, ...parentRest } = body
+        const rawParentData = parentData || parentRest
+        const { _id: pid, ...parentUpdateData } = rawParentData || {}
+        const updatePayload = { ...parentUpdateData, updatedAt: new Date().toISOString() }
+
+        const emailToSet = parentCredentials?.email || parentUpdateData.email
+        if (emailToSet) {
+          const existingParent = await db.collection('users').findOne({
+            email: emailToSet,
+            id: { $ne: updateId }
+          })
+          if (existingParent) {
+            return NextResponse.json({ error: 'Email already exists' }, { status: 400 })
+          }
+          updatePayload.email = emailToSet
+        }
+
+        if (parentCredentials?.password) {
+          const hashedParentPassword = await bcrypt.hash(parentCredentials.password, 10)
+          updatePayload.password = hashedParentPassword
+          updatePayload.plainPassword = parentCredentials.password
+        }
 
         // Parents are users with role 'parent' (simplified for likely data model)
         // Or if there is a separate 'parents' collection? 
@@ -1552,7 +1582,7 @@ export async function PUT(request, { params }) {
 
         await db.collection('users').updateOne(
           { id: updateId, role: 'parent', schoolId: userData.schoolId },
-          { $set: { ...parentUpdateData, updatedAt: new Date().toISOString() } }
+          { $set: updatePayload }
         )
 
         const updatedParent = await db.collection('users').findOne({ id: updateId, role: 'parent', schoolId: userData.schoolId })

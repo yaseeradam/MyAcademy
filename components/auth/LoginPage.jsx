@@ -45,7 +45,7 @@ export default function LoginPage({ onLogin }) {
   }
 
   return (
-    <div className="min-h-screen flex theme-soft text-foreground relative overflow-hidden">
+    <div className="h-screen flex theme-soft text-foreground relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Gradient orbs */}
@@ -74,7 +74,7 @@ export default function LoginPage({ onLogin }) {
       </div>
 
       {/* Left Side - Branding */}
-      <div className={`hidden lg:flex lg:w-1/2 p-12 flex-col justify-between relative z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+      <div className={`hidden lg:flex lg:w-1/2 p-10 flex-col justify-between relative z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
         <div>
           {/* Logo & Title */}
           <div className="flex items-center gap-4 mb-16">
@@ -104,40 +104,7 @@ export default function LoginPage({ onLogin }) {
             </p>
           </div>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="group p-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-sky-200 transition-all duration-300">
-              <div className="p-3 bg-gradient-to-br from-sky-400/20 to-emerald-300/20 rounded-xl w-fit mb-3 group-hover:scale-110 transition-transform">
-                <GraduationCap className="h-6 w-6 text-sky-500" />
-              </div>
-              <h3 className="text-slate-900 font-semibold mb-1">Student Records</h3>
-              <p className="text-slate-500 text-sm">Complete academic profiles</p>
-            </div>
-
-            <div className="group p-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-amber-200 transition-all duration-300">
-              <div className="p-3 bg-gradient-to-br from-amber-300/30 to-orange-300/20 rounded-xl w-fit mb-3 group-hover:scale-110 transition-transform">
-                <Users className="h-6 w-6 text-amber-500" />
-              </div>
-              <h3 className="text-slate-900 font-semibold mb-1">Staff Portal</h3>
-              <p className="text-slate-500 text-sm">Streamlined communication</p>
-            </div>
-
-            <div className="group p-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-emerald-200 transition-all duration-300">
-              <div className="p-3 bg-gradient-to-br from-emerald-300/30 to-teal-300/20 rounded-xl w-fit mb-3 group-hover:scale-110 transition-transform">
-                <BookOpen className="h-6 w-6 text-emerald-500" />
-              </div>
-              <h3 className="text-slate-900 font-semibold mb-1">Curriculum</h3>
-              <p className="text-slate-500 text-sm">Comprehensive tools</p>
-            </div>
-
-            <div className="group p-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-sky-200 transition-all duration-300">
-              <div className="p-3 bg-gradient-to-br from-sky-300/30 to-cyan-300/20 rounded-xl w-fit mb-3 group-hover:scale-110 transition-transform">
-                <ClipboardCheck className="h-6 w-6 text-sky-500" />
-              </div>
-              <h3 className="text-slate-900 font-semibold mb-1">Attendance</h3>
-              <p className="text-slate-500 text-sm">Real-time tracking</p>
-            </div>
-          </div>
+          {/* Feature Cards removed to keep login page unscrollable */}
         </div>
 
         {/* Footer */}
@@ -147,10 +114,10 @@ export default function LoginPage({ onLogin }) {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className={`flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10 transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+      <div className={`flex-1 flex items-center justify-center p-4 lg:p-10 relative z-10 transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
+          <div className="lg:hidden flex items-center justify-center gap-3 mb-6">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-emerald-300 rounded-xl blur-md opacity-50" />
               <img
@@ -170,9 +137,9 @@ export default function LoginPage({ onLogin }) {
             {/* Card Header Gradient */}
             <div className="h-1.5 bg-gradient-to-r from-sky-400 via-amber-300 to-emerald-300" />
 
-            <CardContent className="p-8 lg:p-10">
+            <CardContent className="p-6 lg:p-8">
               {/* Welcome Header */}
-              <div className="text-center mb-8">
+              <div className="text-center mb-6">
                 <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-sky-400/10 to-emerald-300/10 rounded-2xl mb-4">
                   <Lock className="h-6 w-6 text-sky-500" />
                 </div>
@@ -181,7 +148,7 @@ export default function LoginPage({ onLogin }) {
               </div>
 
               {/* Login Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Email Field */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-slate-600 font-medium text-sm">
@@ -267,7 +234,7 @@ export default function LoginPage({ onLogin }) {
               </form>
 
               {/* Divider */}
-              <div className="relative my-8">
+              <div className="relative my-5 hidden sm:block">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-slate-200/80" />
                 </div>
@@ -279,7 +246,7 @@ export default function LoginPage({ onLogin }) {
               </div>
 
               {/* Help Text */}
-              <p className="text-center text-sm text-slate-400">
+              <p className="text-center text-sm text-slate-400 hidden sm:block">
                 Need help? Contact{' '}
                 <a href="mailto:support@myacademy.com" className="text-sky-600 hover:text-sky-700 font-medium transition-colors">
                   IT Support
@@ -289,7 +256,7 @@ export default function LoginPage({ onLogin }) {
           </Card>
 
           {/* Security Badge */}
-          <div className="flex items-center justify-center gap-2 mt-6 text-slate-400 text-xs">
+          <div className="hidden sm:flex items-center justify-center gap-2 mt-4 text-slate-400 text-xs">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>

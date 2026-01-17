@@ -14,8 +14,35 @@ import { format } from 'date-fns'
 // ... existing imports ...
 
 export default function SchoolFeesPage() {
-    // ... existing state ...
+    const [fees, setFees] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [processingId, setProcessingId] = useState(null)
 
+    const fetchFees = async () => {
+        try {
+            setLoading(true)
+            const token = localStorage.getItem('token')
+            if (!token) return
+
+            const res = await fetch('/api/fees/parent', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (res.ok) {
+                const data = await res.json()
+                setFees(data.fees || [])
+            }
+        } catch (error) {
+            console.error('Failed to fetch fees:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchFees()
+    }, [])
     const handlePay = async (feeId) => {
         setProcessingId(feeId)
         try {

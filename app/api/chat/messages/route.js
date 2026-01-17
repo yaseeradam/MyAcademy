@@ -27,7 +27,6 @@ function verify(request) {
 
 export async function GET(request) {
   try {
-    const bypassCache = shouldBypassCache(request)
     const user = verify(request)
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { searchParams } = new URL(request.url)
@@ -35,16 +34,11 @@ export async function GET(request) {
     const limitParam = searchParams.get('limit')
     if (!conversationId) return NextResponse.json({ error: 'conversationId required' }, { status: 400 })
     const limit = limitParam ? parseInt(limitParam, 10) : 100
-    if (!bypassCache) {
-      const cached = getCache(buildCacheKey(request, user))
-      if (cached) return NextResponse.json(cached)
-    }
     const db = await connect()
     const messages = await db.collection('chat_messages').find({
       conversationId,
       schoolId: user.schoolId
     }).sort({ createdAt: 1 }).limit(limit).toArray()
-    if (!bypassCache) setCache(buildCacheKey(request, user), messages, 3000)
     return NextResponse.json(messages)
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -2,167 +2,136 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { User, Mail, Phone, MapPin, Calendar, Hash, Users, Download } from 'lucide-react'
+import { User, Mail, Phone, MapPin, Calendar, Hash, Users, Download, School } from 'lucide-react'
 import jsPDF from 'jspdf'
 
-export function ViewStudentModal({ open, onOpenChange, student, parent, classInfo, onEdit, schoolName }) {
-  const downloadPDF = () => {
+export function ViewStudentModal({ open, onOpenChange, student, parent, classInfo, onEdit, schoolName, schoolLogo, schoolMeta }) {
+  const loadImageData = async (url) => {
+    if (!url) return null
+    try {
+      const response = await fetch(url)
+      if (!response.ok) return null
+      const blob = await response.blob()
+      return await new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result)
+        reader.onerror = () => resolve(null)
+        reader.readAsDataURL(blob)
+      })
+    } catch {
+      return null
+    }
+  }
+
+  const getImageFormat = (dataUrl) => {
+    if (!dataUrl) return 'PNG'
+    return dataUrl.startsWith('data:image/png') ? 'PNG' : 'JPEG'
+  }
+
+  const downloadPDF = async () => {
     const doc = new jsPDF()
-    
-    // Colorful header with gradient effect
-    doc.setFillColor(59, 130, 246)
-    doc.rect(0, 0, 210, 40, 'F')
-    doc.setFillColor(37, 99, 235)
-    doc.rect(0, 30, 210, 10, 'F')
-    
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(24)
-    doc.setFont(undefined, 'bold')
-    doc.text('STUDENT RECORD', 105, 15, { align: 'center' })
-    doc.setFontSize(14)
-    doc.text(schoolName || 'School Name', 105, 25, { align: 'center' })
-    doc.setFontSize(10)
-    doc.text('Official Academic Document', 105, 33, { align: 'center' })
-    
-    // Add student photo if available
-    if (student.photo) {
-      try {
-        // Add white background for photo
-        doc.setFillColor(255, 255, 255)
-        doc.roundedRect(14, 49, 42, 42, 3, 3, 'F')
-        
-        // Add photo
-        doc.addImage(student.photo, 'JPEG', 15, 50, 40, 40)
-        
-        // Add blue border around photo
-        doc.setDrawColor(59, 130, 246)
-        doc.setLineWidth(3)
-        doc.roundedRect(14, 49, 42, 42, 3, 3, 'S')
-      } catch (e) {
-        // If photo fails, add placeholder
-        doc.setFillColor(229, 231, 235)
-        doc.roundedRect(14, 49, 42, 42, 3, 3, 'F')
-        doc.setTextColor(107, 114, 128)
-        doc.setFontSize(10)
-        doc.text('No Photo', 35, 73, { align: 'center' })
-      }
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const margin = 14
+    const headerHeight = 34
+    const logoSize = 18
+    const contentTop = headerHeight + 18
+
+    doc.setFillColor(248, 250, 252)
+    doc.rect(0, 0, pageWidth, headerHeight, 'F')
+    doc.setDrawColor(226, 232, 240)
+    doc.line(0, headerHeight, pageWidth, headerHeight)
+
+    const logoData = await loadImageData(schoolLogo)
+    if (logoData) {
+      doc.addImage(logoData, getImageFormat(logoData), margin, 8, logoSize, logoSize)
     } else {
-      // Add placeholder if no photo
-      doc.setFillColor(229, 231, 235)
-      doc.roundedRect(14, 49, 42, 42, 3, 3, 'F')
-      doc.setTextColor(107, 114, 128)
-      doc.setFontSize(10)
-      doc.text('No Photo', 35, 73, { align: 'center' })
+      doc.setFillColor(226, 232, 240)
+      doc.roundedRect(margin, 8, logoSize, logoSize, 2, 2, 'F')
+      doc.setTextColor(100, 116, 139)
+      doc.setFontSize(9)
+      doc.text('LOGO', margin + 4, 19)
     }
-    
-    // Student name section
-    doc.setTextColor(0, 0, 0)
-    doc.setFontSize(18)
-    doc.setFont(undefined, 'bold')
-    doc.text(`${student.firstName} ${student.lastName}`, 60, 60)
-    
-    doc.setFontSize(11)
-    doc.setFont(undefined, 'normal')
-    doc.setTextColor(100, 100, 100)
-    doc.text(`Admission No: ${student.admissionNumber}`, 60, 68)
-    
-    // Personal Information Box
-    let y = 100
-    doc.setFillColor(239, 246, 255)
-    doc.rect(15, y, 180, 8, 'F')
-    doc.setTextColor(37, 99, 235)
-    doc.setFontSize(12)
-    doc.setFont(undefined, 'bold')
-    doc.text('PERSONAL INFORMATION', 20, y + 6)
-    
-    y += 15
-    doc.setTextColor(0, 0, 0)
-    doc.setFont(undefined, 'normal')
-    doc.setFontSize(10)
-    
-    doc.setFont(undefined, 'bold')
-    doc.text('Date of Birth:', 20, y)
-    doc.setFont(undefined, 'normal')
-    doc.text(student.dateOfBirth, 60, y)
-    
-    doc.setFont(undefined, 'bold')
-    doc.text('Gender:', 120, y)
-    doc.setFont(undefined, 'normal')
-    doc.text(student.gender, 145, y)
-    
-    y += 8
-    if (student.email) {
-      doc.setFont(undefined, 'bold')
-      doc.text('Email:', 20, y)
-      doc.setFont(undefined, 'normal')
-      doc.text(student.email, 60, y)
-      y += 8
-    }
-    
-    if (student.phoneNumber) {
-      doc.setFont(undefined, 'bold')
-      doc.text('Phone:', 20, y)
-      doc.setFont(undefined, 'normal')
-      doc.text(student.phoneNumber, 60, y)
-      y += 8
-    }
-    
-    if (student.address) {
-      doc.setFont(undefined, 'bold')
-      doc.text('Address:', 20, y)
-      doc.setFont(undefined, 'normal')
-      const splitAddress = doc.splitTextToSize(student.address, 130)
-      doc.text(splitAddress, 60, y)
-      y += splitAddress.length * 5 + 3
-    }
-    
-    // Academic Information Box
-    y += 5
-    doc.setFillColor(243, 232, 255)
-    doc.rect(15, y, 180, 8, 'F')
-    doc.setTextColor(126, 34, 206)
-    doc.setFontSize(12)
-    doc.setFont(undefined, 'bold')
-    doc.text('ACADEMIC INFORMATION', 20, y + 6)
-    
-    y += 15
-    doc.setTextColor(0, 0, 0)
-    doc.setFontSize(10)
-    doc.setFont(undefined, 'bold')
-    doc.text('Class:', 20, y)
-    doc.setFont(undefined, 'normal')
-    doc.text(classInfo?.name || 'N/A', 60, y)
-    
-    y += 8
-    doc.setFont(undefined, 'bold')
-    doc.text('Parent/Guardian:', 20, y)
-    doc.setFont(undefined, 'normal')
-    doc.text(parent?.name || 'N/A', 60, y)
-    
-    if (parent?.phoneNumber) {
-      y += 8
-      doc.setFont(undefined, 'bold')
-      doc.text('Parent Contact:', 20, y)
-      doc.setFont(undefined, 'normal')
-      doc.text(parent.phoneNumber, 60, y)
-    }
-    
-    if (student.emergencyContact) {
-      y += 8
-      doc.setFont(undefined, 'bold')
-      doc.text('Emergency Contact:', 20, y)
-      doc.setFont(undefined, 'normal')
-      doc.text(student.emergencyContact, 60, y)
-    }
-    
-    // Footer
-    doc.setFillColor(59, 130, 246)
-    doc.rect(0, 280, 210, 17, 'F')
-    doc.setTextColor(255, 255, 255)
+
+    doc.setTextColor(15, 23, 42)
+    doc.setFontSize(16)
+    doc.text(schoolName || 'School', margin + logoSize + 6, 18)
     doc.setFontSize(9)
-    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 288, { align: 'center' })
-    doc.text('This is an official document', 105, 293, { align: 'center' })
-    
+    doc.setTextColor(100, 116, 139)
+    const metaLine = [schoolMeta?.address, schoolMeta?.phoneNumber, schoolMeta?.email].filter(Boolean).join(' | ')
+    doc.text(metaLine || 'School address and contact', margin + logoSize + 6, 26)
+
+    doc.setTextColor(15, 23, 42)
+    doc.setFontSize(14)
+    doc.text('Student Record', margin, contentTop)
+    doc.setDrawColor(226, 232, 240)
+    doc.line(margin, contentTop + 4, pageWidth - margin, contentTop + 4)
+
+    const photoX = pageWidth - margin - 26
+    const photoY = contentTop - 6
+    doc.setDrawColor(226, 232, 240)
+    doc.roundedRect(photoX, photoY, 26, 26, 3, 3, 'S')
+    if (student.photo && student.photo.startsWith('data:image')) {
+      doc.addImage(student.photo, getImageFormat(student.photo), photoX + 1, photoY + 1, 24, 24)
+    }
+
+    doc.setFontSize(10)
+    doc.setTextColor(71, 85, 105)
+    let y = contentTop + 12
+
+    const sectionTitle = (label) => {
+      doc.setFillColor(241, 245, 249)
+      doc.rect(margin, y - 5, pageWidth - margin * 2, 7, 'F')
+      doc.setTextColor(15, 23, 42)
+      doc.setFontSize(10)
+      doc.text(label, margin + 2, y)
+      y += 10
+    }
+
+    const addRow = (label, value, x) => {
+      doc.setTextColor(100, 116, 139)
+      doc.setFontSize(9)
+      doc.text(label, x, y)
+      doc.setTextColor(15, 23, 42)
+      doc.setFontSize(10)
+      doc.text(value || 'N/A', x + 36, y)
+      y += 7
+    }
+
+    sectionTitle('Student Information')
+    addRow('Full Name:', `${student.firstName} ${student.lastName}`, margin)
+    addRow('Admission No:', student.admissionNumber, margin)
+    addRow('Date of Birth:', student.dateOfBirth || 'N/A', margin)
+    addRow('Gender:', student.gender || 'N/A', margin)
+    addRow('Status:', student.active ? 'Active' : 'Inactive', margin)
+
+    sectionTitle('Academic Information')
+    addRow('Class:', classInfo?.name || 'N/A', margin)
+    addRow('Parent:', parent?.name || 'N/A', margin)
+
+    sectionTitle('Contact Information')
+    if (student.phoneNumber) addRow('Phone:', student.phoneNumber, margin)
+    if (student.email) addRow('Email:', student.email, margin)
+    if (parent?.phoneNumber) addRow('Parent Phone:', parent.phoneNumber, margin)
+    if (student.emergencyContact) addRow('Emergency:', student.emergencyContact, margin)
+    if (student.address) {
+      doc.setTextColor(100, 116, 139)
+      doc.setFontSize(9)
+      doc.text('Address:', margin, y)
+      doc.setTextColor(15, 23, 42)
+      doc.setFontSize(10)
+      const addressLines = doc.splitTextToSize(student.address, pageWidth - margin * 2 - 36)
+      doc.text(addressLines, margin + 36, y)
+      y += 7 * addressLines.length
+    }
+
+    const footerY = doc.internal.pageSize.getHeight() - 18
+    doc.setDrawColor(226, 232, 240)
+    doc.line(margin, footerY, pageWidth - margin, footerY)
+    doc.setTextColor(100, 116, 139)
+    doc.setFontSize(9)
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, footerY + 8)
+    doc.text('Signature: ____________________', pageWidth - margin - 70, footerY + 8)
+
     doc.save(`${student.firstName}_${student.lastName}_Record.pdf`)
   }
 
@@ -170,59 +139,85 @@ export function ViewStudentModal({ open, onOpenChange, student, parent, classInf
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader><DialogTitle>Student Details</DialogTitle></DialogHeader>
-        {student.photo && (
-          <div className="flex justify-center py-4">
-            <img src={student.photo} alt="Student" className="h-32 w-32 rounded-full object-cover border-4 border-blue-500 shadow-lg" />
-          </div>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 py-4">
-          <div className="flex gap-2 p-3 bg-blue-50 rounded-lg">
-            <User className="h-5 w-5 text-blue-600" />
-            <div><p className="text-xs text-gray-600">Name</p><p className="font-semibold">{student.firstName} {student.lastName}</p></div>
-          </div>
-          <div className="flex gap-2 p-3 bg-purple-50 rounded-lg">
-            <Hash className="h-5 w-5 text-purple-600" />
-            <div><p className="text-xs text-gray-600">Admission</p><p className="font-semibold">{student.admissionNumber}</p></div>
-          </div>
-          <div className="flex gap-2 p-3 bg-green-50 rounded-lg">
-            <Calendar className="h-5 w-5 text-green-600" />
-            <div><p className="text-xs text-gray-600">DOB</p><p className="font-semibold">{student.dateOfBirth}</p></div>
-          </div>
-          <div className="flex gap-2 p-3 bg-pink-50 rounded-lg">
-            <User className="h-5 w-5 text-pink-600" />
-            <div><p className="text-xs text-gray-600">Gender</p><p className="font-semibold capitalize">{student.gender}</p></div>
-          </div>
-          {student.email && (
-            <div className="flex gap-2 p-3 bg-orange-50 rounded-lg">
-              <Mail className="h-5 w-5 text-orange-600" />
-              <div><p className="text-xs text-gray-600">Email</p><p className="font-semibold text-sm">{student.email}</p></div>
+      <DialogContent className="sm:max-w-3xl bg-white text-slate-900 border-slate-200 shadow-xl">
+        <DialogHeader>
+          <DialogTitle>Student Record</DialogTitle>
+        </DialogHeader>
+
+        <div className="rounded-xl border border-slate-200 bg-gradient-to-r from-slate-50 to-white p-4 flex items-center gap-4">
+          {schoolLogo ? (
+            <img src={schoolLogo} alt={schoolName} className="h-12 w-12 rounded-lg object-cover ring-1 ring-slate-200" />
+          ) : (
+            <div className="h-12 w-12 rounded-lg bg-slate-100 flex items-center justify-center">
+              <School className="h-6 w-6 text-slate-500" />
             </div>
           )}
-          {student.phoneNumber && (
-            <div className="flex gap-2 p-3 bg-teal-50 rounded-lg">
-              <Phone className="h-5 w-5 text-teal-600" />
-              <div><p className="text-xs text-gray-600">Phone</p><p className="font-semibold">{student.phoneNumber}</p></div>
-            </div>
-          )}
-          <div className="flex gap-2 p-3 bg-indigo-50 rounded-lg">
-            <Users className="h-5 w-5 text-indigo-600" />
-            <div><p className="text-xs text-gray-600">Class</p><p className="font-semibold">{classInfo?.name || 'N/A'}</p></div>
+          <div className="flex-1">
+            <p className="text-xs text-slate-500">School</p>
+            <h2 className="text-lg font-semibold">{schoolName || 'School'}</h2>
+            <p className="text-xs text-slate-500">{schoolMeta?.address || 'Address not set'}</p>
           </div>
-          <div className="flex gap-2 p-3 bg-cyan-50 rounded-lg">
-            <User className="h-5 w-5 text-cyan-600" />
-            <div><p className="text-xs text-gray-600">Parent</p><p className="font-semibold text-sm">{parent?.name || 'N/A'}</p></div>
+          <div className="text-xs text-slate-500 text-right hidden sm:block">
+            <div>{schoolMeta?.phoneNumber || 'Phone not set'}</div>
+            <div>{schoolMeta?.email || 'Email not set'}</div>
           </div>
-          {student.address && (
-            <div className="col-span-2 flex gap-2 p-3 bg-gray-50 rounded-lg">
-              <MapPin className="h-5 w-5 text-gray-600" />
-              <div><p className="text-xs text-gray-600">Address</p><p className="font-semibold">{student.address}</p></div>
-            </div>
-          )}
         </div>
-        <div className="flex gap-2">
-          <Button onClick={downloadPDF} variant="outline" className="flex-1"><Download className="h-4 w-4 mr-2" />Download</Button>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div className="rounded-xl border border-slate-200 bg-white p-4">
+            <div className="flex items-center gap-3">
+              {student.photo ? (
+                <img src={student.photo} alt="Student" className="h-14 w-14 rounded-lg object-cover ring-1 ring-slate-200" />
+              ) : (
+                <div className="h-14 w-14 rounded-lg bg-slate-100 flex items-center justify-center">
+                  <User className="h-6 w-6 text-slate-500" />
+                </div>
+              )}
+              <div>
+                <p className="text-sm text-slate-500">Student</p>
+                <p className="text-base font-semibold">{student.firstName} {student.lastName}</p>
+                <p className="text-xs text-slate-500">Admission #{student.admissionNumber}</p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2 text-sm text-slate-700">
+              <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-slate-400" /><span>{student.dateOfBirth || 'N/A'}</span></div>
+              <div className="flex items-center gap-2"><Users className="h-4 w-4 text-slate-400" /><span>{classInfo?.name || 'N/A'}</span></div>
+              <div className="flex items-center gap-2"><Hash className="h-4 w-4 text-slate-400" /><span className="capitalize">{student.gender || 'N/A'}</span></div>
+              {student.phoneNumber && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" /><span>{student.phoneNumber}</span></div>}
+              {student.email && <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-400" /><span>{student.email}</span></div>}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-sm text-slate-500">Guardian</p>
+            <div className="mt-2 space-y-2 text-sm text-slate-700">
+              <div className="flex items-center gap-2"><User className="h-4 w-4 text-slate-400" /><span>{parent?.name || 'N/A'}</span></div>
+              {parent?.phoneNumber && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" /><span>{parent.phoneNumber}</span></div>}
+              {student.emergencyContact && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" /><span>{student.emergencyContact}</span></div>}
+              {student.address && (
+                <div className="flex items-start gap-2">
+                  <MapPin className="h-4 w-4 text-slate-400 mt-0.5" />
+                  <span>{student.address}</span>
+                </div>
+              )}
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-2">
+                <p>Status</p>
+                <p className="text-sm font-medium text-slate-700">{student.active ? 'Active' : 'Inactive'}</p>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-2">
+                <p>Admission Date</p>
+                <p className="text-sm font-medium text-slate-700">{new Date().toLocaleDateString()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-2 mt-5">
+          <Button onClick={downloadPDF} variant="outline" className="flex-1">
+            <Download className="h-4 w-4 mr-2" />Download PDF
+          </Button>
           <Button onClick={onEdit} variant="outline" className="flex-1">Edit</Button>
           <Button onClick={() => onOpenChange(false)} className="flex-1">Close</Button>
         </div>

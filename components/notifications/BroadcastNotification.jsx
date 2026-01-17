@@ -20,7 +20,6 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react'
-import socketManager from '@/lib/socket-client'
 
 function BroadcastNotification({ currentUser, trigger }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -66,26 +65,12 @@ function BroadcastNotification({ currentUser, trigger }) {
     }
   }, [])
 
-  // ✅ Only load once when dialog opens
+  // ? Only load once when dialog opens
   useEffect(() => {
     if (isOpen) {
-      const token = localStorage.getItem('token')
-      if (token) {
-        try {
-          socketManager.connect(token)
-        } catch (e) {}
-      }
       loadUserStats()
     }
   }, [isOpen, loadUserStats])
-
-  // ✅ Clean up socket listeners on unmount
-  useEffect(() => {
-    return () => {
-      socketManager.off('broadcast_sent')
-      socketManager.off('error')
-    }
-  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -98,51 +83,45 @@ function BroadcastNotification({ currentUser, trigger }) {
     setResult(null)
 
     try {
-      // 🔒 Remove any existing listeners before adding new ones
-      socketManager.off('broadcast_sent')
-      socketManager.off('error')
-
-      const handleBroadcastResult = (data) => {
-        setResult(data)
-        setIsLoading(false)
-
-        if (data.count > 0) {
-          setFormData({
-            title: '',
-            message: '',
-            targetAudience: [],
-            priority: 'medium'
-          })
-
-          setTimeout(() => {
-            setIsOpen(false)
-            setResult(null)
-          }, 3000)
-        }
-
-        socketManager.off('broadcast_sent', handleBroadcastResult)
-        socketManager.off('error', handleBroadcastError)
-      }
-
-      const handleBroadcastError = (error) => {
-        setResult({ error })
-        setIsLoading(false)
-        socketManager.off('broadcast_sent', handleBroadcastResult)
-        socketManager.off('error', handleBroadcastError)
-      }
-
-      socketManager.on('broadcast_sent', handleBroadcastResult)
-      socketManager.on('error', handleBroadcastError)
-
-      socketManager.broadcastNotification({
-        title: formData.title.trim(),
-        message: formData.message.trim(),
-        targetAudience: formData.targetAudience,
-        priority: formData.priority
+      const token = localStorage.getItem('token')
+      const response = await fetch('/api/notifications/broadcast', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: formData.title.trim(),
+          message: formData.message.trim(),
+          targetAudience: formData.targetAudience,
+          priority: formData.priority
+        })
       })
+
+      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data?.error || 'Failed to send notification')
+      }
+
+      setResult(data)
+      setIsLoading(false)
+
+      if (data.count > 0) {
+        setFormData({
+          title: '',
+          message: '',
+          targetAudience: [],
+          priority: 'medium'
+        })
+
+        setTimeout(() => {
+          setIsOpen(false)
+          setResult(null)
+        }, 3000)
+      }
     } catch (error) {
       console.error('Error broadcasting notification:', error)
-      setResult({ error: 'Failed to send notification' })
+      setResult({ error: error.message || 'Failed to send notification' })
       setIsLoading(false)
     }
   }

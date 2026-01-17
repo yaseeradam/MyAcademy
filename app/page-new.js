@@ -14,6 +14,7 @@ import DashboardPage from '@/components/pages/DashboardPage'
 import StudentsPage from '@/components/pages/StudentsPage'
 import TeachersPage from '@/components/pages/TeachersPage'
 import ParentsPage from '@/components/pages/ParentsPage'
+import MyChildrenPage from '@/components/pages/MyChildrenPage'
 import ClassesPage from '@/components/pages/ClassesPage'
 import SubjectsPage from '@/components/pages/SubjectsPage'
 import AssignmentsPage from '@/components/pages/AssignmentsPage'
@@ -49,7 +50,7 @@ function App() {
   const [showAssignmentModal, setShowAssignmentModal] = useState(false)
   const [showMasterSchoolModal, setShowMasterSchoolModal] = useState(false)
 
-  const { stats, students, teachers, parents, classes, subjects, assignments, attendance, notifications, schools, setStudents, setTeachers, setParents, setClasses, setSubjects, setAssignments, setAttendance, setNotifications, setSchools, apiCall, loadDashboardData, loadNotifications, loadTodayAttendance } = useAppData(user, token)
+  const { stats, students, teachers, parents, classes, subjects, assignments, attendance, notifications, schools, feePayments, setStudents, setTeachers, setParents, setClasses, setSubjects, setAssignments, setAttendance, setNotifications, setSchools, apiCall, loadDashboardData, loadNotifications, loadTodayAttendance } = useAppData(user, token)
   
   const formHandlers = useForms(apiCall, loadDashboardData)
   const filterHandlers = useFilters()
@@ -154,12 +155,15 @@ function App() {
       
       {showFormView === 'teacher' && <TeacherForm {...formHandlers} setShowFormView={setShowFormView} />}
       {showFormView === 'parent' && <ParentForm {...formHandlers} setShowFormView={setShowFormView} />}
-      {showFormView === 'student' && <StudentForm {...formHandlers} setShowFormView={setShowFormView} parents={parents} classes={classes} />}
+      {showFormView === 'student' && <StudentForm {...formHandlers} setShowFormView={setShowFormView} parents={parents} classes={classes} school={school} schoolSettings={schoolSettings} />}
       
       {activeTab === 'teachers' && user.role === 'school_admin' && !showFormView && <TeachersPage teachers={teachers} school={school} {...filterHandlers} setShowFormView={setShowFormView} toast={toast} />}
       {activeTab === 'parents' && user.role === 'school_admin' && !showFormView && <ParentsPage parents={parents} students={students} school={school} {...filterHandlers} setShowFormView={setShowFormView} toast={toast} />}
-      {activeTab === 'students' && user.role === 'school_admin' && !showFormView && <StudentsPage students={students} classes={classes} parents={parents} school={school} {...filterHandlers} setShowFormView={setShowFormView} toast={toast} />}
+      {activeTab === 'students' && user.role === 'school_admin' && !showFormView && <StudentsPage students={students} classes={classes} parents={parents} school={school} schoolSettings={schoolSettings} {...filterHandlers} setShowFormView={setShowFormView} toast={toast} />}
       {activeTab === 'classes' && user.role === 'school_admin' && <ClassesPage classes={classes} students={students} showClassModal={showClassModal} setShowClassModal={setShowClassModal} classForm={formHandlers.classForm} setClassForm={formHandlers.setClassForm} handleCreateClass={formHandlers.handleCreateClass} />}
+      {activeTab === 'my-children' && user.role === 'parent' && (
+        <MyChildrenPage students={students} classes={classes} attendance={attendance} feePayments={feePayments} />
+      )}
       {activeTab === 'subjects' && user.role === 'school_admin' && <SubjectsPage subjects={subjects} showSubjectModal={showSubjectModal} setShowSubjectModal={setShowSubjectModal} subjectForm={formHandlers.subjectForm} setSubjectForm={formHandlers.setSubjectForm} handleCreateSubject={formHandlers.handleCreateSubject} />}
       {activeTab === 'assignments' && user.role === 'school_admin' && <AssignmentsPage assignments={assignments} teachers={teachers} classes={classes} subjects={subjects} showAssignmentModal={showAssignmentModal} setShowAssignmentModal={setShowAssignmentModal} assignmentForm={formHandlers.assignmentForm} setAssignmentForm={formHandlers.setAssignmentForm} handleCreateAssignment={(e) => formHandlers.handleCreateAssignment(e, subjects, classes)} />}
       {activeTab === 'attendance' && (user.role === 'school_admin' || user.role === 'teacher') && <AttendancePage user={user} attendance={attendance} students={students} teachers={teachers} classes={classes} {...attendanceHandlers} />}
@@ -170,7 +174,7 @@ function App() {
       {activeTab === 'gamification' && <GamificationDashboard currentUser={user} />}
       {activeTab === 'messages' && <MessagesPage currentUser={user} onBack={() => setActiveTab('dashboard')} />}
       
-      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'assignments', 'attendance', 'billing', 'payments', 'gamification', 'messages', 'school-settings', 'master-settings'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
+      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'assignments', 'attendance', 'billing', 'payments', 'gamification', 'messages', 'school-settings', 'master-settings', 'my-children'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
       
       {showCalculator && <CalculatorApp isOpen={showCalculator} onClose={() => setShowCalculator(false)} />}
     </MainLayout>

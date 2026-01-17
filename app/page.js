@@ -19,6 +19,7 @@ import DashboardPage from '@/components/pages/DashboardPage'
 import StudentsPage from '@/components/pages/StudentsPage'
 import TeachersPage from '@/components/pages/TeachersPage'
 import ParentsPage from '@/components/pages/ParentsPage'
+import MyChildrenPage from '@/components/pages/MyChildrenPage'
 import ClassesPage from '@/components/pages/ClassesPage'
 import SubjectsPage from '@/components/pages/SubjectsPage'
 import AssignmentsPage from '@/components/pages/AssignmentsPage'
@@ -532,13 +533,13 @@ function App() {
 
       {showFormView === 'teacher' && <TeacherForm {...formHandlers} setShowFormView={setShowFormView} />}
       {showFormView === 'parent' && <ParentForm {...formHandlers} setShowFormView={setShowFormView} />}
-      {showFormView === 'student' && <StudentForm {...formHandlers} setShowFormView={setShowFormView} parents={parents} classes={classes} />}
+      {showFormView === 'student' && <StudentForm {...formHandlers} setShowFormView={setShowFormView} parents={parents} classes={classes} school={school} schoolSettings={schoolSettings} />}
 
       {activeTab === 'teachers' && user.role === 'school_admin' && !showFormView && <TeachersPage teachers={teachers} school={school} {...filterHandlers} setShowFormView={setShowFormView} modal={modal} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} onEdit={(teacher) => { formHandlers.setTeacherForm({ teacherData: teacher, credentials: { email: '', password: '' } }); formHandlers.setTeacherPhotoPreview(teacher.photo || ''); setShowFormView('teacher'); }} onDelete={formHandlers.handleDeleteTeacher} />}
       {activeTab === 'parents' && user.role === 'school_admin' && !showFormView && <ParentsPage parents={parents} students={students} school={school} {...filterHandlers} setShowFormView={setShowFormView} modal={modal} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} onEdit={(parent) => { formHandlers.setParentForm({ parentData: parent, parentCredentials: { email: '', password: '' } }); formHandlers.setParentPhotoPreview(parent.photo || ''); setShowFormView('parent'); }} onDelete={formHandlers.handleDeleteParent} />}
       {activeTab === 'parents' && user.role === 'teacher' && <ParentsPage parents={filteredParents} students={filteredStudents} school={school} {...filterHandlers} setShowFormView={null} modal={modal} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} readOnly={true} />}
-      {activeTab === 'students' && user.role === 'school_admin' && !showFormView && <StudentsPage students={students} classes={classes} parents={parents} school={school} {...filterHandlers} setShowFormView={setShowFormView} modal={modal} onUpdateStudent={handleUpdateStudent} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} onEdit={(student) => { formHandlers.setStudentForm(student); formHandlers.setStudentPhotoPreview(student.photo || ''); setShowFormView('student'); }} onDelete={formHandlers.handleDeleteStudent} />}
-      {activeTab === 'students' && user.role === 'teacher' && <StudentsPage students={filteredStudents} classes={filteredClasses} parents={filteredParents} school={school} {...filterHandlers} setShowFormView={null} modal={modal} onUpdateStudent={null} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} readOnly={true} />}
+      {activeTab === 'students' && user.role === 'school_admin' && !showFormView && <StudentsPage students={students} classes={classes} parents={parents} school={school} schoolSettings={schoolSettings} {...filterHandlers} setShowFormView={setShowFormView} modal={modal} onUpdateStudent={handleUpdateStudent} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} onEdit={(student) => { formHandlers.setStudentForm(student); formHandlers.setStudentPhotoPreview(student.photo || ''); setShowFormView('student'); }} onDelete={formHandlers.handleDeleteStudent} />}
+      {activeTab === 'students' && user.role === 'teacher' && <StudentsPage students={filteredStudents} classes={filteredClasses} parents={filteredParents} school={school} schoolSettings={schoolSettings} {...filterHandlers} setShowFormView={null} modal={modal} onUpdateStudent={null} toast={toast} apiCall={apiCall} loadDashboardData={loadDashboardData} readOnly={true} />}
       {activeTab === 'classes' && user.role === 'school_admin' && <ClassesPage classes={classes} students={students} showClassModal={showClassModal} setShowClassModal={setShowClassModal} classForm={formHandlers.classForm} setClassForm={formHandlers.setClassForm} handleCreateClass={async (e) => { const success = await formHandlers.handleCreateClass(e); if (success) setShowClassModal(false); }} handleDeleteClass={formHandlers.handleDeleteClass} />}
       {activeTab === 'my-classes' && user.role === 'teacher' && <ClassesPage classes={filteredClasses} students={filteredStudents} showClassModal={false} setShowClassModal={() => { }} classForm={{}} setClassForm={() => { }} handleCreateClass={() => { }} readOnly={true} />}
       {activeTab === 'subjects' && user.role === 'school_admin' && <SubjectsPage subjects={subjects} showSubjectModal={showSubjectModal} setShowSubjectModal={setShowSubjectModal} subjectForm={formHandlers.subjectForm} setSubjectForm={formHandlers.setSubjectForm} handleCreateSubject={async (e) => { const success = await formHandlers.handleCreateSubject(e); if (success) setShowSubjectModal(false); }} handleDeleteSubject={formHandlers.handleDeleteSubject} />}
@@ -577,6 +578,9 @@ function App() {
         />
       )}
       {activeTab === 'school-fees' && user.role === 'parent' && <SchoolFeesPage user={user} />}
+      {activeTab === 'my-children' && user.role === 'parent' && (
+        <MyChildrenPage students={students} classes={classes} attendance={attendance} feePayments={feePayments} />
+      )}
 
       {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'report-cards', 'announcements', 'academic-calendar', 'certificates', 'homework', 'fees', 'library', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook'].includes(activeTab) && <Card><CardContent className="p-8 text-center"><p className="text-gray-600">This section is under development.</p></CardContent></Card>}
 

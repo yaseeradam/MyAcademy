@@ -22,21 +22,21 @@ export default function SchoolSettingsPage({
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white">School Settings</h2>
-          <p className="text-blue-200/60 text-sm">Configure your school's information and appearance</p>
+          <h2 className="text-2xl font-bold text-slate-900">School Settings</h2>
+          <p className="text-slate-500 text-sm">Configure your school's information and appearance</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Settings Column */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="border-0 bg-white/5 backdrop-blur-xl">
+          <Card className="border border-slate-200/70 bg-white/80 backdrop-blur-xl">
             <CardHeader>
-              <CardTitle className="flex items-center text-white">
+              <CardTitle className="flex items-center text-slate-900">
                 <Building2 className="h-5 w-5 mr-2 text-indigo-400" />
                 School Information
               </CardTitle>
-              <CardDescription className="text-blue-200/60">
+              <CardDescription className="text-slate-500">
                 Update your school's basic details and contact info
               </CardDescription>
             </CardHeader>
@@ -44,53 +44,53 @@ export default function SchoolSettingsPage({
               <form onSubmit={handleSaveSettings} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="schoolName" className="text-blue-200/80">School Name</Label>
+                    <Label htmlFor="schoolName" className="text-slate-700">School Name</Label>
                     <Input
                       id="schoolName"
                       value={schoolSettings.schoolName}
                       onChange={(e) => setSchoolSettings(prev => ({ ...prev, schoolName: e.target.value }))}
                       placeholder="Enter school name"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                      className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="schoolEmail" className="text-blue-200/80">School Email</Label>
+                    <Label htmlFor="schoolEmail" className="text-slate-700">School Email</Label>
                     <Input
                       id="schoolEmail"
                       type="email"
                       value={schoolSettings.email}
                       onChange={(e) => setSchoolSettings(prev => ({ ...prev, email: e.target.value }))}
                       placeholder="Enter school email"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                      className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phoneNumber" className="text-blue-200/80">Phone Number</Label>
+                    <Label htmlFor="phoneNumber" className="text-slate-700">Phone Number</Label>
                     <Input
                       id="phoneNumber"
                       value={schoolSettings.phoneNumber}
                       onChange={(e) => setSchoolSettings(prev => ({ ...prev, phoneNumber: e.target.value }))}
                       placeholder="Enter school phone number"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                      className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address" className="text-blue-200/80">Address</Label>
+                  <Label htmlFor="address" className="text-slate-700">Address</Label>
                   <Textarea
                     id="address"
                     value={schoolSettings.address}
                     onChange={(e) => setSchoolSettings(prev => ({ ...prev, address: e.target.value }))}
                     placeholder="Enter school address"
                     rows={3}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-blue-200/40"
+                    className="bg-white/80 border-slate-200/80 text-slate-900 placeholder:text-slate-500 shadow-sm focus:border-sky-300 focus:ring-sky-200/50"
                   />
                 </div>
 
-                <div className="pt-4 border-t border-white/10">
+                <div className="pt-4 border-t border-slate-200/70">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium text-white">Grading System</h3>
+                    <h3 className="text-lg font-medium text-slate-900">Grading System</h3>
                     <Button
                       type="button"
                       variant="outline"
@@ -102,7 +102,7 @@ export default function SchoolSettingsPage({
                           { min: 0, max: 0, grade: '', remark: '' }
                         ]
                       }))}
-                      className="bg-white/5 border-white/10 text-blue-200 hover:text-white hover:bg-white/10"
+                      className="bg-white/80 border-slate-200/80 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Grade Range
@@ -111,9 +111,9 @@ export default function SchoolSettingsPage({
 
                   <div className="space-y-3">
                     {(schoolSettings.gradingScale || []).sort((a, b) => b.min - a.min).map((grade, index) => (
-                      <div key={index} className="grid grid-cols-12 gap-2 items-end bg-white/5 p-3 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                      <div key={index} className="grid grid-cols-12 gap-2 items-end bg-white/80 p-3 rounded-lg border border-slate-200/70 hover:border-slate-300 transition-colors">
                         <div className="col-span-2">
-                          <Label className="text-xs text-blue-200/60 mb-1 block">Min</Label>
+                          <Label className="text-xs text-slate-500 mb-1 block">Min</Label>
                           <Input
                             type="number"
                             value={grade.min}
@@ -122,11 +122,11 @@ export default function SchoolSettingsPage({
                               newScale[index].min = parseFloat(e.target.value)
                               setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
                             }}
-                            className="h-8 bg-black/20 border-white/10 text-white text-sm"
+                            className="h-8 bg-white border-slate-200/80 text-slate-900 text-sm"
                           />
                         </div>
                         <div className="col-span-2">
-                          <Label className="text-xs text-blue-200/60 mb-1 block">Max</Label>
+                          <Label className="text-xs text-slate-500 mb-1 block">Max</Label>
                           <Input
                             type="number"
                             value={grade.max}
@@ -135,11 +135,11 @@ export default function SchoolSettingsPage({
                               newScale[index].max = parseFloat(e.target.value)
                               setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
                             }}
-                            className="h-8 bg-black/20 border-white/10 text-white text-sm"
+                            className="h-8 bg-white border-slate-200/80 text-slate-900 text-sm"
                           />
                         </div>
                         <div className="col-span-2">
-                          <Label className="text-xs text-blue-200/60 mb-1 block">Grade</Label>
+                          <Label className="text-xs text-slate-500 mb-1 block">Grade</Label>
                           <Input
                             value={grade.grade}
                             onChange={(e) => {
@@ -148,11 +148,11 @@ export default function SchoolSettingsPage({
                               setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
                             }}
                             placeholder="A"
-                            className="h-8 bg-black/20 border-white/10 text-white text-sm"
+                            className="h-8 bg-white border-slate-200/80 text-slate-900 text-sm"
                           />
                         </div>
                         <div className="col-span-4">
-                          <Label className="text-xs text-blue-200/60 mb-1 block">Remark</Label>
+                          <Label className="text-xs text-slate-500 mb-1 block">Remark</Label>
                           <Input
                             value={grade.remark}
                             onChange={(e) => {
@@ -161,7 +161,7 @@ export default function SchoolSettingsPage({
                               setSchoolSettings(prev => ({ ...prev, gradingScale: newScale }))
                             }}
                             placeholder="Excellent"
-                            className="h-8 bg-black/20 border-white/10 text-white text-sm"
+                            className="h-8 bg-white border-slate-200/80 text-slate-900 text-sm"
                           />
                         </div>
                         <div className="col-span-2 flex justify-end">
@@ -182,7 +182,7 @@ export default function SchoolSettingsPage({
                       </div>
                     ))}
                     {(!schoolSettings.gradingScale || schoolSettings.gradingScale.length === 0) && (
-                      <div className="text-center p-6 text-blue-200/40 text-sm border-2 border-dashed border-white/10 rounded-lg">
+                      <div className="text-center p-6 text-slate-400 text-sm border-2 border-dashed border-slate-200/80 rounded-lg">
                         No grading scale defined. Click "Add Grade Range" to start.
                       </div>
                     )}
@@ -201,19 +201,19 @@ export default function SchoolSettingsPage({
 
         {/* Sidebar Column (Logo) */}
         <div className="lg:col-span-1">
-          <Card className="border-0 bg-white/5 backdrop-blur-xl h-full">
+          <Card className="border border-slate-200/70 bg-white/80 backdrop-blur-xl h-full">
             <CardHeader>
-              <CardTitle className="text-white">School Logo</CardTitle>
-              <CardDescription className="text-blue-200/60">
+              <CardTitle className="text-slate-900">School Logo</CardTitle>
+              <CardDescription className="text-slate-500">
                 Upload your official school logo
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
-              <div className="w-48 h-48 bg-black/20 rounded-xl flex items-center justify-center border-2 border-dashed border-white/20 mb-6 overflow-hidden relative group">
+              <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center border-2 border-dashed border-slate-200/80 mb-6 overflow-hidden relative group">
                 {schoolSettings.logo ? (
                   <img src={schoolSettings.logo} alt="School Logo" className="w-full h-full object-contain p-2" />
                 ) : (
-                  <Building2 className="h-16 w-16 text-white/20" />
+                  <Building2 className="h-16 w-16 text-slate-300" />
                 )}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <p className="text-white text-sm font-medium">Change Logo</p>
@@ -228,8 +228,8 @@ export default function SchoolSettingsPage({
               </div>
 
               <div className="text-center w-full">
-                <p className="text-xs text-blue-200/40 mb-2">Supported formats: PNG, JPG, WEBP (Max 2MB)</p>
-                <Button variant="outline" className="w-full bg-white/5 border-white/10 text-white hover:bg-white/10" onClick={() => document.getElementById('logoFile').click()}>
+                <p className="text-xs text-slate-500 mb-2">Supported formats: PNG, JPG, WEBP (Max 2MB)</p>
+                <Button variant="outline" className="w-full bg-white/80 border-slate-200/80 text-slate-700 hover:bg-slate-100" onClick={() => document.getElementById('logoFile').click()}>
                   Upload New Logo
                 </Button>
               </div>

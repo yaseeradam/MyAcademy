@@ -27,20 +27,14 @@ function verify(request) {
 
 export async function GET(request) {
   try {
-    const bypassCache = shouldBypassCache(request)
     const user = verify(request)
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    if (!bypassCache) {
-      const cached = getCache(buildCacheKey(request, user))
-      if (cached) return NextResponse.json(cached)
-    }
     const db = await connect()
     const conversations = await db.collection('chat_conversations').find({
       schoolId: user.schoolId,
       participants: user.id
     }).sort({ lastMessageAt: -1 }).toArray()
     if (!conversations.length) {
-      if (!bypassCache) setCache(buildCacheKey(request, user), [], 5000)
       return NextResponse.json([])
     }
     const conversationIds = conversations.map(c => c.id)
@@ -67,7 +61,6 @@ export async function GET(request) {
       lastMessage: byLastMessage.get(c.id) || null,
       unreadCount: byId.get(c.id) || 0
     }))
-    if (!bypassCache) setCache(buildCacheKey(request, user), result, 5000)
     return NextResponse.json(result)
   } catch (error) {
     console.error('Chat conversations GET failed:', error)

@@ -134,6 +134,16 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
   }, [soundEnabled])
 
   useEffect(() => {
+    if (!isOpen) return
+    const token = localStorage.getItem('token')
+    if (token) {
+      socketManager.connect(token)
+    }
+    loadNotifications(true)
+    socketManager.getUnreadCount()
+  }, [isOpen])
+
+  useEffect(() => {
     if (!preferences.push || pushSetupRef.current) return
     if (typeof window === 'undefined') return
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
@@ -209,12 +219,13 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
     }
   }
 
-  const loadNotifications = async () => {
+  const loadNotifications = async (forceReload = false) => {
     try {
       const token = localStorage.getItem('token')
       if (!token) return
-      
-      const response = await fetch('/api/notifications', {
+
+      const url = forceReload ? '/api/notifications?nocache=1' : '/api/notifications'
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -296,7 +307,37 @@ function NotificationCenter({ currentUser, isOpen, onToggle }) {
   }
 
   const markAsRead = async (notificationId) => {
-    socketManager.markNotificationRead(notificationId)
+    let wasUnread = false
+    setNotifications(prev => {
+      const next = prev.map(notif => {
+        if (notif.id !== notificationId) return notif
+        if (!notif.read) {
+          wasUnread = true
+        }
+        return { ...notif, read: true }
+      })
+      return next
+    })
+    if (wasUnread) {
+      setUnreadCount(prev => Math.max(0, prev - 1))
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) return
+      await fetch('/api/notifications/mark-read', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ notificationId })
+      })
+      socketManager.markNotificationRead(notificationId)
+    } catch (error) {
+      console.error('Error marking notification read:', error)
+      loadNotifications(true)
+    }
   }
 
   const markAllAsRead = async () => {
