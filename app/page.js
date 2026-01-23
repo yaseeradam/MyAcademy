@@ -52,6 +52,7 @@ import CertificatesPage from '@/components/pages/CertificatesPage'
 import ParentFeesPage from '@/components/pages/ParentFeesPage'
 import GradebookPage from '@/components/pages/GradebookPage'
 import BackupToolsPage from '@/components/pages/BackupToolsPage'
+import StudentPromotionPage from '@/components/pages/StudentPromotionPage'
 import { Home, MessageCircle, Building2, Settings as SettingsIcon, Users2, Users, UserCheck, School as SchoolIcon, BookOpen, GraduationCap, Calendar, Trophy, CreditCard, BarChart3, Clock, FileText, DollarSign, BookMarked, CalendarDays, Heart, Bus, AlertCircle, Grid3x3 } from 'lucide-react'
 import SubscriptionExpired from '@/components/subscription/SubscriptionExpired'
 import AccessDeniedOverlay from '@/components/subscription/AccessDeniedOverlay'
@@ -563,6 +564,7 @@ function App() {
       {activeTab === 'homework' && user.role === 'teacher' && <HomeworkPage homework={newFeatures.homework.filter(hw => filteredClasses.some(c => c._id === hw.classId))} classes={filteredClasses} subjects={filteredSubjects} students={filteredStudents} userRole={user.role} showModal={showHomeworkModal} setShowModal={setShowHomeworkModal} form={homeworkForm} setForm={setHomeworkForm} handleSubmit={(e) => newFeatures.handleHomeworkSubmit(e, homeworkForm, setShowHomeworkModal)} handleGrade={() => { }} handleDelete={newFeatures.handleDeleteHomework} onBack={() => setActiveTab('dashboard')} />}
       {activeTab === 'library' && user.role === 'school_admin' && <LibraryPage books={newFeatures.books} students={students} showModal={showBookModal} setShowModal={setShowBookModal} showIssueModal={showIssueModal} setShowIssueModal={setShowIssueModal} form={bookForm} setForm={setBookForm} issueForm={issueForm} setIssueForm={setIssueForm} handleSubmit={(e) => newFeatures.handleBookSubmit(e, bookForm, setShowBookModal)} handleIssue={(e) => newFeatures.handleIssueBook(e, issueForm, setShowIssueModal)} handleReturn={newFeatures.handleReturnBook} handleDelete={newFeatures.handleDeleteBook} searchTerm={bookSearch} setSearchTerm={setBookSearch} onBack={() => setActiveTab('more-features')} />}
       {activeTab === 'backup-tools' && user.role === 'school_admin' && <BackupToolsPage apiCall={apiCall} token={token} onBack={() => setActiveTab('more-features')} />}
+      {activeTab === 'student-promotion' && user.role === 'school_admin' && <StudentPromotionPage apiCall={apiCall} classes={classes} students={students} loadDashboardData={loadDashboardData} />}
       {activeTab === 'billing' && user.role === 'school_admin' && <BillingDashboard currentUser={user} school={school} />}
 
       {activeTab === 'messages' && <MessagesPage currentUser={user} onBack={() => setActiveTab('dashboard')} />}
@@ -584,7 +586,7 @@ function App() {
         <MyChildrenPage students={students} classes={classes} attendance={attendance} feePayments={feePayments} />
       )}
 
-      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'report-cards', 'announcements', 'academic-calendar', 'certificates', 'homework', 'fees', 'library', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook', 'results'].includes(activeTab) && null}
+      {!['dashboard', 'notifications', 'schools', 'teachers', 'parents', 'students', 'classes', 'subjects', 'my-classes', 'my-subjects', 'assignments', 'timetable', 'teacher-attendance', 'student-attendance', 'exams', 'report-cards', 'announcements', 'academic-calendar', 'certificates', 'homework', 'fees', 'library', 'billing', 'payments', 'gamification', 'messages', 'school-fees', 'school-settings', 'master-settings', 'more-features', 'gradebook', 'results', 'backup-tools', 'student-promotion', 'my-children'].includes(activeTab) && null}
 
       <ReportDialog
         open={showReportDialog}

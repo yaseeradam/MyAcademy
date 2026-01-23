@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Clock, FileText, DollarSign, BookOpen, BookMarked, GraduationCap, Megaphone, CalendarDays, Award, Database } from 'lucide-react'
+import { Clock, FileText, DollarSign, BookOpen, BookMarked, GraduationCap, Megaphone, CalendarDays, Award, Database, ArrowUpCircle } from 'lucide-react'
 
 export default function MoreFeaturesPage({ setActiveTab }) {
   const features = [
@@ -20,6 +20,14 @@ export default function MoreFeaturesPage({ setActiveTab }) {
       gradientOverlay: 'from-blue-100/70 to-white/40',
       iconContainer: 'from-blue-500 to-blue-400 shadow-blue-200/70',
       description: 'Manage term dates and events'
+    },
+    {
+      id: 'student-promotion',
+      label: 'Student Promotion',
+      icon: ArrowUpCircle,
+      gradientOverlay: 'from-orange-100/70 to-white/40',
+      iconContainer: 'from-orange-500 to-amber-400 shadow-orange-200/70',
+      description: 'Promote students to next class'
     },
     {
       id: 'certificates',

@@ -12,7 +12,11 @@ let cachedDb = null
 
 async function connectDB() {
   if (cachedDb) return cachedDb
-  const client = new MongoClient(MONGO_URL)
+  const client = new MongoClient(MONGO_URL, {
+    serverSelectionTimeoutMS: 30000,
+    connectTimeoutMS: 30000,
+    socketTimeoutMS: 60000
+  })
   await client.connect()
   cachedDb = client.db(DB_NAME)
   return cachedDb
@@ -65,7 +69,7 @@ export async function POST(request) {
 
     return NextResponse.json({ backup: info })
   } catch (error) {
-    console.error('Backup export error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Backup export error:', error.message, error.stack)
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 })
   }
 }

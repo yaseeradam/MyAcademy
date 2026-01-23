@@ -9,7 +9,9 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Eye, Edit, Trash2, School } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Plus, Eye, Edit, Trash2, School, ArrowRight, GraduationCap } from 'lucide-react'
 
 export default function ClassesPage({
   classes,
@@ -22,6 +24,9 @@ export default function ClassesPage({
   handleDeleteClass,
   readOnly = false
 }) {
+  // Sort classes by grade level for the dropdown
+  const sortedClasses = [...classes].sort((a, b) => (a.gradeLevel || 0) - (b.gradeLevel || 0))
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -50,16 +55,30 @@ export default function ClassesPage({
                   <div className="space-y-4">
                     <h3 className="font-medium text-slate-800">Class Information</h3>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="className" className="text-slate-600">Class Name</Label>
-                      <Input
-                        id="className"
-                        value={classForm.name}
-                        onChange={(e) => setClassForm(prev => ({ ...prev, name: e.target.value }))}
-                        placeholder="e.g., Grade 1A, JSS 2, Year 10"
-                        required
-                        className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="className" className="text-slate-600">Class Name</Label>
+                        <Input
+                          id="className"
+                          value={classForm.name}
+                          onChange={(e) => setClassForm(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="e.g., Grade 1A, JSS 2, Year 10"
+                          required
+                          className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="gradeLevel" className="text-slate-600">Grade Level (for ordering)</Label>
+                        <Input
+                          id="gradeLevel"
+                          type="number"
+                          value={classForm.gradeLevel || ''}
+                          onChange={(e) => setClassForm(prev => ({ ...prev, gradeLevel: parseInt(e.target.value) || 0 }))}
+                          placeholder="e.g., 1, 2, 3..."
+                          min="1"
+                          className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-2">
@@ -94,11 +113,75 @@ export default function ClassesPage({
                           id="academicYear"
                           value={classForm.academicYear}
                           onChange={(e) => setClassForm(prev => ({ ...prev, academicYear: e.target.value }))}
-                          placeholder="e.g., 2024"
+                          placeholder="e.g., 2024/2025"
                           required
                           className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
                         />
                       </div>
+                    </div>
+
+                    {/* Promotion Settings */}
+                    <div className="border-t border-slate-200 pt-4 mt-2">
+                      <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2">
+                        <ArrowRight className="h-4 w-4 text-amber-500" />
+                        Promotion Settings
+                      </h3>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="nextClassId" className="text-slate-600">Promotes To (Next Class)</Label>
+                          <Select
+                            value={classForm.nextClassId || 'none'}
+                            onValueChange={(value) => setClassForm(prev => ({
+                              ...prev,
+                              nextClassId: value === 'none' ? null : value,
+                              isFinalClass: value === 'none' ? prev.isFinalClass : false
+                            }))}
+                          >
+                            <SelectTrigger className="bg-white border-slate-200">
+                              <SelectValue placeholder="Select next class" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">No next class</SelectItem>
+                              {sortedClasses
+                                .filter(c => c.id !== classForm.id)
+                                .map(c => (
+                                  <SelectItem key={c.id} value={c.id}>
+                                    {c.name} {c.gradeLevel ? `(Level ${c.gradeLevel})` : ''}
+                                  </SelectItem>
+                                ))
+                              }
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-slate-600">Final Class (Graduation)</Label>
+                          <div className="flex items-center space-x-2 pt-2">
+                            <Switch
+                              id="isFinalClass"
+                              checked={classForm.isFinalClass || false}
+                              onCheckedChange={(checked) => setClassForm(prev => ({
+                                ...prev,
+                                isFinalClass: checked,
+                                nextClassId: checked ? null : prev.nextClassId
+                              }))}
+                            />
+                            <Label htmlFor="isFinalClass" className="text-sm text-slate-600 cursor-pointer">
+                              Students graduate from here
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {classForm.isFinalClass && (
+                        <div className="mt-3 p-3 bg-violet-50 rounded-lg border border-violet-200">
+                          <div className="flex items-center gap-2 text-violet-700 text-sm">
+                            <GraduationCap className="h-4 w-4" />
+                            <span>Students will be marked as "Graduated" during promotion</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
