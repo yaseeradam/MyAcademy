@@ -55,11 +55,11 @@ export default function MainLayout({ user, school, schoolSettings, children, act
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 ${sidebarCollapsed ? 'w-20' : 'w-72'} bg-white/80 backdrop-blur-xl border-r border-slate-200/70 transform transition-all duration-300 ease-in-out flex flex-col ${sidebarOpen ? 'translate-x-0 shadow-2xl shadow-slate-200/70' : '-translate-x-full lg:translate-x-0'}`}>
 
-        {/* Background Gradient Effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-sky-100/80 to-transparent pointer-events-none" />
+        {/* Background Gradient Effect - Simplified */}
+        <div className="absolute inset-0 bg-gradient-to-b from-sky-50/50 to-transparent pointer-events-none" />
 
         {/* Header */}
-        <div className="relative shrink-0 flex items-center h-16 px-4 border-b border-slate-200/70 bg-white/70">
+        <div className="relative shrink-0 flex items-center h-16 px-4 border-b border-slate-200/70 bg-white/60">
           {!sidebarCollapsed ? (
             <>
               <div className="flex items-center gap-3 overflow-hidden flex-1">
@@ -113,7 +113,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
                     }`}
                 >
                   {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-sky-300 to-emerald-200 opacity-100" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-sky-300 opacity-100" />
                   )}
 
                   <div className="relative flex items-center w-full">
@@ -195,8 +195,8 @@ export default function MainLayout({ user, school, schoolSettings, children, act
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white border-slate-200/80 text-slate-800 mt-2 p-1 relative overflow-hidden backdrop-blur-xl shadow-xl shadow-slate-200/70">
-                <div className="absolute inset-0 bg-gradient-to-b from-sky-100/70 to-transparent pointer-events-none" />
+              <DropdownMenuContent align="end" className="w-56 bg-white border-slate-200/70 text-slate-800 mt-2 p-1 relative overflow-hidden backdrop-blur-xl shadow-xl shadow-slate-200/70">
+                <div className="absolute inset-0 bg-gradient-to-b from-sky-50/40 to-transparent pointer-events-none" />
                 <DropdownMenuLabel className="pb-0 relative">
                   <div className="flex flex-col space-y-1 p-2">
                     <p className="text-sm font-semibold text-slate-800">{user.name}</p>
@@ -220,7 +220,7 @@ export default function MainLayout({ user, school, schoolSettings, children, act
         {/* Page Content */}
         <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 custom-scrollbar relative">
           {/* Subtle background glow for content area */}
-          <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-sky-200/60 to-transparent pointer-events-none -z-10" />
+          <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-sky-100/40 to-transparent pointer-events-none -z-10" />
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

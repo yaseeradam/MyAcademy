@@ -11,10 +11,8 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: hsl(var(--background));
     background-image:
-        radial-gradient(circle at 12% 8%, rgba(56, 189, 248, 0.15), transparent 45%),
-        radial-gradient(circle at 88% 12%, rgba(251, 191, 36, 0.18), transparent 40%),
-        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.12), transparent 45%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.96));
+        radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.12), transparent 50%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
     color: hsl(var(--foreground));
 }
 
@@ -66,6 +64,7 @@ code {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -74,7 +73,7 @@ code {
 
 
 @layer base {
-  :root {
+    :root {
         --font-sans: "Manrope", "Segoe UI", sans-serif;
         --font-display: "Fraunces", "Times New Roman", serif;
 
@@ -118,7 +117,7 @@ code {
         --soft-accent-2: 160 45% 36%;
         --soft-warm: 35 70% 45%;
         --soft-danger: 0 65% 45%;
-        
+
         /* Theme colors - can be overridden by school settings */
         --theme-primary: #0ea5e9;
         --theme-light-50: #f0f9ff;
@@ -130,17 +129,32 @@ code {
         --theme-dark-600: #0284c7;
         --theme-dark-700: #0369a1;
         --theme-dark-800: #0c4a6e;
+
+        /* Enhanced Semantic Colors */
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #f97316;
+
+        /* UI Surface Colors */
+        --surface: #ffffff;
+        --surface-soft: rgba(255, 255, 255, 0.8);
+        --border-standard: rgba(226, 232, 240, 0.7);
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-tertiary: #94a3b8;
     }
 }
 
 
 
 @layer base {
-  * {
-    @apply border-border;
+    * {
+        @apply border-border;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
 }
 
@@ -173,6 +187,7 @@ code {
         opacity: 0;
         transform: translateY(12px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -180,10 +195,12 @@ code {
 }
 
 @keyframes float-slow {
+
     0%,
     100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-12px);
     }
@@ -193,6 +210,7 @@ code {
     0% {
         transform: translateX(-100%);
     }
+
     100% {
         transform: translateX(120%);
     }

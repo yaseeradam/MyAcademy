@@ -70,17 +70,17 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
 
       <div className={`
         fixed inset-y-0 left-0 z-50 
-        ${sidebarCollapsed ? 'w-20' : 'w-64'} bg-gradient-to-b from-[#0f1d32] via-[#0a1628] to-[#071018] shadow-2xl border-r border-white/5
+        ${sidebarCollapsed ? 'w-20' : 'w-64'} bg-gradient-to-b from-[#0c2340] via-[#0e2a4d] to-[#081829] shadow-2xl border-r border-sky-400/10
         transform transition-all duration-300 ease-in-out 
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-white/5 bg-white/5">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-sky-400/10 bg-sky-900/20">
           <div className="flex items-center">
             {school?.logo ? (
-              <img src={school.logo} alt="Logo" className="h-10 w-10 mr-3 rounded-xl object-cover ring-2 ring-amber-400/50" />
+              <img src={school.logo} alt="Logo" className="h-10 w-10 mr-3 rounded-xl object-cover ring-2 ring-sky-400/50" />
             ) : (
-              <div className="h-10 w-10 mr-3 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg">
+              <div className="h-10 w-10 mr-3 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-lg">
                 <School className="h-6 w-6 text-white" />
               </div>
             )}
@@ -90,7 +90,7 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
                   {school?.name || 'My Academy'}
                 </span>
                 {user.role === 'developer' && (
-                  <span className="text-xs text-amber-400 font-medium">Master System</span>
+                  <span className="text-xs text-sky-400 font-medium">Master System</span>
                 )}
               </div>
             )}
@@ -123,11 +123,11 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
                   setSidebarOpen(false)
                 }}
                 className={`w-full flex items-center px-3 py-2.5 text-left text-sm font-medium rounded-xl transition-all duration-200 group relative ${activeTab === item.id
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30 scale-[1.02]'
-                    : 'text-blue-200/70 hover:bg-white/5 hover:text-white'
+                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/30 scale-[1.02]'
+                  : 'text-blue-200/70 hover:bg-white/5 hover:text-white'
                   }`}
               >
-                <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${sidebarCollapsed ? 'mx-auto' : 'mr-3'} ${activeTab === item.id ? 'scale-110 text-on-accent' : 'text-slate-300 group-hover:text-amber-200 group-hover:scale-110'}`} />
+                <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${sidebarCollapsed ? 'mx-auto' : 'mr-3'} ${activeTab === item.id ? 'scale-110 text-white' : 'text-slate-300 group-hover:text-sky-300 group-hover:scale-110'}`} />
                 {!sidebarCollapsed && (
                   <>
                     <span className="flex-1">{item.label}</span>
@@ -144,10 +144,10 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
         </nav>
 
         {/* User Section */}
-        <div className="border-t border-white/5 p-4 bg-white/5">
+        <div className="border-t border-sky-400/10 p-4 bg-sky-900/20">
           <div className="flex items-center mb-3">
-            <Avatar className="h-10 w-10 mr-3 ring-2 ring-amber-400/50">
-              <AvatarFallback className="bg-gradient-to-br from-amber-400 to-orange-500 text-white font-medium">
+            <Avatar className="h-10 w-10 mr-3 ring-2 ring-sky-400/50">
+              <AvatarFallback className="bg-gradient-to-br from-sky-400 to-blue-600 text-white font-medium">
                 {user.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
@@ -155,10 +155,10 @@ export default function Sidebar({ user, school, activeTab, setActiveTab, onLogou
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-white truncate">{user.name}</p>
                 <div className="flex items-center space-x-1">
-                  <Badge className="text-xs capitalize bg-amber-500/20 text-amber-300 border-amber-400/30">
+                  <Badge className="text-xs capitalize bg-sky-500/20 text-sky-300 border-sky-400/30">
                     {user.role === 'school_admin' ? 'Admin' : user.role?.replace('_', ' ')}
                   </Badge>
-                  {user.role === 'developer' && <Crown className="h-3 w-3 text-amber-400" />}
+                  {user.role === 'developer' && <Crown className="h-3 w-3 text-sky-400" />}
                 </div>
               </div>
             )}
